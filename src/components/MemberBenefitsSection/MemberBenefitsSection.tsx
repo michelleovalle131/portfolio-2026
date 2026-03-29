@@ -40,6 +40,7 @@ const IMPACT_CARDS = [
 export function MemberBenefitsSection() {
   return (
     <section
+      id="recent-impact"
       className={styles.section}
       aria-labelledby="recent-impact-heading"
     >

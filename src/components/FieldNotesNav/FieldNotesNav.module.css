@@ -1,0 +1,136 @@
+.nav {
+  position: fixed;
+  z-index: 100;
+  top: clamp(12px, 2.5vw, 20px);
+  left: clamp(12px, 2.8vw, 28px);
+  width: max-content;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid color-mix(in srgb, #ffffff 50%, transparent);
+  font-family: "Inter", system-ui, sans-serif;
+  pointer-events: auto;
+  background: color-mix(in srgb, var(--page-bg) 82%, transparent);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 0.85rem;
+}
+
+.divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 14px;
+  align-self: center;
+  list-style: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.link {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.95);
+  transition: color 0.2s ease;
+  display: inline-block;
+  line-height: 1;
+}
+
+.link:hover {
+  color: var(--field-accent, #a67c52);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--field-accent, #a67c52);
+  outline-offset: 3px;
+}
+
+.colorItem {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.colorWheelLabel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.colorWheelLabel:hover {
+  opacity: 0.92;
+  transform: scale(1.04);
+}
+
+.colorWheelLabel:focus-within {
+  outline: 2px solid var(--field-accent, #a67c52);
+  outline-offset: 2px;
+}
+
+.colorWheelIcon {
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  display: block;
+}
+
+.colorInputHidden {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .nav {
+    top: clamp(10px, 2vw, 16px);
+    left: clamp(10px, 3vw, 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+
+  .colorWheelLabel {
+    transition: none;
+  }
+
+  .colorWheelLabel:hover {
+    transform: none;
+  }
+}

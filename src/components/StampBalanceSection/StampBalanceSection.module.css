@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: row;
   width: 100%;
+  margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
   height: 100vh;
@@ -15,16 +16,22 @@
 }
 
 .left {
-  flex: 1 1 50%;
-  min-width: 0;
-  min-height: 0;
-  margin-left: 40px;
+  flex: 0 0 50vw;
+  width: 50vw;
+  min-width: 50vw;
+  max-width: 50vw;
+  align-self: stretch;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #e4daf5;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(24px, 5vw, 48px);
+  padding: 0;
   position: relative;
+  box-sizing: border-box;
 }
 
 .leftParallax {
@@ -62,15 +69,16 @@
 }
 
 .right {
-  flex: 1 1 50%;
+  flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-  box-sizing: content-box;
+  align-self: stretch;
+  box-sizing: border-box;
   /* Dark fill + dots come from body (index.css) */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(24px, 5vw, 56px);
+  padding: 0;
 }
 
 /* Motion lives here so mask + perforation stay aligned on .stampClip (no transform on masked node). */
@@ -235,13 +243,17 @@
     max-height: none;
   }
 
-  .left,
-  .right {
+  .left {
     flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: auto;
     min-height: min(50vh, 420px);
   }
 
-  .left {
-    margin-left: 0;
+  .right {
+    flex: 1 1 auto;
+    min-height: min(50vh, 420px);
   }
 }

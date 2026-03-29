@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { useMemo } from "react";
 import { Stamp } from "../Stamp/Stamp";
 import { STAMP_META } from "../Hero/stampMeta";
-import { STAMP_IMAGE_URLS } from "../Hero/stampImagePool";
+import { STAMP_IMAGE_URLS, uniqueStampBackgrounds } from "../Hero/stampImagePool";
 import { buildScatterSlots } from "./scatterStampLayout";
 import styles from "./SplitViewportSection.module.css";
 
@@ -31,15 +31,11 @@ const TIERS = [
 ] as const;
 
 function scatterBackgrounds(count: number): string[] {
-  const urls = STAMP_IMAGE_URLS;
-  const fallbacks = STAMP_META.map((s) => s.fallbackBg);
-  if (urls.length === 0) {
-    return Array.from({ length: count }, (_, i) => fallbacks[i % fallbacks.length]!);
-  }
-  return Array.from({ length: count }, (_, i) => {
-    const url = urls[(i * 7) % urls.length]!;
-    return `url("${url}") center / cover no-repeat, #ffffff`;
-  });
+  return uniqueStampBackgrounds(
+    count,
+    STAMP_IMAGE_URLS,
+    STAMP_META.map((s) => s.fallbackBg),
+  );
 }
 
 export function SplitViewportSection() {
@@ -49,7 +45,11 @@ export function SplitViewportSection() {
   );
 
   return (
-    <section className={styles.section} aria-label="Life, craft, and mind">
+    <section
+      id="contact"
+      className={styles.section}
+      aria-label="Life, craft, and mind"
+    >
       <div className={styles.left}>
         <div className={styles.stampCanvas} aria-hidden>
           {SCATTER_SLOTS.map((slot, i) => {

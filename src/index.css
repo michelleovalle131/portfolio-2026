@@ -7,6 +7,7 @@
 /* Page shell: dark fill on html/body; dots are one fixed layer behind #root */
 :root {
   --page-bg: #1a1a1a;
+  --field-accent: #a67c52;
   --page-dot-grid-color: rgba(255, 255, 255, 0.11);
   --page-dot-grid-pitch: 26px;
 }
@@ -16,10 +17,17 @@
  * A fixed 100% chain on #root breaks viewport-relative position: sticky in the hero.
  */
 html {
+  scroll-behavior: smooth;
   min-height: 100%;
   min-height: 100dvh;
   margin: 0;
   background-color: var(--page-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -31,6 +39,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--page-bg);
+  /* ✏️ Twemoji U+270F, 32×32 PNG — CC-BY 4.0 Twitter, Inc. / X Corp. Hotspot ≈ pencil tip. */
+  cursor: url("/cursors/pencil-emoji.png") 8 24, auto;
+}
+
+a[href],
+button,
+[role="button"],
+label,
+select,
+summary,
+input[type="color"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="url"],
+input[type="number"],
+textarea {
+  cursor: text;
 }
 
 #root {
@@ -41,12 +72,14 @@ body {
   z-index: 1;
 }
 
+/* Dotted grid hidden for now; restore by removing display:none */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  display: none;
   background-image: radial-gradient(
     circle at center,
     var(--page-dot-grid-color) 1px,

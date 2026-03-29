@@ -1,47 +1,37 @@
 /*
  * michelleovalle.vercel.app hero-imgs: img band matches max 500px-wide card × 320px tall
  * (gallery uses height 320px + width 100%; polaroid uses max-width 500 + same padding).
- * Image viewport: 150×142px. Polaroid outer = 174px wide.
+ * Image viewport: 172×150px. Polaroid outer = 196px wide (image + 12px padding each side).
  */
+.maskDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .polaroid {
   position: relative;
   box-sizing: border-box;
-  width: 174px;
-  min-width: 174px;
-  max-width: 174px;
+  width: 196px;
+  min-width: 196px;
+  max-width: 196px;
   flex-shrink: 0;
   background: #ffffff;
   padding: 12px;
   display: flex;
   flex-direction: column;
   pointer-events: auto;
-  transform: translateY(0);
-  transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.45s ease;
-}
-
-.polaroid:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .polaroid,
-  .polaroid:hover {
-    transform: none;
-    box-shadow: none;
-    transition: none;
-  }
 }
 
 .image {
   box-sizing: border-box;
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  height: 142px;
-  min-height: 142px;
+  width: 172px;
+  min-width: 172px;
+  max-width: 172px;
+  height: 150px;
+  min-height: 150px;
   flex-shrink: 0;
   align-self: center;
   background-color: #ffffff;
