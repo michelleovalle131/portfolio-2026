@@ -1,0 +1,247 @@
+.section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  /* Set from JS; left/right use different multipliers for scroll parallax */
+  --intro-scroll-y: 0px;
+  --intro-parallax-left: 0.055;
+  --intro-parallax-right: 0.12;
+}
+
+.left {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+  margin-left: 40px;
+  background: #e4daf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 48px);
+  position: relative;
+}
+
+.leftParallax {
+  transform: translate3d(
+    0,
+    calc(var(--intro-scroll-y, 0px) * var(--intro-parallax-left)),
+    0
+  );
+  will-change: transform;
+}
+
+.rightParallax {
+  transform: translate3d(
+    0,
+    calc(var(--intro-scroll-y, 0px) * var(--intro-parallax-right)),
+    0
+  );
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leftParallax,
+  .rightParallax {
+    transform: none;
+    will-change: auto;
+  }
+}
+
+.maskDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.right {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: content-box;
+  /* Dark fill + dots come from body (index.css) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 56px);
+}
+
+/* Motion lives here so mask + perforation stay aligned on .stampClip (no transform on masked node). */
+.stampMotion {
+  transform-origin: center center;
+  transform: translate3d(0, 450px, 0);
+  transition: transform 2s cubic-bezier(0.18, 0.82, 0.18, 1);
+}
+
+.stampMotionEntered {
+  transform: translate3d(0, 0, 0);
+}
+
+.stampMotionEntered:hover {
+  transform: translate3d(0, 0, 0) rotate(2.5deg);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stampMotion {
+    transform: none;
+    transition: none;
+  }
+
+  .stampMotionEntered:hover {
+    transform: none;
+  }
+}
+
+.stampClip {
+  background: #ffffff;
+  padding: clamp(12px, 2vw, 18px);
+  max-width: min(320px, 88vw);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stampInner {
+  display: flex;
+  flex-direction: column;
+  background: #e4daf5;
+  overflow: hidden;
+}
+
+.portraitPanel {
+  aspect-ratio: 1;
+  width: 100%;
+  background: #e8e8e8;
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+}
+
+.stampFooter {
+  background: #ffffff;
+  padding: 16px 18px 18px;
+  text-align: right;
+}
+
+.stampValue {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #111111;
+}
+
+.stampSub {
+  margin: 6px 0 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: #5c5c5c;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.copyBlock {
+  max-width: 36rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+.headline {
+  margin: 0 0 clamp(20px, 3vw, 28px);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(1.375rem, 3.2vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.paragraphGroup {
+  margin: 0 0 clamp(28px, 4vw, 36px);
+}
+
+.paragraphGroup .body + .body {
+  margin-top: clamp(14px, 2.2vw, 18px);
+}
+
+.body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(0.875rem, 1.6vw, 1rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.inlineLink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-underline-offset: 0.15em;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.inlineLink:hover {
+  text-decoration-color: rgba(255, 255, 255, 0.95);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.cta:hover {
+  opacity: 0.85;
+}
+
+.ctaArrow {
+  font-size: 0.9rem;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .section {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-height: none;
+  }
+
+  .left,
+  .right {
+    flex: 1 1 auto;
+    min-height: min(50vh, 420px);
+  }
+
+  .left {
+    margin-left: 0;
+  }
+}

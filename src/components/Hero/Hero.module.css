@@ -1,0 +1,171 @@
+.hero {
+  position: relative;
+  min-height: 110vh;
+  min-height: 110dvh;
+  /* Fill + dot grid live on body (index.css) */
+  /* Default = dark fill (data-theme="dark"); light fills set slate type + CTA invert */
+  --hero-fg: #ffffff;
+  --hero-muted: rgba(255, 255, 255, 0.88);
+  --hero-cta-bg: #ffffff;
+  --hero-cta-fg: var(--page-bg);
+  color: var(--hero-fg);
+  overflow: hidden;
+  transition: color 0.45s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 6vw, 80px);
+}
+
+.hero[data-theme="light"] {
+  --hero-fg: #0f172a;
+  --hero-muted: rgba(15, 23, 42, 0.82);
+  --hero-cta-bg: #0f172a;
+  --hero-cta-fg: #ffffff;
+}
+
+.stampLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Set from JS for scroll parallax; inherited by .stampParallax children */
+  --scroll-y: 0px;
+}
+
+/* Per-stamp scroll drift (factor × document scroll in px) */
+.stampParallax {
+  width: fit-content;
+  max-width: 100%;
+  pointer-events: auto;
+  transform: translate3d(
+    0,
+    calc(var(--scroll-y, 0px) * var(--parallax-factor, 0)),
+    0
+  );
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stampParallax {
+    transform: none;
+    will-change: auto;
+  }
+}
+
+/*
+ * Stamp grid: edit line ranges in stampGridLayout.ts (columns / rows 1-based).
+ * Enable “grid” in DevTools on .stampGrid to see tracks while tuning.
+ */
+.stampGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(13, minmax(0, 1fr));
+  gap: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 380px;
+  max-width: 480px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 3.5vw, 28px);
+}
+
+.title {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  display: block;
+  width: 60px;
+  height: auto;
+  color: var(--hero-fg);
+  transition: color 0.45s ease;
+}
+
+.lede {
+  margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--hero-muted);
+  max-width: 42ch;
+  transition: color 0.45s ease;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 4px;
+}
+
+.primaryCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  padding: 14px 28px;
+  background: var(--hero-cta-bg);
+  color: var(--hero-cta-fg);
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.primaryCta:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hero-fg);
+  text-decoration: none;
+  transition:
+    color 0.45s ease,
+    opacity 0.2s ease;
+}
+
+.secondaryLink:hover {
+  opacity: 0.8;
+}
+
+.arrow {
+  font-size: 0.85rem;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: clamp(1.125rem, 4.5vw, 1.75rem);
+  }
+}

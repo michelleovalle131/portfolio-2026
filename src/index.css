@@ -1,0 +1,58 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Page shell: dark fill on html/body; dots are one fixed layer behind #root */
+:root {
+  --page-bg: #1a1a1a;
+  --page-dot-grid-color: rgba(255, 255, 255, 0.11);
+  --page-dot-grid-pitch: 26px;
+}
+
+/*
+ * Use min-height (not height: 100%) so the document grows with tall sections.
+ * A fixed 100% chain on #root breaks viewport-relative position: sticky in the hero.
+ */
+html {
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  background-color: var(--page-bg);
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--page-bg);
+}
+
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at center,
+    var(--page-dot-grid-color) 1px,
+    transparent 1px
+  );
+  background-size: var(--page-dot-grid-pitch) var(--page-dot-grid-pitch);
+  background-position: 0 0;
+  background-repeat: repeat;
+}

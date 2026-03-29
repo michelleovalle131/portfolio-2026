@@ -1,0 +1,69 @@
+/*
+ * michelleovalle.vercel.app hero-imgs: img band matches max 500px-wide card × 320px tall
+ * (gallery uses height 320px + width 100%; polaroid uses max-width 500 + same padding).
+ * Image viewport: 150×142px. Polaroid outer = 174px wide.
+ */
+.polaroid {
+  position: relative;
+  box-sizing: border-box;
+  width: 174px;
+  min-width: 174px;
+  max-width: 174px;
+  flex-shrink: 0;
+  background: #ffffff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+.polaroid:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .polaroid,
+  .polaroid:hover {
+    transform: none;
+    box-shadow: none;
+    transition: none;
+  }
+}
+
+.image {
+  box-sizing: border-box;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  height: 142px;
+  min-height: 142px;
+  flex-shrink: 0;
+  align-self: center;
+  background-color: #ffffff;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
+}
+
+.caption {
+  margin: 0;
+  padding: 10px 6px;
+  min-height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--caption-size, 11px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  text-align: center;
+  color: #2a2a2a;
+  font-family: "Inter", system-ui, sans-serif;
+}
