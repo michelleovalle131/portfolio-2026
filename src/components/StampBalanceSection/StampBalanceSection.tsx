@@ -178,7 +178,7 @@ export function StampBalanceSection() {
       <div className={`${styles.right} ${styles.rightParallax}`}>
         <div className={styles.copyBlock}>
           <h2 className={styles.headline} id="intro-heading">
-            Hi, I&apos;m Michelle
+            Hello from Chicago
           </h2>
           <div className={styles.paragraphGroup}>
             <p className={styles.body}>
@@ -199,8 +199,13 @@ export function StampBalanceSection() {
               at Atlassian.
             </p>
           </div>
-          <a className={styles.cta} href="/#contact">
-            Learn more
+          <a
+            className={styles.cta}
+            href="https://www.linkedin.com/in/michelleovalle/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Let&apos;s connect
             <span className={styles.ctaArrow} aria-hidden>
               ↗
             </span>

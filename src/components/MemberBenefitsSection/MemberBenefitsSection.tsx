@@ -36,7 +36,7 @@ const IMPACT_CARDS: ImpactCard[] = [
     subtitle: "Improving Engagement and Activation",
     title: "From Aha to Mastery Strategy",
     description:
-      "Engaging users by understanding their needs and guiding them through key value moments in Confluence.",
+      "Led the vision for building a better engagement model for users by understanding their needs and guiding them through key value moment in Confluence. Experiments actively being run based off this strategy.",
   },
   {
     id: "rovo-awareness",
@@ -60,7 +60,7 @@ const IMPACT_CARDS: ImpactCard[] = [
     title:
       "Company Hub—one place for trusted information, built for the whole company",
     description:
-      "Led the design and launch of a centralized knowledge experience that helped users more easily find what they needed.",
+      "Led the design and launch of a centralized knowledge experience that helped users more easily find what they needed. Now being built as a platform app for other teams to adopt the framework we established.",
   },
 ];
 
@@ -68,13 +68,13 @@ type RecentImpactContentProps = {
   headingId: string;
 };
 
-/** Shared “Recent highlights / Work with impact” block (home + About resume). */
+/** Shared “Recent highlights / Working towards impact” block (home + About resume). */
 export function RecentImpactContent({ headingId }: RecentImpactContentProps) {
   return (
     <div className={styles.inner}>
       <p className={styles.eyebrow}>Recent Highlights</p>
       <h2 className={styles.headline} id={headingId}>
-        Work with impact
+        Working towards impact
       </h2>
 
       <div className={styles.cardList}>

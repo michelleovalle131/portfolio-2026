@@ -224,11 +224,8 @@ export function Hero({ remixEpoch = 0 }: HeroProps) {
             </span>
           </p>
           <div className={styles.actions}>
-            <a className={styles.secondaryLink} href="/#contact">
-              Get in touch
-              <span className={styles.arrow} aria-hidden>
-                ↗
-              </span>
+            <a className={styles.secondaryLink} href="/#intro">
+              Keep Discovering
             </a>
           </div>
         </div>
