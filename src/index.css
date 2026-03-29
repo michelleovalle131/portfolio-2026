@@ -6,9 +6,11 @@
 
 /* Page shell: dark fill on html/body; dots are one fixed layer behind #root */
 :root {
-  --page-bg: #1a1a1a;
+  --page-bg: #faf9f6;
+  --site-text: #3a3a3a;
+  --site-text-muted: rgba(58, 58, 58, 0.78);
   --field-accent: #a67c52;
-  --page-dot-grid-color: rgba(255, 255, 255, 0.11);
+  --page-dot-grid-color: rgba(0, 0, 0, 0.06);
   --page-dot-grid-pitch: 26px;
 }
 
@@ -39,6 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--page-bg);
+  color: var(--site-text, #3a3a3a);
   /* ✏️ Twemoji U+270F, 32×32 PNG — CC-BY 4.0 Twitter, Inc. / X Corp. Hotspot ≈ pencil tip. */
   cursor: url("/cursors/pencil-emoji.png") 8 24, auto;
 }

@@ -25,7 +25,12 @@
   height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #e4daf5;
+  /* Sky; dk gray shows if image fails to load */
+  background-color: var(--site-text, #3a3a3a);
+  background-image: url("/imgs/split-stamp-sky-bg.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,25 +163,26 @@
 
 .stampSub {
   margin: 6px 0 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
   font-size: 10px;
-  font-weight: 400;
+  font-weight: 500;
   color: #5c5c5c;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .copyBlock {
   max-width: 36rem;
   text-align: center;
-  color: #ffffff;
+  color: var(--site-text, #3a3a3a);
 }
 
 .headline {
   margin: 0 0 clamp(20px, 3vw, 28px);
   font-family: "Inter", system-ui, sans-serif;
   font-size: clamp(1.375rem, 3.2vw, 1.875rem);
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.02em;
 }
@@ -195,19 +201,19 @@
   font-size: clamp(0.875rem, 1.6vw, 1rem);
   font-weight: 400;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--site-text-muted, rgba(58, 58, 58, 0.85));
 }
 
 .inlineLink {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-decoration-color: rgba(58, 58, 58, 0.35);
   text-underline-offset: 0.15em;
   transition: text-decoration-color 0.2s ease;
 }
 
 .inlineLink:hover {
-  text-decoration-color: rgba(255, 255, 255, 0.95);
+  text-decoration-color: var(--site-text, #3a3a3a);
 }
 
 .cta {
@@ -219,7 +225,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--site-text, #3a3a3a);
   text-decoration: none;
   transition: opacity 0.2s ease;
 }

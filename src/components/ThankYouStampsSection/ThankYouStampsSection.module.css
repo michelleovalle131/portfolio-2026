@@ -1,0 +1,133 @@
+/*
+ * Final band of the page only (30vh). No extra track height—otherwise the document
+ * extends with empty scroll past this section. View-timeline animations still run
+ * as the section enters the viewport while scrolling up the page.
+ */
+.sectionTrack {
+  position: relative;
+  width: 100%;
+  min-height: 30vh;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.sectionStickyVisual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30vh;
+  max-height: 30vh;
+  min-height: 30vh;
+  overflow: hidden;
+  background-color: var(--page-bg, #faf9f6);
+  box-sizing: border-box;
+  /* For absolute stamp layer + centered chrome */
+  isolation: isolate;
+}
+
+.stampSprawl {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stampSprawlInner {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stampSprawlItem {
+  position: absolute;
+  transform-origin: center center;
+  pointer-events: auto;
+}
+
+.stampSprawlScale {
+  transform: rotate(var(--sprawl-r, 0deg));
+  transform-origin: center center;
+}
+
+/*
+ * Scroll-driven motion (View Timeline): progress follows scroll; reversing scroll
+ * runs the keyframes backward. Each photo is mounted twice with different
+ * animation-range windows so every image slides in twice as you scroll.
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations
+ */
+@keyframes thankYouStampRise {
+  from {
+    transform: translate(
+      -50%,
+      calc(-50% + var(--max-slide, 125px))
+    );
+  }
+
+  to {
+    transform: translate(-50%, -50%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .sectionScrollDriven {
+    view-timeline-name: --thank-you;
+    view-timeline-axis: block;
+    timeline-scope: --thank-you;
+  }
+
+  .stampSprawlItem {
+    animation-name: thankYouStampRise;
+    animation-duration: auto;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+    animation-timeline: --thank-you;
+    animation-range: entry var(--entry-range-start, 0%)
+      entry var(--entry-range-end, 100%);
+  }
+}
+
+/* Browsers without scroll-driven animations: stamps sit at rest */
+@supports not (animation-timeline: view()) {
+  .stampSprawlItem {
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Matches FieldNotesNav .nav: radius, frosted fill, shadow, padding */
+.thankYouChrome {
+  position: relative;
+  z-index: 50;
+  width: max-content;
+  max-width: min(28rem, calc(100vw - 2.5rem));
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: rgba(252, 251, 248, 0.6);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* Same as MemberBenefitsSection .cardSubtitle (“Confluence” product tag) */
+.thankYouHeading {
+  margin: 0;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #111111;
+  line-height: 1.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stampSprawlItem {
+    animation: none !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+

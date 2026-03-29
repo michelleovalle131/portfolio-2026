@@ -1,0 +1,173 @@
+.main {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(clamp(4.5rem, 12vw, 7.5rem) + 80px) clamp(1.25rem, 5vw, 3rem)
+    clamp(4rem, 10vw, 6rem);
+  box-sizing: border-box;
+  color: var(--site-text, #3a3a3a);
+}
+
+.header {
+  max-width: 42rem;
+  margin: 0 auto clamp(3rem, 8vw, 4.5rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--site-text-muted, rgba(58, 58, 58, 0.78));
+  line-height: 1.2;
+}
+
+.title {
+  margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #111111;
+}
+
+.lede {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(0.9375rem, 1.35vw, 1.0625rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--site-text-muted, rgba(58, 58, 58, 0.85));
+}
+
+.headerLinkedin {
+  margin: clamp(1rem, 2.5vw, 1.25rem) 0 0;
+  /* Hero .secondaryLink uses --hero-fg (normally set on .hero) */
+  --hero-fg: var(--site-text, #3a3a3a);
+}
+
+.experience {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto clamp(3rem, 8vw, 5rem);
+  padding: 0;
+}
+
+.recognition {
+  width: 100%;
+  max-width: 42rem;
+  margin: 80px auto clamp(3rem, 8vw, 5rem);
+  padding: 0;
+}
+
+.experience > .eyebrow {
+  margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+}
+
+/* Section labels — same treatment as eyebrow, for h2 semantics */
+.sectionHeading {
+  margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--site-text-muted, rgba(58, 58, 58, 0.78));
+  line-height: 1.2;
+}
+
+.experienceBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+/* Row 1 — headline left, dates right */
+.jobTopRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin: 0 0 clamp(0.45rem, 1.2vw, 0.6rem);
+  min-width: 0;
+}
+
+/* Line 1 — job headline (no underline; dotted rules only between entries) */
+.jobTitle {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: min(12rem, 100%);
+  max-width: 28rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(1.0625rem, 1.65vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: #111111;
+}
+
+/* Line 2 — seniority / role (bold) */
+.jobLevel {
+  margin: 0 0 clamp(0.45rem, 1.2vw, 0.6rem);
+  max-width: 28rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(0.9375rem, 1.35vw, 1.0625rem);
+  font-weight: 600;
+  line-height: 1.55;
+  color: #111111;
+}
+
+/* Brief description under role */
+.jobDescription {
+  margin: 0;
+  max-width: 28rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: clamp(0.9375rem, 1.35vw, 1.0625rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--site-text-muted, rgba(58, 58, 58, 0.88));
+}
+
+/* Row 1 right — monospace, all caps */
+.jobDates {
+  margin: 0;
+  flex: 0 0 auto;
+  margin-left: auto;
+  text-align: right;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #111111;
+  line-height: 1.35;
+}
+
+.jobBlock {
+  margin: 0;
+}
+
+/* Full-width dotted rule between entries — same 2px / 7px pattern as impact cards */
+.jobBlock:not(:last-child)::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: clamp(1.35rem, 3vw, 1.85rem);
+  margin-bottom: clamp(1.35rem, 3vw, 1.85rem);
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(17, 17, 17, 0.28) 0 2px,
+    transparent 2px 7px
+  );
+  background-size: 7px 2px;
+  background-repeat: repeat-x;
+}

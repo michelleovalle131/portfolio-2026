@@ -1,28 +1,24 @@
 .hero {
   position: relative;
   margin: 0;
-  min-height: 110vh;
-  min-height: 110dvh;
-  /* Fill + dot grid live on body (index.css) */
-  /* Default = dark fill (data-theme="dark"); light fills set slate type + CTA invert */
-  --hero-fg: #ffffff;
-  --hero-muted: rgba(255, 255, 255, 0.88);
-  --hero-cta-bg: #ffffff;
-  --hero-cta-fg: var(--page-bg);
+  min-height: 125vh;
+  min-height: 125dvh;
+  /* Light page + Riso paper: dark gray type (matches --site-text) */
+  --hero-fg: var(--site-text, #3a3a3a);
+  --hero-muted: var(--site-text-muted, rgba(58, 58, 58, 0.78));
+  --hero-cta-bg: var(--site-text, #3a3a3a);
+  --hero-cta-fg: #faf9f6;
   color: var(--hero-fg);
   overflow: hidden;
   transition: color 0.45s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(24px, 6vw, 80px);
+  display: block;
 }
 
-.hero[data-theme="light"] {
-  --hero-fg: #0f172a;
-  --hero-muted: rgba(15, 23, 42, 0.82);
-  --hero-cta-bg: #0f172a;
-  --hero-cta-fg: #ffffff;
+.hero[data-hero-contrast="dark"] {
+  --hero-fg: #faf9f6;
+  --hero-muted: rgba(250, 249, 246, 0.82);
+  --hero-cta-bg: #faf9f6;
+  --hero-cta-fg: #2a2a2a;
 }
 
 .stampLayer {
@@ -65,19 +61,37 @@
   grid-template-rows: repeat(13, minmax(0, 1fr));
   gap: 0;
   min-height: 0;
-  overflow: visible;
+  /* Must clip parallax drift; do not use visible — it overrides .stampLayer overflow */
+  overflow: hidden;
+}
+
+/* Sticky full viewport: type stays vh/vw-centered while extra hero height scrolls (parallax). */
+.textViewport {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 6vw, 80px);
+  box-sizing: border-box;
+  pointer-events: none;
 }
 
 .content {
   position: relative;
-  z-index: 1;
-  width: 380px;
-  max-width: 480px;
+  width: min(380px, 100%);
+  max-width: min(480px, 100%);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(20px, 3.5vw, 28px);
+  pointer-events: auto;
 }
 
 .title {
@@ -89,19 +103,47 @@
 .logo {
   display: block;
   width: 60px;
-  height: auto;
-  color: var(--hero-fg);
-  transition: color 0.45s ease;
+  height: 34px;
+  flex-shrink: 0;
+  background-color: var(--hero-fg);
+  mask: url("/imgs/MO-Logo.svg") center / contain no-repeat;
+  -webkit-mask: url("/imgs/MO-Logo.svg") center / contain no-repeat;
+  transition: background-color 0.45s ease;
 }
 
 .lede {
   margin: 0;
   font-size: clamp(0.9rem, 2vw, 1rem);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.705;
   color: var(--hero-muted);
-  max-width: 42ch;
+  max-width: min(48ch, 100%);
   transition: color 0.45s ease;
+}
+
+/* One underline per wrapped line: 2px marks, 5px gap (7px repeat) */
+.ledeText {
+  display: inline;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-bottom: 4px;
+  border-bottom: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    color-mix(in srgb, currentColor 36%, transparent) 0 2px,
+    transparent 2px 7px
+  );
+  background-size: 7px 2px;
+  background-position: 0 100%;
+  background-repeat: repeat-x;
+}
+
+.hero[data-hero-contrast="dark"] .ledeText {
+  background-image: repeating-linear-gradient(
+    to right,
+    color-mix(in srgb, var(--hero-fg) 34%, transparent) 0 2px,
+    transparent 2px 7px
+  );
 }
 
 .actions {

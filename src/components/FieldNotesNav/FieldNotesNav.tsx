@@ -5,10 +5,12 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { NavLink } from "react-router-dom";
+import { pickRandomRisoPageBg } from "../../lib/risoBackgrounds";
 import styles from "./FieldNotesNav.module.css";
 
 const PAGE_BG_STORAGE_KEY = "portfolio-page-bg";
-const DEFAULT_PAGE_BG = "#1a1a1a";
+const DEFAULT_PAGE_BG = "#faf9f6";
 
 function readStoredPageBg(): string {
   try {
@@ -26,53 +28,35 @@ function applyPageBgToRoot(hex: string) {
   document.documentElement.style.setProperty("--page-bg", hex);
 }
 
-function ColorWheelIcon({ gradientId }: { gradientId: string }) {
+/** Heroicons outline “swatches” (Tailwind UI). */
+function SwatchesIcon() {
   return (
     <svg
       className={styles.colorWheelIcon}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
       viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
       aria-hidden
       focusable="false"
     >
-      <defs>
-        <linearGradient
-          id={gradientId}
-          x1="0%"
-          y1="0%"
-          x2="100%"
-          y2="100%"
-        >
-          <stop offset="0%" stopColor="#f87171" />
-          <stop offset="25%" stopColor="#fbbf24" />
-          <stop offset="50%" stopColor="#4ade80" />
-          <stop offset="75%" stopColor="#60a5fa" />
-          <stop offset="100%" stopColor="#c084fc" />
-        </linearGradient>
-      </defs>
-      <circle
-        cx="12"
-        cy="12"
-        r="8.25"
-        fill={`url(#${gradientId})`}
-        stroke="rgba(255, 255, 255, 0.45)"
-        strokeWidth="1.25"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="2.75"
-        fill="var(--page-bg)"
-        stroke="rgba(255, 255, 255, 0.35)"
-        strokeWidth="0.75"
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"
       />
     </svg>
   );
 }
 
-export function FieldNotesNav() {
+type FieldNotesNavProps = {
+  onPortfolioRefresh?: () => void;
+};
+
+export function FieldNotesNav({ onPortfolioRefresh }: FieldNotesNavProps) {
   const [pageBg, setPageBg] = useState(DEFAULT_PAGE_BG);
   const colorInputId = useId().replace(/:/g, "");
-  const wheelGradId = `${colorInputId}-wheel`;
 
   useLayoutEffect(() => {
     const stored = readStoredPageBg();
@@ -91,25 +75,58 @@ export function FieldNotesNav() {
     }
   }, []);
 
+  const onRefreshClick = useCallback(() => {
+    const next = pickRandomRisoPageBg(pageBg);
+    setPageBg(next);
+    applyPageBgToRoot(next);
+    try {
+      localStorage.setItem(PAGE_BG_STORAGE_KEY, next);
+    } catch {
+      /* ignore */
+    }
+    onPortfolioRefresh?.();
+  }, [pageBg, onPortfolioRefresh]);
+
   return (
     <nav className={styles.nav} aria-label="Site navigation">
       <ul className={styles.list}>
         <li>
-          <a className={styles.link} href="#home">
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+            to="/"
+            end
+          >
             Home
-          </a>
+          </NavLink>
         </li>
         <li className={styles.divider} aria-hidden="true" />
         <li>
-          <a className={styles.link} href="#intro">
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+            to="/about"
+          >
             About
-          </a>
+          </NavLink>
         </li>
         <li className={styles.divider} aria-hidden="true" />
+        <li>
+          <button
+            type="button"
+            className={styles.actionButton}
+            onClick={onRefreshClick}
+            title="New stamp photos and a Risograph-style paper color"
+          >
+            Refresh
+          </button>
+        </li>
         <li className={styles.colorItem}>
           <label className={styles.colorWheelLabel} htmlFor={colorInputId}>
             <span className={styles.srOnly}>Page background color</span>
-            <ColorWheelIcon gradientId={wheelGradId} />
+            <SwatchesIcon />
             <input
               id={colorInputId}
               className={styles.colorInputHidden}

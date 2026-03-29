@@ -12,8 +12,13 @@ import {
   type StampMaskGeometry,
 } from "../Stamp/stampPerforationMask";
 import { LogoMark } from "./LogoMark";
-import { STAMP_IMAGE_URLS, uniqueStampBackgrounds } from "./stampImagePool";
+import {
+  labelFromStampBackground,
+  STAMP_IMAGE_URLS,
+  uniqueStampBackgrounds,
+} from "./stampImagePool";
 import { stampGridStyle } from "./stampGridLayout";
+import { usePageBgIsDark } from "../../hooks/usePageBgIsDark";
 import { STAMP_META } from "./stampMeta";
 import styles from "./Hero.module.css";
 
@@ -26,19 +31,11 @@ const FALLBACK_BACKGROUNDS = STAMP_META.map((s) => s.fallbackBg);
 const HERO_PERFORATION_PATTERN_SCALE = 0.7 * 0.8;
 
 /**
- * Reference punch radius for “size 1” (includes prior ×1.1 tuning). Variants scale this;
- * pitch stays `pitchInR × r` per stamp so proportion is unchanged within each variant.
+ * Punch radius for hero stamps (includes prior ×1.1 tuning). Single scallop size for
+ * every stamp; pitch stays `pitchInR × r` per stamp.
  */
-const HERO_PERFORATION_R_BASE =
+const HERO_PERFORATION_R =
   (8 / (1.25 * 1.25)) * 0.92 * 0.8 * HERO_PERFORATION_PATTERN_SCALE * 1.1;
-
-/** [size1, −20%, +21% vs base] — third variant is +10% on prior +10% (1.1 × 1.1). */
-const HERO_SCALLOP_VARIANT_SCALES = [1, 0.8, 1.21] as const;
-
-/** New random variant per stamp on each full page load (refresh). */
-function randomScallopVariantIndexPerStamp(count: number): number[] {
-  return Array.from({ length: count }, () => Math.floor(Math.random() * 3));
-}
 
 /**
  * Center-to-center spacing = this × r. Kept at 4r: same flat-between-dips look, scaled with r.
@@ -63,15 +60,35 @@ function emptyPerforations(): (StampMaskGeometry | null)[] {
   return Array.from({ length: STAMP_META.length }, () => null);
 }
 
-export function Hero() {
+type HeroProps = {
+  /** Increments on Reprint so stamp photos + scallops reshuffle like a full page reload. */
+  remixEpoch?: number;
+};
+
+export function Hero({ remixEpoch = 0 }: HeroProps) {
+  const pageBgIsDark = usePageBgIsDark();
   const layerRef = useRef<HTMLDivElement>(null);
   const polaroidRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [stampBackgrounds] = useState(() => initialBackgrounds());
+  const [stampBackgrounds, setStampBackgrounds] = useState(() =>
+    initialBackgrounds(),
+  );
   const [perforations, setPerforations] = useState(emptyPerforations);
 
-  const stampScallopVariantIndices = useMemo(
-    () => randomScallopVariantIndexPerStamp(STAMP_META.length),
-    [],
+  useLayoutEffect(() => {
+    if (remixEpoch === 0) {
+      return;
+    }
+    setStampBackgrounds(initialBackgrounds());
+    setPerforations(emptyPerforations());
+  }, [remixEpoch]);
+
+  const stampLabels = useMemo(
+    () =>
+      stampBackgrounds.map((bg, i) => {
+        const fromFile = labelFromStampBackground(bg);
+        return fromFile || STAMP_META[i]!.label;
+      }),
+    [stampBackgrounds],
   );
 
   const measureHeroPerforations = useCallback(() => {
@@ -93,17 +110,13 @@ export function Hero() {
       }
       const offX = br.left - lr.left;
       const offY = br.top - lr.top;
-      const variantIdx = stampScallopVariantIndices[i] ?? 0;
-      const variantScale = HERO_SCALLOP_VARIANT_SCALES[variantIdx];
-      const rHero =
-        HERO_PERFORATION_R_BASE * variantScale;
       const { r, circles } = buildStampPerforationCirclesSeamless(
         w,
         h,
         offX,
         offY,
         {
-          r: rHero,
+          r: HERO_PERFORATION_R,
           pitchInR: HERO_PERFORATION_PITCH_R,
         },
       );
@@ -113,7 +126,7 @@ export function Hero() {
       return { w, h, r, circles };
     });
     setPerforations(next);
-  }, [stampScallopVariantIndices]);
+  }, []);
 
   useLayoutEffect(() => {
     measureHeroPerforations();
@@ -163,7 +176,11 @@ export function Hero() {
   }, [measureHeroPerforations]);
 
   return (
-    <section id="home" className={styles.hero} data-theme="dark">
+    <section
+      id="home"
+      className={styles.hero}
+      data-hero-contrast={pageBgIsDark ? "dark" : "light"}
+    >
       <div
         ref={layerRef}
         className={`${styles.stampLayer} ${styles.stampGrid}`}
@@ -171,7 +188,7 @@ export function Hero() {
       >
         {STAMP_META.map((s, i) => (
           <div
-            key={s.label}
+            key={`hero-stamp-${i}`}
             className={styles.stampParallax}
             style={{
               ...stampGridStyle(i),
@@ -184,7 +201,7 @@ export function Hero() {
               ref={(el) => {
                 polaroidRefs.current[i] = el;
               }}
-              label={s.label}
+              label={stampLabels[i] ?? s.label}
               imageBackground={stampBackgrounds[i] ?? s.fallbackBg}
               stampIndex={i}
               perforation={perforations[i] ?? null}
@@ -193,21 +210,27 @@ export function Hero() {
         ))}
       </div>
 
-      <div className={styles.content}>
-        <h1 className={styles.title}>
-          <LogoMark className={styles.logo} />
-        </h1>
-        <p className={styles.lede}>
-          Sr Product Designer who thrives at the intersection of systems,
-          craft, and real impact.
-        </p>
-        <div className={styles.actions}>
-          <a className={styles.secondaryLink} href="#contact">
-            Get in touch
-            <span className={styles.arrow} aria-hidden>
-              ↗
+      {/* Viewport-centered type (sticky); section is 125dvh for longer parallax scroll. */}
+      <div className={styles.textViewport}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>
+            <LogoMark className={styles.logo} />
+          </h1>
+          <p className={styles.lede}>
+            <span className={styles.ledeText}>
+              Hi, I&apos;m Michelle—a Sr Product Designer who thrives at the
+              intersection of systems, craft, and making a real impact for
+              users.
             </span>
-          </a>
+          </p>
+          <div className={styles.actions}>
+            <a className={styles.secondaryLink} href="/#contact">
+              Get in touch
+              <span className={styles.arrow} aria-hidden>
+                ↗
+              </span>
+            </a>
+          </div>
         </div>
       </div>
     </section>

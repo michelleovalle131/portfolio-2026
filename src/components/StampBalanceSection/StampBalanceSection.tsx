@@ -9,7 +9,7 @@ import {
 import { buildStampPerforationCircles } from "../Stamp/stampPerforationMask";
 import styles from "./StampBalanceSection.module.css";
 
-const PORTRAIT_SRC = "/stamp-balance-portrait.png";
+const PORTRAIT_SRC = "/imgs/MOportrait.jpg";
 
 type MaskGeom = {
   w: number;
@@ -35,7 +35,7 @@ export function StampBalanceSection() {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    let delayTimer: ReturnType<typeof setTimeout> | undefined;
+    let delayTimer: number | undefined;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -199,7 +199,7 @@ export function StampBalanceSection() {
               at Atlassian.
             </p>
           </div>
-          <a className={styles.cta} href="#contact">
+          <a className={styles.cta} href="/#contact">
             Learn more
             <span className={styles.ctaArrow} aria-hidden>
               ↗

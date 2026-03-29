@@ -165,8 +165,8 @@ export function buildStampPerforationCircles(
   }
 
   // Rough tooth count for pitch 3r: length ≈ 2r + (n−1)·3r = r(3n − 1)
-  let nW = Math.max(3, Math.floor(width / (PITCH_FACTOR * rTarget)));
-  let nH = Math.max(3, Math.floor(height / (PITCH_FACTOR * rTarget)));
+  const nW = Math.max(3, Math.floor(width / (PITCH_FACTOR * rTarget)));
+  const nH = Math.max(3, Math.floor(height / (PITCH_FACTOR * rTarget)));
   let r = Math.min(
     width / (PITCH_FACTOR * nW - 1),
     height / (PITCH_FACTOR * nH - 1),

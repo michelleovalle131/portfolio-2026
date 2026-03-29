@@ -2,14 +2,56 @@ import { useEffect, useRef, useState } from "react";
 import { getInkFromPageBg, type InkColors } from "../../lib/pageBgInk";
 import styles from "./MouseTrail.module.css";
 
-const TRAIL_MAX_AGE_MS = 1350;
-const LERP = 0.1;
+/** How long ink stays on screen before fully gone (longer = gentler dissolve). */
+const TRAIL_MAX_AGE_MS = 2200;
 /** Denser samples so Catmull–Rom splines stay smooth through tight turns. */
 const MIN_DIST_SQ = 0.22;
-/** >1 fades the tail a bit faster than linear. */
-const FADE_CURVE = 1.22;
+/**
+ * Fade curve: (1 - age/max) ** FADE_POWER. Higher = tail vanishes faster;
+ * lower = softer, more “ink hanging in the paper” linger.
+ * Other directions to try later: hold full opacity for first N ms then ease;
+ * per-point velocity-based width; grain/dither in a second pass; “dry brush”
+ * width taper as points age; very short max age for snappy UI sketch.
+ */
+const FADE_POWER = 2.35;
+
+/** Thin marker: soft feather + crisp core (CSS px, before DPR transform). */
+const MARKER_FEATHER_WIDTH = 1.2;
+const MARKER_FEATHER_SHADOW_BLUR = 1.85;
+const MARKER_FEATHER_SHADOW_ALPHA = 0.2;
+const MARKER_CORE_WIDTH = 0.68;
 
 type TrailPoint = { x: number; y: number; t: number };
+
+/** Links, controls, and fields — skip drawing so clicks behave normally. */
+function isInteractiveSurface(target: EventTarget | null): boolean {
+  if (!target || !(target instanceof Element)) {
+    return false;
+  }
+  if (target.closest('nav[aria-label="Site navigation"]')) {
+    return true;
+  }
+  return (
+    target.closest(
+      [
+        "a[href]",
+        "button",
+        "input",
+        "textarea",
+        "select",
+        "option",
+        "label",
+        "summary",
+        '[role="button"]',
+        '[role="link"]',
+        '[role="menuitem"]',
+        '[role="option"]',
+        '[role="tab"]',
+        "[contenteditable]:not([contenteditable='false'])",
+      ].join(", "),
+    ) != null
+  );
+}
 
 /** Uniform Catmull–Rom (centripetal-style tension via standard /6 handles). */
 function buildCatmullRomPath(pts: TrailPoint[]): Path2D {
@@ -31,11 +73,19 @@ function buildCatmullRomPath(pts: TrailPoint[]): Path2D {
   return path;
 }
 
+/** Opacity vs age: ease-out style dissolve (strong while young, smooth tail-off). */
+function fadeForAge(ageMs: number, peakAlpha: number): number {
+  if (ageMs >= TRAIL_MAX_AGE_MS) return 0;
+  const t = ageMs / TRAIL_MAX_AGE_MS;
+  const life = (1 - t) ** FADE_POWER;
+  return Math.max(0, peakAlpha * life);
+}
+
 function inkGradient(
   ctx: CanvasRenderingContext2D,
   pts: TrailPoint[],
   now: number,
-  alphaScale: number,
+  peakAlpha: number,
   ink: InkColors,
 ): CanvasGradient {
   const first = pts[0]!;
@@ -45,15 +95,7 @@ function inkGradient(
   for (let i = 0; i < n; i++) {
     const pos = n === 1 ? 0 : i / (n - 1);
     const age = now - pts[i]!.t;
-    const alpha =
-      age < TRAIL_MAX_AGE_MS
-        ? Math.max(
-            0,
-            alphaScale *
-              0.38 *
-              (1 - age / TRAIL_MAX_AGE_MS) ** FADE_CURVE,
-          )
-        : 0;
+    const alpha = fadeForAge(age, peakAlpha);
     g.addColorStop(
       pos,
       `rgba(${ink.r},${ink.g},${ink.b},${alpha})`,
@@ -81,11 +123,11 @@ function usePrefersReducedMotion(): boolean {
 
 export function MouseTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
   const brushRef = useRef({ x: -9999, y: -9999 });
   const trailRef = useRef<TrailPoint[]>([]);
   const rafRef = useRef(0);
-  const initializedRef = useRef(false);
+  const drawingRef = useRef(false);
+  const prevUserSelectRef = useRef<string>("");
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -107,36 +149,68 @@ export function MouseTrail() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const onPointerMove = (e: PointerEvent) => {
-      if (!initializedRef.current) {
-        brushRef.current = { x: e.clientX, y: e.clientY };
-        initializedRef.current = true;
+    const pushPoint = (x: number, y: number, now: number) => {
+      const trail = trailRef.current;
+      const last = trail[trail.length - 1];
+      if (!last) {
+        trail.push({ x, y, t: now });
+        return;
       }
-      mouseRef.current = { x: e.clientX, y: e.clientY };
+      const dx = x - last.x;
+      const dy = y - last.y;
+      if (dx * dx + dy * dy >= MIN_DIST_SQ) {
+        trail.push({ x, y, t: now });
+      }
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      if (isInteractiveSurface(e.target)) return;
+
+      drawingRef.current = true;
+      prevUserSelectRef.current = document.body.style.userSelect;
+      document.body.style.userSelect = "none";
+
+      const x = e.clientX;
+      const y = e.clientY;
+      const now = performance.now();
+      brushRef.current = { x, y };
+      pushPoint(x, y, now);
+
+      try {
+        e.preventDefault();
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!drawingRef.current) return;
+      const x = e.clientX;
+      const y = e.clientY;
+      const now = performance.now();
+      brushRef.current = { x, y };
+      pushPoint(x, y, now);
+    };
+
+    const endStroke = () => {
+      if (!drawingRef.current) return;
+      drawingRef.current = false;
+      document.body.style.userSelect = prevUserSelectRef.current;
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.button === 0) {
+        endStroke();
+      }
+    };
+
+    const onPointerCancel = () => {
+      endStroke();
     };
 
     const tick = (now: number) => {
-      const mouse = mouseRef.current;
-      const brush = brushRef.current;
-
-      if (initializedRef.current) {
-        brush.x += (mouse.x - brush.x) * LERP;
-        brush.y += (mouse.y - brush.y) * LERP;
-      }
-
       const trail = trailRef.current;
-      if (initializedRef.current) {
-        const last = trail[trail.length - 1];
-        if (!last) {
-          trail.push({ x: brush.x, y: brush.y, t: now });
-        } else {
-          const dx = brush.x - last.x;
-          const dy = brush.y - last.y;
-          if (dx * dx + dy * dy >= MIN_DIST_SQ) {
-            trail.push({ x: brush.x, y: brush.y, t: now });
-          }
-        }
-      }
 
       const cutoff = now - TRAIL_MAX_AGE_MS;
       while (trail.length > 0 && trail[0]!.t < cutoff) {
@@ -150,25 +224,25 @@ export function MouseTrail() {
       if (trail.length > 1) {
         const ink = getInkFromPageBg();
         const path = buildCatmullRomPath(trail);
-        const gradWash = inkGradient(ctx, trail, now, 0.55, ink);
-        const gradCore = inkGradient(ctx, trail, now, 1, ink);
+        /* Feather: marker bleed into “paper” — wide, soft, low alpha */
+        const gradFeather = inkGradient(ctx, trail, now, 0.32, ink);
+        /* Core: thin, dense line like a fine-tip marker */
+        const gradCore = inkGradient(ctx, trail, now, 0.94, ink);
 
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 
-        /* Outer wash: soft bleed like ink into paper. */
         ctx.save();
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = `rgba(${ink.shadowR},${ink.shadowG},${ink.shadowB},0.44)`;
-        ctx.lineWidth = 2.35;
-        ctx.strokeStyle = gradWash;
+        ctx.shadowBlur = MARKER_FEATHER_SHADOW_BLUR;
+        ctx.shadowColor = `rgba(${ink.r},${ink.g},${ink.b},${MARKER_FEATHER_SHADOW_ALPHA})`;
+        ctx.lineWidth = MARKER_FEATHER_WIDTH;
+        ctx.strokeStyle = gradFeather;
         ctx.stroke(path);
         ctx.restore();
 
-        /* Core line: slightly sharper body. */
         ctx.save();
         ctx.shadowBlur = 0;
-        ctx.lineWidth = 1.05;
+        ctx.lineWidth = MARKER_CORE_WIDTH;
         ctx.strokeStyle = gradCore;
         ctx.stroke(path);
         ctx.restore();
@@ -179,15 +253,28 @@ export function MouseTrail() {
 
     resize();
     window.addEventListener("resize", resize);
-    document.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { capture: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { capture: true });
+    window.addEventListener("pointercancel", onPointerCancel, {
+      capture: true,
+    });
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("resize", resize);
-      document.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown, {
+        capture: true,
+      });
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp, { capture: true });
+      window.removeEventListener("pointercancel", onPointerCancel, {
+        capture: true,
+      });
       cancelAnimationFrame(rafRef.current);
+      document.body.style.userSelect = prevUserSelectRef.current;
       trailRef.current = [];
-      initializedRef.current = false;
+      drawingRef.current = false;
     };
   }, [reducedMotion]);
 

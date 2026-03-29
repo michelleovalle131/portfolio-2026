@@ -134,7 +134,7 @@ function relativeLuminance(r: number, g: number, b: number): number {
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 }
 
-const FALLBACK_BG = "#1a1a1a";
+const FALLBACK_BG = "#faf9f6";
 
 export function getInkFromPageBg(): InkColors {
   const raw =
