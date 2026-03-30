@@ -6,6 +6,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import { usePageBgIsDark } from "../../hooks/usePageBgIsDark";
 import { buildStampPerforationCircles } from "../Stamp/stampPerforationMask";
 import styles from "./StampBalanceSection.module.css";
 
@@ -21,6 +22,7 @@ type MaskGeom = {
 const STAMP_ENTER_DELAY_MS = 320;
 
 export function StampBalanceSection() {
+  const pageBgIsDark = usePageBgIsDark();
   const maskId = useId().replace(/:/g, "");
   const stampRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -122,6 +124,7 @@ export function StampBalanceSection() {
       className={styles.section}
       id="intro"
       aria-labelledby="intro-heading"
+      data-page-contrast={pageBgIsDark ? "dark" : "light"}
     >
       <div className={`${styles.left} ${styles.leftParallax}`}>
         {geom && geom.circles.length > 0 ? (

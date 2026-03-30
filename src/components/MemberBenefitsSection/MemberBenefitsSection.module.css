@@ -2,6 +2,13 @@
   width: 100%;
   padding: calc(clamp(4.5rem, 12vw, 7.5rem) + 80px) clamp(1.25rem, 5vw, 3rem)
     clamp(4rem, 10vw, 6rem);
+  --impact-section-fg: var(--site-text, #3a3a3a);
+  --impact-headline-fg: #111111;
+}
+
+.section[data-page-contrast="dark"] {
+  --impact-section-fg: #faf9f6;
+  --impact-headline-fg: #faf9f6;
 }
 
 .inner {
@@ -20,7 +27,7 @@
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--site-text, #3a3a3a);
+  color: var(--impact-section-fg);
   line-height: 1.2;
 }
 
@@ -33,7 +40,7 @@
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  color: #111111;
+  color: var(--impact-headline-fg);
 }
 
 .cardList {

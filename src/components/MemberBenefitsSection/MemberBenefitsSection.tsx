@@ -1,3 +1,4 @@
+import { usePageBgIsDark } from "../../hooks/usePageBgIsDark";
 import styles from "./MemberBenefitsSection.module.css";
 
 /** Files in `public/imgs/hero-imgs/` (served at `/imgs/hero-imgs/...`). */
@@ -144,11 +145,13 @@ export function RecentImpactContent({ headingId }: RecentImpactContentProps) {
 }
 
 export function MemberBenefitsSection() {
+  const pageBgIsDark = usePageBgIsDark();
   return (
     <section
       id="recent-impact"
       className={styles.section}
       aria-labelledby="recent-impact-heading"
+      data-page-contrast={pageBgIsDark ? "dark" : "light"}
     >
       <RecentImpactContent headingId="recent-impact-heading" />
     </section>
