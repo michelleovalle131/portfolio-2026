@@ -223,11 +223,6 @@ export function Hero({ remixEpoch = 0 }: HeroProps) {
               users.
             </span>
           </p>
-          <div className={styles.actions}>
-            <a className={styles.secondaryLink} href="/#intro">
-              Keep Discovering
-            </a>
-          </div>
         </div>
       </div>
     </section>
