@@ -31,7 +31,7 @@ function fract(n: number): number {
   return n - Math.floor(n);
 }
 
-/** Spread stamps across the full band (deterministic per seed + index). */
+/** Spread stamps across the full band (deterministic per seed + index); 0–100%. */
 function sprawlSlot(seed: number, index: number): {
   leftPct: number;
   topPct: number;
@@ -41,65 +41,79 @@ function sprawlSlot(seed: number, index: number): {
   const b = fract(Math.sin(seed * 269.5 + index * 183.3) * 23421.14159265);
   const c = fract(Math.sin(seed * 419.2 + index * 97.4) * 99123.456789);
   return {
-    leftPct: 4 + a * 92,
-    topPct: 4 + b * 92,
+    leftPct: a * 100,
+    topPct: b * 100,
     rotateDeg: -22 + c * 44,
   };
 }
 
-/** Each fun-facts image is rendered twice so it can slide in once per scroll “pass”. */
+/**
+ * Pass 0: `entry` (first appearance). Pass 1: `cover` (second appearance after entry
+ * has finished — cover runs later in the view timeline).
+ */
 const SCROLL_PASSES = 2;
 
-/**
- * View-timeline `entry` ranges: wave 0 finishes before wave 1 starts (~8–44% then ~50–96%).
- */
-function entryRangeForStamp(
+type StampScrollRange = {
+  rangeStart: string;
+  rangeEnd: string;
+  phase: "entry" | "cover";
+};
+
+function stampScrollRangeForStamp(
   slotIndex: number,
   imageCount: number,
   remixSeed: number,
-): { rangeStart: string; rangeEnd: string } {
+): StampScrollRange {
   if (imageCount <= 0) {
-    return { rangeStart: "0%", rangeEnd: "100%" };
+    return { rangeStart: "0%", rangeEnd: "100%", phase: "entry" };
   }
-  const wave: 0 | 1 = slotIndex < imageCount ? 0 : 1;
-  const localIndex = wave === 0 ? slotIndex : slotIndex - imageCount;
+
+  const pass = Math.floor(slotIndex / imageCount);
+  const localIndex = slotIndex % imageCount;
   const jitter =
     fract(Math.sin(remixSeed * 0.011 + slotIndex * 4.27) * 9999) * 2.8;
   const t = imageCount === 1 ? 0 : localIndex / (imageCount - 1);
 
-  if (wave === 0) {
-    const bandStart = 8;
-    const bandEnd = 44;
+  if (pass === 0) {
+    const bandStart = 70;
+    const bandEnd = 100;
     const bandW = bandEnd - bandStart;
-    const slotStart = bandStart + t * (bandW * 0.68) + jitter * 0.35;
+    /* Tighter start spread + longer dur → wider animation-range (slower scroll feel). */
+    const slotStart = bandStart + t * (bandW * 0.52) + jitter * 0.35;
     const dur =
-      12 +
-      fract(Math.sin(remixSeed * 0.017 + localIndex * 2.9) * 9999) * 7;
+      58 +
+      fract(Math.sin(remixSeed * 0.017 + localIndex * 2.9) * 9999) * 38;
     const slotEnd = Math.min(bandEnd, slotStart + dur);
     return {
       rangeStart: `${slotStart.toFixed(1)}%`,
       rangeEnd: `${slotEnd.toFixed(1)}%`,
+      phase: "entry",
     };
   }
 
-  const bandStart = 50;
-  const bandEnd = 96;
+  /** Second pass: same images, `cover` 0–50%, longer spans for slower motion */
+  const bandStart = 0;
+  const bandEnd = 50;
   const bandW = bandEnd - bandStart;
-  const slotStart = bandStart + t * (bandW * 0.68) + jitter * 0.35;
-  const dur =
-    12 +
-    fract(Math.sin(remixSeed * 0.023 + localIndex * 3.3) * 9999) * 7;
+  const slotStart = bandStart + t * (bandW * 0.52) + jitter * 0.35;
+  let dur =
+    20 +
+    fract(Math.sin(remixSeed * 0.041 + localIndex * 3.15) * 9999) * 30;
+  if (dur < 1) {
+    dur = 1;
+  }
   const slotEnd = Math.min(bandEnd, slotStart + dur);
   return {
     rangeStart: `${slotStart.toFixed(1)}%`,
     rangeEnd: `${slotEnd.toFixed(1)}%`,
+    phase: "cover",
   };
 }
 
+/** Shorter rise than hero so fewer stamps sit clipped under overflow before their range. */
 function maxSlidePx(index: number, remixSeed: number): number {
-  return (
-    118 + fract(Math.sin(remixSeed * 0.019 + index * 2.91) * 10000) * 22
-  );
+  const raw = 118 + fract(Math.sin(remixSeed * 0.019 + index * 2.91) * 10000) * 22;
+  return Math.round(raw * 0.55);
 }
 
 type ThankYouStampsSectionProps = {
@@ -155,7 +169,6 @@ export function ThankYouStampsSection({
     [stampBackgrounds],
   );
 
-  /** Pass 1 uses a different seed so duplicates sit elsewhere with new rotation. */
   const sprawlSlotsByPass = useMemo(() => {
     const base = remixEpoch * 1009 + 42;
     return {
@@ -278,10 +291,10 @@ export function ThankYouStampsSection({
               stampSlotCount > 0 &&
               Array.from({ length: stampSlotCount }, (__, slotIndex) => {
                 const imageIndex = slotIndex % imageCount;
-                const pass = slotIndex < imageCount ? 0 : 1;
+                const pass = Math.floor(slotIndex / imageCount) as 0 | 1;
                 const pos = sprawlSlotsByPass[pass][imageIndex]!;
                 const seed = remixEpoch * 1009 + 42 + pass * 17;
-                const { rangeStart, rangeEnd } = entryRangeForStamp(
+                const { rangeStart, rangeEnd, phase } = stampScrollRangeForStamp(
                   slotIndex,
                   imageCount,
                   seed,
@@ -289,7 +302,11 @@ export function ThankYouStampsSection({
                 return (
                   <div
                     key={`thank-you-sprawl-${remixEpoch}-${slotIndex}`}
-                    className={styles.stampSprawlItem}
+                    className={
+                      phase === "cover"
+                        ? `${styles.stampSprawlItem} ${styles.stampSprawlItemCover}`
+                        : styles.stampSprawlItem
+                    }
                     style={
                       {
                         "--sprawl-r": `${pos.rotateDeg}deg`,
@@ -302,23 +319,23 @@ export function ThankYouStampsSection({
                       } as CSSProperties
                     }
                   >
-                  <div className={styles.stampSprawlScale}>
-                    <Stamp
-                      ref={(el) => {
-                        polaroidRefs.current[slotIndex] = el;
-                      }}
-                      label={
-                        stampLabels[imageIndex] ??
-                        STAMP_META[imageIndex % STAMP_META.length]!.label
-                      }
-                      imageBackground={
-                        stampBackgrounds[imageIndex] ??
-                        STAMP_META[imageIndex % STAMP_META.length]!.fallbackBg
-                      }
-                      stampIndex={slotIndex}
-                      perforation={perforations[slotIndex] ?? null}
-                    />
-                  </div>
+                    <div className={styles.stampSprawlScale}>
+                      <Stamp
+                        ref={(el) => {
+                          polaroidRefs.current[slotIndex] = el;
+                        }}
+                        label={
+                          stampLabels[imageIndex] ??
+                          STAMP_META[imageIndex % STAMP_META.length]!.label
+                        }
+                        imageBackground={
+                          stampBackgrounds[imageIndex] ??
+                          STAMP_META[imageIndex % STAMP_META.length]!.fallbackBg
+                        }
+                        stampIndex={slotIndex}
+                        perforation={perforations[slotIndex] ?? null}
+                      />
+                    </div>
                   </div>
                 );
               })}

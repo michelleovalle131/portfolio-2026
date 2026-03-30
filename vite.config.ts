@@ -9,14 +9,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const HERO_IMGS_VIRTUAL = "\0virtual:hero-imgs";
 const FUN_FACTS_IMGS_VIRTUAL = "\0virtual:fun-facts-imgs";
 
+const IMAGE_EXT = /\.(png|jpe?g|webp|gif|svg|avif)$/i;
+
 function readPublicImgDir(publicSubdir: string, urlPrefix: string): string {
   const dir = path.join(__dirname, "public", publicSubdir);
   if (!fs.existsSync(dir)) {
     return "export default []";
   }
   const files = fs
-    .readdirSync(dir)
-    .filter((f: string) => /\.(png|jpe?g|webp|gif|svg)$/i.test(f));
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isFile() && IMAGE_EXT.test(d.name))
+    .map((d) => d.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   const urls = files.map(
     (f: string) => `${urlPrefix}/${encodeURIComponent(f)}`,
   );
