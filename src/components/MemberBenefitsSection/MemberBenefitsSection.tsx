@@ -1,159 +1,171 @@
-import { usePageBgIsDark } from "../../hooks/usePageBgIsDark";
+import { type CSSProperties, useEffect, useRef } from "react";
 import styles from "./MemberBenefitsSection.module.css";
 
-/** Files in `public/imgs/hero-imgs/` (served at `/imgs/hero-imgs/...`). */
-function publicHeroImg(fileName: string): string {
-  return `/imgs/hero-imgs/${encodeURIComponent(fileName)}`;
-}
+const PROJECT_BG_SRC =
+  "https://www.figma.com/api/mcp/asset/bee7ff00-bed8-46cd-99ee-4fe13685a78f";
+const COMPANY_HUB_BG_SRC =
+  "https://www.figma.com/api/mcp/asset/1b1dcee8-1a78-47f6-8ff9-22b624c80bd8";
+const COMPANY_HUB_CARD_IMG_SRC =
+  "https://www.figma.com/api/mcp/asset/c896dd1a-52a2-41a7-8838-ff554bce1c21";
 
-/** Files in `public/imgs/` (served at `/imgs/...`). */
-function publicImg(fileName: string): string {
-  return `/imgs/${encodeURIComponent(fileName)}`;
-}
-
-type ImpactCard = {
+type ProjectSection = {
   id: string;
-  image?: string;
-  /** Public URL for MP4 (e.g. `/imgs/...`) — renders `<video>` instead of `<img>`. */
-  videoSrc?: string;
-  imageAlt: string;
-  subtitle: string;
+  bgSrc: string;
+  cardImgSrc: string;
+  cardImgAlt: string;
+  cardBg?: string;
+  cardImageContain?: boolean;
+  cardImageTall?: boolean;
+  kicker: string;
   title: string;
   description: string;
-  imageRight?: boolean;
-  imagePanelLight?: boolean;
-  imageFitContain?: boolean;
-  /** With cover, pin focal point to center (good for wide art). */
-  imageCoverCenter?: boolean;
+  ctaHref: string;
 };
 
-const IMPACT_CARDS: ImpactCard[] = [
+const PROJECT_SECTIONS: ProjectSection[] = [
   {
-    id: "aha-mastery-strategy",
-    image: publicHeroImg("Golden Path strategy.png"),
-    imagePanelLight: true,
-    imageAlt:
-      "Strategy and journey visuals for guiding users through Confluence value moments",
-    subtitle: "Improving Engagement and Activation",
-    title: "From Aha to Mastery Strategy",
+    id: "recent-impact-loom",
+    bgSrc: PROJECT_BG_SRC,
+    cardImgSrc: PROJECT_BG_SRC,
+    cardImgAlt:
+      "Suggested Actions experience in Confluence with AI prompts and meeting follow-up guidance",
+    kicker: "Loom Meeting Recordings · AI Suggestions",
+    title: "Turning meetings into progress with 1-click AI suggestions",
     description:
-      "Led the vision for building a better engagement model for users by understanding their needs and guiding them through key value moment in Confluence. Experiments actively being run based off this strategy.",
+      "Led a one-week sprint with successful results in increasing Rovo awareness among Atlassian Cloud users in Confluence.",
+    ctaHref: "https://www.atlassian.com/software/confluence",
   },
   {
-    id: "rovo-awareness",
-    image: publicHeroImg("Atlassian Rovo Campaign.png"),
-    imageAlt: "Rovo awareness campaign creative and messaging",
-    subtitle:
-      "Increasing Discoverability of Atlassian's AI in Confluence",
-    title: "Increasing Rovo awareness campaign",
-    description:
-      "Led a one-week sprint with successful results in increasing Rovo awareness among Atlassian Cloud users.",
-    imageRight: true,
-  },
-  {
-    id: "company-hub",
-    videoSrc: publicImg("Wanderly hub.mp4"),
-    imagePanelLight: true,
-    imageCoverCenter: true,
-    imageAlt:
-      "Wanderly Hub product experience video with interface and motion",
-    subtitle: "Building a platform app experience",
-    title:
-      "Company Hub—one place for trusted information, built for the whole company",
+    id: "recent-impact-company-hub",
+    bgSrc: COMPANY_HUB_BG_SRC,
+    cardImgSrc: COMPANY_HUB_CARD_IMG_SRC,
+    cardImgAlt: "Company Hub editor and publishing interface in Confluence",
+    cardBg: "#e6def7",
+    cardImageContain: true,
+    cardImageTall: true,
+    kicker: "Confluence Company Hub • Building an editing experience",
+    title: "Company Hub - one place for trusted information, built for the whole company",
     description:
       "Led the design and launch of a centralized knowledge experience that helped users more easily find what they needed. Now being built as a platform app for other teams to adopt the framework we established.",
+    ctaHref: "https://www.atlassian.com/software/confluence",
   },
 ];
 
-type RecentImpactContentProps = {
-  headingId: string;
-};
+export function MemberBenefitsSection() {
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
-/** Shared “Recent highlights / Working towards impact” block (home + About resume). */
-export function RecentImpactContent({ headingId }: RecentImpactContentProps) {
+  useEffect(() => {
+    const sections = sectionRefs.current.filter(
+      (section): section is HTMLElement => section !== null,
+    );
+    if (sections.length === 0) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reducedMotion.matches) {
+      sections.forEach((section) => {
+        section.style.setProperty("--card-progress", "1");
+      });
+      return;
+    }
+
+    let raf = 0;
+    const syncScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const viewportH = window.innerHeight || 1;
+        sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const start = viewportH * 0.92;
+          const end = viewportH * 0.38;
+          const raw = (start - rect.top) / (start - end);
+          const progress = Math.max(0, Math.min(1, raw));
+          // Slight delay: keep card low briefly, then progress motion.
+          const delayedProgress = Math.max(
+            0,
+            Math.min(1, (progress - 0.12) / 0.88),
+          );
+          section.style.setProperty("--card-progress", String(delayedProgress));
+        });
+      });
+    };
+
+    window.addEventListener("scroll", syncScroll, { passive: true });
+    window.addEventListener("resize", syncScroll);
+    syncScroll();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", syncScroll);
+      window.removeEventListener("resize", syncScroll);
+    };
+  }, []);
+
   return (
-    <div className={styles.inner}>
-      <p className={styles.eyebrow}>Recent Highlights</p>
-      <h2 className={styles.headline} id={headingId}>
-        Working towards impact
-      </h2>
-
-      <div className={styles.cardList}>
-        {IMPACT_CARDS.map((card) => (
+    <>
+      {PROJECT_SECTIONS.map((project, index) => (
+        <section
+          key={project.id}
+          ref={(el) => {
+            sectionRefs.current[index] = el;
+          }}
+          id={project.id}
+          className={styles.section}
+          aria-label="Project highlight"
+        >
+          <img
+            className={styles.bgImage}
+            src={project.bgSrc}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+          />
           <article
-            key={card.id}
-            className={
-              card.imageRight
-                ? `${styles.card} ${styles.cardImageRight}`
-                : styles.card
+            className={styles.card}
+            style={
+              project.cardBg
+                ? ({ ["--project-card-bg" as string]: project.cardBg } as CSSProperties)
+                : undefined
             }
           >
             <div
-              className={
-                card.imagePanelLight
-                  ? `${styles.cardImage} ${styles.cardImageLight}`
-                  : styles.cardImage
-              }
+              className={[
+                styles.cardImageWrap,
+                project.cardImageTall ? styles.cardImageWrapTall : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
-              {card.videoSrc ? (
-                <video
-                  className={
-                    card.imageCoverCenter ? styles.cardImageCoverCenter : undefined
-                  }
-                  src={card.videoSrc}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  aria-label={card.imageAlt}
-                />
-              ) : (
-                <img
-                  className={
-                    [
-                      card.imageFitContain ? styles.cardImageImgContain : "",
-                      card.imageCoverCenter ? styles.cardImageCoverCenter : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ") || undefined
-                  }
-                  src={card.image}
-                  alt={card.imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+              <img
+                className={[
+                  styles.cardImage,
+                  project.cardImageContain ? styles.cardImageContain : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                src={project.cardImgSrc}
+                alt={project.cardImgAlt}
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-            <div className={styles.cardBody}>
-              <div className={styles.cardTopRow}>
-                <p className={styles.cardSubtitle}>{card.subtitle}</p>
-                <div className={styles.stampPlaceholder} aria-hidden />
-              </div>
-              <div className={styles.bodySpacer} aria-hidden />
-              <div className={styles.cardTitleBlock}>
-                <h3 className={styles.cardTitle}>
-                  <span className={styles.cardTitleText}>{card.title}</span>
-                </h3>
-              </div>
-              <p className={styles.cardDescription}>{card.description}</p>
+
+            <div className={styles.cardContent}>
+              <p className={styles.kicker}>{project.kicker}</p>
+              <h2 className={styles.cardTitle}>{project.title}</h2>
+              <p className={styles.cardDescription}>{project.description}</p>
+              <a
+                className={styles.ctaRow}
+                href={project.ctaHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>View project</span>
+              </a>
             </div>
           </article>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function MemberBenefitsSection() {
-  const pageBgIsDark = usePageBgIsDark();
-  return (
-    <section
-      id="recent-impact"
-      className={styles.section}
-      aria-labelledby="recent-impact-heading"
-      data-page-contrast={pageBgIsDark ? "dark" : "light"}
-    >
-      <RecentImpactContent headingId="recent-impact-heading" />
-    </section>
+        </section>
+      ))}
+    </>
   );
 }

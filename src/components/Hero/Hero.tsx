@@ -1,63 +1,85 @@
 import {
-  useCallback,
+  type CSSProperties,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { Stamp } from "../Stamp/Stamp";
-import {
-  buildStampPerforationCirclesSeamless,
-  type StampMaskGeometry,
-} from "../Stamp/stampPerforationMask";
-import { LogoMark } from "./LogoMark";
 import {
   labelFromStampBackground,
   STAMP_IMAGE_URLS,
   uniqueStampBackgrounds,
 } from "./stampImagePool";
-import { stampGridStyle } from "./stampGridLayout";
 import { usePageBgIsDark } from "../../hooks/usePageBgIsDark";
 import { STAMP_META } from "./stampMeta";
 import styles from "./Hero.module.css";
 
+/** Extracts the URL from a CSS background shorthand like `url("...") center / cover no-repeat`. */
+function extractImgSrc(background: string): string | null {
+  const m = background.match(/url\(\s*["']?([^"')]+)["']?\s*\)/);
+  return m ? m[1]! : null;
+}
+
 const FALLBACK_BACKGROUNDS = STAMP_META.map((s) => s.fallbackBg);
 
-/**
- * Shrinks r only; pitch stays `pitchInR × r` (same scallop-to-pitch look, finer repeat).
- * Cumulative: 0.7 vs pre-scale hero, then ×0.8 (~20% smaller again) ⇒ 0.56.
- */
-const HERO_PERFORATION_PATTERN_SCALE = 0.7 * 0.8;
+type HeroImageSize = "small" | "medium" | "large";
 
-/**
- * Punch radius for hero stamps (includes prior ×1.1 tuning). Single scallop size for
- * every stamp; pitch stays `pitchInR × r` per stamp.
- */
-const HERO_PERFORATION_R =
-  (8 / (1.25 * 1.25)) * 0.92 * 0.8 * HERO_PERFORATION_PATTERN_SCALE * 1.1;
+type HeroImagePlacement = {
+  size: HeroImageSize;
+  left: string;
+  top: string;
+};
 
-/**
- * Center-to-center spacing = this × r. Kept at 4r: same flat-between-dips look, scaled with r.
- */
-const HERO_PERFORATION_PITCH_R = 4;
-
-/** Unitless multipliers: translateY = scrollY × factor (floaty, varied speeds) */
-const STAMP_PARALLAX_FACTORS = [
-  0.14, -0.1, 0.18, -0.12, 0.11, -0.16, 0.09, -0.14, 0.15, -0.08, 0.13,
+const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
+  // top zone — settle above the headline
+  { size: "large", left: "-3%", top: "5%" },
+  { size: "small", left: "14%", top: "10%" },
+  { size: "large", left: "31%", top: "2%" },
+  { size: "medium", left: "59%", top: "4%" },
+  { size: "medium", left: "87%", top: "8%" },
+  // middle zone — overlap the headline
+  { size: "small", left: "-2%", top: "42%" },
+  { size: "small", left: "75%", top: "38%" },
+  { size: "medium", left: "91%", top: "44%" },
+  // bottom zone — settle below the headline
+  { size: "small", left: "16%", top: "68%" },
+  { size: "large", left: "38%", top: "72%" },
+  { size: "medium", left: "2%", top: "78%" },
+  { size: "medium", left: "63%", top: "74%" },
+  { size: "large", left: "85%", top: "65%" },
 ] as const;
+
+const FOREGROUND_IMAGE_COUNT = 3;
+
+/**
+ * How fast each stamp rises per scroll-pixel (higher = arrives sooner).
+ * translateY reaches 0 at scrollY = 100dvh / speed.
+ * Speeds ≥ 0.85 so all stamps arrive within the hero's 120dvh max scroll.
+ */
+const STAMP_SCROLL_SPEEDS = [
+  1.0, 1.4, 0.9, 1.2, 1.55, 1.3, 1.5, 0.88, 1.1, 0.95, 1.45, 1.2, 0.85,
+] as const;
+
+/** Lower values = silkier but slower catch-up. */
+const SCROLL_LERP = 0.09;
+const SCROLL_SNAP_EPSILON = 0.08;
 
 /** Shuffled per load; `uniqueStampBackgrounds` assigns distinct photo URLs (no repeats on hero). */
 function initialBackgrounds(): string[] {
-  return uniqueStampBackgrounds(
-    STAMP_META.length,
-    STAMP_IMAGE_URLS,
-    FALLBACK_BACKGROUNDS,
-  );
+  return uniqueStampBackgrounds(HERO_IMAGE_LAYOUT.length, STAMP_IMAGE_URLS, [
+    ...FALLBACK_BACKGROUNDS,
+    FALLBACK_BACKGROUNDS[0]!,
+    FALLBACK_BACKGROUNDS[1]!,
+  ]);
 }
 
-function emptyPerforations(): (StampMaskGeometry | null)[] {
-  return Array.from({ length: STAMP_META.length }, () => null);
+function randomForegroundIndices(total: number, count: number): Set<number> {
+  const indices = Array.from({ length: total }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j]!, indices[i]!];
+  }
+  return new Set(indices.slice(0, Math.min(count, total)));
 }
 
 type HeroProps = {
@@ -67,113 +89,129 @@ type HeroProps = {
 
 export function Hero({ remixEpoch = 0 }: HeroProps) {
   const pageBgIsDark = usePageBgIsDark();
-  const layerRef = useRef<HTMLDivElement>(null);
-  const polaroidRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const frameRef = useRef<HTMLDivElement>(null);
   const [stampBackgrounds, setStampBackgrounds] = useState(() =>
     initialBackgrounds(),
   );
-  const [perforations, setPerforations] = useState(emptyPerforations);
-
-  useLayoutEffect(() => {
-    if (remixEpoch === 0) {
-      return;
-    }
-    setStampBackgrounds(initialBackgrounds());
-    setPerforations(emptyPerforations());
-  }, [remixEpoch]);
-
-  const stampLabels = useMemo(
-    () =>
-      stampBackgrounds.map((bg, i) => {
-        const fromFile = labelFromStampBackground(bg);
-        return fromFile || STAMP_META[i]!.label;
-      }),
-    [stampBackgrounds],
+  const [foregroundIndices, setForegroundIndices] = useState(() =>
+    randomForegroundIndices(HERO_IMAGE_LAYOUT.length, FOREGROUND_IMAGE_COUNT),
   );
-
-  const measureHeroPerforations = useCallback(() => {
-    const layer = layerRef.current;
-    if (!layer) {
-      return;
-    }
-    const lr = layer.getBoundingClientRect();
-    const next: (StampMaskGeometry | null)[] = STAMP_META.map((_, i) => {
-      const el = polaroidRefs.current[i];
-      if (!el) {
-        return null;
-      }
-      const br = el.getBoundingClientRect();
-      const w = Math.round(br.width * 1000) / 1000;
-      const h = Math.round(br.height * 1000) / 1000;
-      if (w < 24 || h < 24) {
-        return null;
-      }
-      const offX = br.left - lr.left;
-      const offY = br.top - lr.top;
-      const { r, circles } = buildStampPerforationCirclesSeamless(
-        w,
-        h,
-        offX,
-        offY,
-        {
-          r: HERO_PERFORATION_R,
-          pitchInR: HERO_PERFORATION_PITCH_R,
-        },
-      );
-      if (circles.length === 0) {
-        return null;
-      }
-      return { w, h, r, circles };
-    });
-    setPerforations(next);
-  }, []);
-
-  useLayoutEffect(() => {
-    measureHeroPerforations();
-  }, [measureHeroPerforations]);
-
-  useLayoutEffect(() => {
-    const layer = layerRef.current;
-    if (!layer) {
-      return;
-    }
-    const ro = new ResizeObserver(() => {
-      measureHeroPerforations();
-    });
-    ro.observe(layer);
-    return () => {
-      ro.disconnect();
-    };
-  }, [measureHeroPerforations]);
+  const [imageAspectRatios, setImageAspectRatios] = useState<number[]>([]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-    const root = layerRef.current;
-    if (!root) {
-      return;
-    }
-    let raf = 0;
-    let rafMeasure = 0;
-    const syncScroll = () => {
-      cancelAnimationFrame(raf);
-      cancelAnimationFrame(rafMeasure);
-      raf = requestAnimationFrame(() => {
-        root.style.setProperty("--scroll-y", `${window.scrollY}px`);
-        rafMeasure = requestAnimationFrame(() => {
-          measureHeroPerforations();
-        });
+    if (remixEpoch === 0) return;
+    setStampBackgrounds(initialBackgrounds());
+    setForegroundIndices(
+      randomForegroundIndices(HERO_IMAGE_LAYOUT.length, FOREGROUND_IMAGE_COUNT),
+    );
+  }, [remixEpoch]);
+
+  const stampLabels = useMemo(() => {
+    const labels = STAMP_META.map((s) => s.label);
+    return stampBackgrounds.map((bg, i) => {
+      const fromFile = labelFromStampBackground(bg);
+      return fromFile || labels[i % labels.length]!;
+    });
+  }, [stampBackgrounds]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const nextRatios = Array<number>(stampBackgrounds.length).fill(3 / 4);
+    const loads = stampBackgrounds.map((background, index) => {
+      const src = extractImgSrc(background);
+      if (!src) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          if (!cancelled && image.naturalWidth > 0 && image.naturalHeight > 0) {
+            nextRatios[index] = image.naturalWidth / image.naturalHeight;
+          }
+          resolve();
+        };
+        image.onerror = () => resolve();
+        image.src = src;
       });
+    });
+    Promise.all(loads).then(() => {
+      if (!cancelled) setImageAspectRatios(nextRatios);
+    });
+    return () => {
+      cancelled = true;
     };
-    window.addEventListener("scroll", syncScroll, { passive: true });
-    syncScroll();
+  }, [stampBackgrounds]);
+
+  const renderStamp = (slot: HeroImagePlacement, i: number, layer: "back" | "front") => {
+    const bg = stampBackgrounds[i] ?? FALLBACK_BACKGROUNDS[0]!;
+    const src = extractImgSrc(bg);
+    const aspectRatio = imageAspectRatios[i] ?? 3 / 4;
+    const stampStyle = {
+      ["--stamp-left" as string]: slot.left,
+      ["--stamp-top" as string]: slot.top,
+      ["--stamp-speed" as string]: String(STAMP_SCROLL_SPEEDS[i] ?? 1),
+      ["--stamp-aspect" as string]: String(aspectRatio),
+    } satisfies CSSProperties;
+
+    return (
+      <div
+        key={`hero-stamp-${layer}-${i}`}
+        className={[
+          styles.stampParallax,
+          styles[`size${slot.size[0]!.toUpperCase()}${slot.size.slice(1)}`],
+        ].join(" ")}
+        style={stampStyle}
+      >
+        {src ? (
+          <img
+            className={styles.heroPhoto}
+            src={src}
+            alt={stampLabels[i] ?? "Hero image"}
+            draggable={false}
+          />
+        ) : (
+          <div
+            className={styles.heroPhotoFallback}
+            style={{ background: bg }}
+            aria-label={stampLabels[i] ?? "Hero image"}
+          />
+        )}
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = frameRef.current;
+    if (!root) return;
+    let raf = 0;
+    let targetY = window.scrollY;
+    let currentY = targetY;
+
+    const tick = () => {
+      const delta = targetY - currentY;
+      currentY += delta * SCROLL_LERP;
+      if (Math.abs(delta) < SCROLL_SNAP_EPSILON) {
+        currentY = targetY;
+      }
+      root.style.setProperty("--scroll-y", `${currentY}px`);
+      raf = currentY === targetY ? 0 : requestAnimationFrame(tick);
+    };
+
+    const sync = () => {
+      targetY = window.scrollY;
+      if (raf === 0) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    sync();
     return () => {
       cancelAnimationFrame(raf);
-      cancelAnimationFrame(rafMeasure);
-      window.removeEventListener("scroll", syncScroll);
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
     };
-  }, [measureHeroPerforations]);
+  }, []);
 
   return (
     <section
@@ -181,48 +219,31 @@ export function Hero({ remixEpoch = 0 }: HeroProps) {
       className={styles.hero}
       data-hero-contrast={pageBgIsDark ? "dark" : "light"}
     >
-      <div
-        ref={layerRef}
-        className={`${styles.stampLayer} ${styles.stampGrid}`}
-        aria-hidden
-      >
-        {STAMP_META.map((s, i) => (
-          <div
-            key={`hero-stamp-${i}`}
-            className={styles.stampParallax}
-            style={{
-              ...stampGridStyle(i),
-              ["--parallax-factor" as string]: String(
-                STAMP_PARALLAX_FACTORS[i] ?? 0.1,
-              ),
-            }}
-          >
-            <Stamp
-              ref={(el) => {
-                polaroidRefs.current[i] = el;
-              }}
-              label={stampLabels[i] ?? s.label}
-              imageBackground={stampBackgrounds[i] ?? s.fallbackBg}
-              stampIndex={i}
-              perforation={perforations[i] ?? null}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Sticky frame keeps stamps + text locked to the viewport while the section scrolls */}
+      <div ref={frameRef} className={styles.stickyFrame}>
+        <div
+          className={`${styles.stampLayer} ${styles.stampLayerBack}`}
+          aria-hidden
+        >
+          {HERO_IMAGE_LAYOUT.map((slot, i) => {
+            if (foregroundIndices.has(i)) return null;
+            return renderStamp(slot, i, "back");
+          })}
+        </div>
 
-      {/* Viewport-centered type (sticky); section is 125dvh for longer parallax scroll. */}
-      <div className={styles.textViewport}>
-        <div className={styles.content}>
-          <h1 className={styles.title}>
-            <LogoMark className={styles.logo} />
+        <div className={styles.textViewport}>
+          <h1 className={styles.displayTitle}>
+            Design with
+            <br />
+            heart &amp; mind
           </h1>
-          <p className={styles.lede}>
-            <span className={styles.ledeText}>
-              Hi, I&apos;m Michelle—a Sr Product Designer who thrives at the
-              intersection of systems, craft, and making a real impact for
-              users.
-            </span>
-          </p>
+        </div>
+
+        <div className={`${styles.stampLayer} ${styles.stampLayerFront}`} aria-hidden>
+          {HERO_IMAGE_LAYOUT.map((slot, i) => {
+            if (!foregroundIndices.has(i)) return null;
+            return renderStamp(slot, i, "front");
+          })}
         </div>
       </div>
     </section>

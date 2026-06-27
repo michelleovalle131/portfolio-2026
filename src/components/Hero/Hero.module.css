@@ -1,15 +1,13 @@
 .hero {
   position: relative;
-  margin: 0;
-  min-height: 125vh;
-  min-height: 125dvh;
-  /* Light page + Riso paper: dark gray type (matches --site-text) */
+  /* Tall enough for the scroll-driven image animation to play out */
+  height: 220dvh;
+  --nav-height: 64px;
   --hero-fg: var(--site-text, #3a3a3a);
   --hero-muted: var(--site-text-muted, rgba(58, 58, 58, 0.78));
   --hero-cta-bg: var(--site-text, #3a3a3a);
   --hero-cta-fg: #faf9f6;
   color: var(--hero-fg);
-  overflow: hidden;
   transition: color 0.45s ease;
   display: block;
 }
@@ -21,26 +19,49 @@
   --hero-cta-fg: #2a2a2a;
 }
 
-.stampLayer {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* Set from JS for scroll parallax; inherited by .stampParallax children */
+/* Sticky container: locks to viewport while the hero section scrolls behind it.
+   No overflow:hidden — any overflow value other than visible on a sticky element
+   or its ancestors can break the stickiness. Stamps are clipped by the viewport naturally. */
+.stickyFrame {
+  position: sticky;
+  top: var(--nav-height);
+  height: calc(100dvh - var(--nav-height));
   --scroll-y: 0px;
 }
 
-/* Per-stamp scroll drift (factor × document scroll in px) */
+.stampLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stampLayerBack {
+  z-index: 0;
+}
+
+.stampLayerFront {
+  z-index: 2;
+}
+
+/*
+ * Stamps start 100dvh below their natural position and rise as the user scrolls.
+ * translateY = 100dvh − scrollY × speed  →  reaches 0 when scrollY = 100dvh / speed
+ */
 .stampParallax {
-  width: fit-content;
-  max-width: 100%;
-  pointer-events: auto;
-  transform: translate3d(
-    0,
-    calc(var(--scroll-y, 0px) * var(--parallax-factor, 0)),
-    0
+  position: absolute;
+  left: clamp(
+    16px,
+    var(--stamp-left, 0%),
+    calc(100% - var(--stamp-width, 0px) - 16px)
   );
+  top: var(--stamp-top, 0%);
+  background: #fff;
+  aspect-ratio: var(--stamp-aspect, 3 / 4);
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  /* Keep moving upward through and past the frame as scroll continues */
+  transform: translateY(calc(100dvh - var(--scroll-y, 0px) * var(--stamp-speed, 1)));
   will-change: transform;
 }
 
@@ -51,99 +72,72 @@
   }
 }
 
-/*
- * Stamp grid: edit line ranges in stampGridLayout.ts (columns / rows 1-based).
- * Enable “grid” in DevTools on .stampGrid to see tracks while tuning.
- */
-.stampGrid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: repeat(13, minmax(0, 1fr));
-  gap: 0;
-  min-height: 0;
-  /* Must clip parallax drift; do not use visible — it overrides .stampLayer overflow */
-  overflow: hidden;
+.sizeSmall {
+  --stamp-width: clamp(153px, 13.29vw, 191px);
+  width: var(--stamp-width);
 }
 
-/* Sticky full viewport: type stays vh/vw-centered while extra hero height scrolls (parallax). */
+.sizeMedium {
+  --stamp-width: clamp(190px, 16.76vw, 241px);
+  width: var(--stamp-width);
+}
+
+.sizeLarge {
+  --stamp-width: clamp(231px, 20.4vw, 295px);
+  width: var(--stamp-width);
+}
+
+.heroPhoto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: inherit;
+  object-fit: contain;
+  object-position: center;
+}
+
+.heroPhotoFallback {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: inherit;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Text lives above background stamps but below foreground stamps */
 .textViewport {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 100dvh;
+  max-width: 1440px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(24px, 6vw, 80px);
+  padding: 0 120px;
   box-sizing: border-box;
+  text-align: center;
   pointer-events: none;
 }
 
-.content {
-  position: relative;
-  width: min(380px, 100%);
-  max-width: min(480px, 100%);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(20px, 3.5vw, 28px);
+.displayTitle {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  color: var(--hero-fg);
+  font-family: "Canela Deck Trial", Georgia, serif;
+  font-size: clamp(3rem, 10.3vw, 9.25rem);
+  line-height: 1;
+  font-weight: 100;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-wrap: balance;
   pointer-events: auto;
-}
-
-.title {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.logo {
-  display: block;
-  width: 60px;
-  height: 34px;
-  flex-shrink: 0;
-  background-color: var(--hero-fg);
-  mask: url("/imgs/MO-Logo.svg") center / contain no-repeat;
-  -webkit-mask: url("/imgs/MO-Logo.svg") center / contain no-repeat;
-  transition: background-color 0.45s ease;
-}
-
-.lede {
-  margin: 0;
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  font-weight: 400;
-  line-height: 1.705;
-  color: var(--hero-muted);
-  max-width: min(48ch, 100%);
   transition: color 0.45s ease;
-}
-
-/* One underline per wrapped line: 2px marks, 5px gap (7px repeat) */
-.ledeText {
-  display: inline;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  padding-bottom: 4px;
-  border-bottom: none;
-  background-image: repeating-linear-gradient(
-    to right,
-    color-mix(in srgb, currentColor 36%, transparent) 0 2px,
-    transparent 2px 7px
-  );
-  background-size: 7px 2px;
-  background-position: 0 100%;
-  background-repeat: repeat-x;
-}
-
-.hero[data-hero-contrast="dark"] .ledeText {
-  background-image: repeating-linear-gradient(
-    to right,
-    color-mix(in srgb, var(--hero-fg) 34%, transparent) 0 2px,
-    transparent 2px 7px
-  );
 }
 
 .primaryCta {
@@ -161,7 +155,6 @@
   text-transform: uppercase;
   text-decoration: none;
   border: none;
-  cursor: pointer;
   transition:
     background-color 0.45s ease,
     color 0.45s ease,
@@ -199,8 +192,16 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 640px) {
-  .title {
-    font-size: clamp(1.125rem, 4.5vw, 1.75rem);
+@media (max-width: 900px) {
+  .textViewport {
+    padding: 0 20px;
+  }
+
+  .displayTitle {
+    font-size: clamp(2.5rem, 13vw, 6.25rem);
+  }
+
+  .stampParallax {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 }

@@ -1,273 +1,126 @@
 .section {
-  display: flex;
-  flex-direction: row;
   width: 100%;
-  margin: 0;
+  --intro-image-progress: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100vh;
-  max-height: 100dvh;
-  /* Set from JS; left/right use different multipliers for scroll parallax */
-  --intro-scroll-y: 0px;
-  --intro-parallax-left: 0.055;
-  --intro-parallax-right: 0.12;
-  /* Match Hero `--hero-fg` when `data-page-contrast` is dark (manual page bg) */
-  --intro-copy-fg: var(--site-text, #3a3a3a);
-  --intro-copy-muted: var(--site-text-muted, rgba(58, 58, 58, 0.85));
-}
-
-.section[data-page-contrast="dark"] {
-  --intro-copy-fg: #faf9f6;
-  --intro-copy-muted: rgba(250, 249, 246, 0.78);
-}
-
-.left {
-  flex: 0 0 50vw;
-  width: 50vw;
-  min-width: 50vw;
-  max-width: 50vw;
-  align-self: stretch;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 100vh;
-  min-height: 100dvh;
-  /* Sky; dk gray shows if image fails to load */
-  background-color: var(--site-text, #3a3a3a);
-  background-image: url("/imgs/split-stamp-sky-bg.png");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+  background: #f9f6f0;
+  box-sizing: border-box;
+  padding: clamp(48px, 8vw, 112px) clamp(20px, 6vw, 80px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.leftParallax {
-  transform: translate3d(
-    0,
-    calc(var(--intro-scroll-y, 0px) * var(--intro-parallax-left)),
-    0
-  );
-  will-change: transform;
-}
-
-.rightParallax {
-  transform: translate3d(
-    0,
-    calc(var(--intro-scroll-y, 0px) * var(--intro-parallax-right)),
-    0
-  );
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .leftParallax,
-  .rightParallax {
-    transform: none;
-    will-change: auto;
-  }
-}
-
-.maskDefs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.right {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
-  align-self: stretch;
-  box-sizing: border-box;
-  /* Dark fill + dots come from body (index.css) */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-/* Motion lives here so mask + perforation stay aligned on .stampClip (no transform on masked node). */
-.stampMotion {
-  transform-origin: center center;
-  transform: translate3d(0, 450px, 0);
-  transition: transform 2s cubic-bezier(0.18, 0.82, 0.18, 1);
-}
-
-.stampMotionEntered {
-  transform: translate3d(0, 0, 0);
-}
-
-.stampMotionEntered:hover {
-  transform: translate3d(0, 0, 0) rotate(2.5deg);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stampMotion {
-    transform: none;
-    transition: none;
-  }
-
-  .stampMotionEntered:hover {
-    transform: none;
-  }
-}
-
-.stampClip {
-  background: #ffffff;
-  padding: clamp(12px, 2vw, 18px);
-  max-width: min(320px, 88vw);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.stampInner {
-  display: flex;
-  flex-direction: column;
-  background: #e4daf5;
-  overflow: hidden;
-}
-
-.portraitPanel {
-  aspect-ratio: 1;
-  width: 100%;
-  background: #e8e8e8;
-  display: block;
-  overflow: hidden;
-  position: relative;
+  gap: clamp(32px, 6vw, 64px);
 }
 
 .portraitImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 22%;
   display: block;
+  object-fit: cover;
+  object-position: center;
 }
 
-.stampFooter {
-  background: #ffffff;
-  padding: 16px 18px 18px;
-  text-align: right;
+.imageCard {
+  width: min(400px, 40vw);
+  aspect-ratio: 10 / 13;
+  overflow: hidden;
+  flex-shrink: 0;
+  transform: translate3d(
+    0,
+    calc(200px - (200px * var(--intro-image-progress, 0))),
+    0
+  );
+  will-change: transform;
+  box-shadow:
+    0 0 1px rgba(30, 31, 33, 0.31),
+    0 1px 1px rgba(30, 31, 33, 0.25);
 }
 
-.stampValue {
-  margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: clamp(2.25rem, 6vw, 3.25rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: #111111;
-}
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    --intro-image-progress: 1;
+  }
 
-.stampSub {
-  margin: 6px 0 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 10px;
-  font-weight: 500;
-  color: #5c5c5c;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  .imageCard {
+    transform: none;
+    will-change: auto;
+  }
 }
 
 .copyBlock {
-  max-width: 36rem;
-  text-align: center;
-  color: var(--intro-copy-fg);
+  width: min(500px, 100%);
 }
 
 .headline {
-  margin: 0 0 clamp(20px, 3vw, 28px);
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: clamp(1.375rem, 3.2vw, 1.875rem);
-  font-weight: 700;
-  line-height: 1.25;
+  margin: 0 0 24px;
+  font-family: "Canela Deck Trial", Georgia, serif;
+  color: #1d1d16;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
-.paragraphGroup {
-  margin: 0 0 clamp(28px, 4vw, 36px);
-}
-
-.paragraphGroup .body + .body {
-  margin-top: clamp(14px, 2.2vw, 18px);
-}
-
 .body {
-  margin: 0;
+  margin: 0 0 24px;
   font-family: "Inter", system-ui, sans-serif;
-  font-size: clamp(0.875rem, 1.6vw, 1rem);
+  font-size: 18px;
   font-weight: 400;
-  line-height: 1.65;
-  color: var(--intro-copy-muted);
+  line-height: 1.78;
+  letter-spacing: -0.01em;
+  color: #1d1d16;
 }
 
 .inlineLink {
-  color: inherit;
+  color: #1d1d16;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--intro-copy-fg) 35%, transparent);
-  text-underline-offset: 0.15em;
-  transition: text-decoration-color 0.2s ease;
-}
-
-.inlineLink:hover {
-  text-decoration-color: var(--intro-copy-fg);
+  text-underline-offset: 0.12em;
 }
 
 .cta {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   font-family: "Inter", system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--intro-copy-fg);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  color: #f9f6f0;
+  background: #1d1d16;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .cta:hover {
-  opacity: 0.85;
-}
-
-.ctaArrow {
-  font-size: 0.9rem;
-  line-height: 1;
+  opacity: 0.92;
   transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
   .section {
     flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    max-height: none;
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: auto;
+    padding: 56px 20px;
+    gap: 32px;
   }
 
-  .left {
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    height: auto;
-    min-height: min(50vh, 420px);
+  .imageCard {
+    width: min(400px, 100%);
+    transform: none;
+    will-change: auto;
   }
 
-  .right {
-    flex: 1 1 auto;
-    min-height: min(50vh, 420px);
+  .headline {
+    margin-bottom: 18px;
+    font-size: clamp(2rem, 9vw, 2.4rem);
+  }
+
+  .body {
+    font-size: 17px;
+    line-height: 1.7;
   }
 }
