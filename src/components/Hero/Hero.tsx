@@ -32,21 +32,21 @@ type HeroImagePlacement = {
 
 const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
   // top zone — settle above the headline
-  { size: "large", left: "-3%", top: "5%" },
-  { size: "small", left: "14%", top: "10%" },
+  { size: "medium", left: "3%", top: "70%" },
+  { size: "medium", left: "0%", top: "8%" },
   { size: "large", left: "31%", top: "2%" },
   { size: "medium", left: "59%", top: "4%" },
   { size: "medium", left: "87%", top: "8%" },
   // middle zone — overlap the headline
-  { size: "small", left: "-2%", top: "42%" },
+  { size: "small", left: "14%", top: "26%" },
   { size: "small", left: "75%", top: "38%" },
-  { size: "medium", left: "91%", top: "44%" },
+  { size: "medium", left: "90%", top: "28%" },
   // bottom zone — settle below the headline
-  { size: "small", left: "16%", top: "68%" },
+  { size: "small", left: "48%", top: "58%" },
   { size: "large", left: "38%", top: "72%" },
-  { size: "medium", left: "2%", top: "78%" },
-  { size: "medium", left: "63%", top: "74%" },
-  { size: "large", left: "85%", top: "65%" },
+  { size: "large", left: "2%", top: "68%" },
+  { size: "medium", left: "58%", top: "78%" },
+  { size: "large", left: "86%", top: "58%" },
 ] as const;
 
 const FOREGROUND_IMAGE_COUNT = 3;
@@ -54,10 +54,10 @@ const FOREGROUND_IMAGE_COUNT = 3;
 /**
  * How fast each stamp rises per scroll-pixel (higher = arrives sooner).
  * translateY reaches 0 at scrollY = 100dvh / speed.
- * Speeds ≥ 0.85 so all stamps arrive within the hero's 120dvh max scroll.
+ * Speeds ≥ 0.85 so all stamps arrive within the hero sticky scroll span.
  */
 const STAMP_SCROLL_SPEEDS = [
-  1.0, 1.4, 0.9, 1.2, 1.55, 1.3, 1.5, 0.88, 1.1, 0.95, 1.45, 1.2, 0.85,
+  1.0, 1.55, 0.9, 1.2, 1.55, 1.3, 1.5, 0.88, 1.1, 0.95, 1.45, 1.2, 0.85,
 ] as const;
 
 /** Lower values = silkier but slower catch-up. */

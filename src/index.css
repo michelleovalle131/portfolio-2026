@@ -1,3 +1,5 @@
+@import "./styles/fonts.css";
+
 *,
 *::before,
 *::after {
@@ -6,10 +8,20 @@
 
 /* Page shell: dark fill on html/body; dots are one fixed layer behind #root */
 :root {
-  --page-bg: #faf9f6;
-  --site-text: #3a3a3a;
-  --site-text-muted: rgba(58, 58, 58, 0.78);
+  --page-bg: var(--surface-cream);
+  --site-text: #1d1d16;
+  --site-text-muted: #1d1d16;
+  --nav-height: 64px;
+  --font-display: "Canela Deck", Georgia, serif;
   --field-accent: #a67c52;
+  --surface-cream: #f9f6f0;
+  --surface-warm: #f5f0dc;
+  --surface-blue: #dee7f6;
+  --surface-lavender: #e6def7;
+  --surface-blue-deep: #d8e5f8;
+  --accent-life: #e8d4cf;
+  --accent-craft: #ddd4b8;
+  --accent-mind: #b8cce8;
   --page-dot-grid-color: rgba(0, 0, 0, 0.06);
   --page-dot-grid-pitch: 26px;
 }
@@ -41,30 +53,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--page-bg);
-  color: var(--site-text, #3a3a3a);
-  /* ✏️ Twemoji U+270F, 32×32 PNG — CC-BY 4.0 Twitter, Inc. / X Corp. Hotspot ≈ pencil tip. */
-  cursor: url("/cursors/pencil-emoji.png") 8 24, auto;
-}
-
-a[href],
-button,
-[role="button"],
-label,
-select,
-summary,
-input[type="color"],
-input[type="checkbox"],
-input[type="radio"] {
-  cursor: pointer;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="search"],
-input[type="url"],
-input[type="number"],
-textarea {
-  cursor: text;
+  color: var(--site-text);
 }
 
 #root {

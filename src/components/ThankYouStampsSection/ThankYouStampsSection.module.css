@@ -1,176 +1,102 @@
-/*
- * Final band (30vh): last section on the page — no extra scroll below it.
- * View-timeline animations run as this section moves through the viewport.
- */
-.sectionTrack {
-  position: relative;
+.footer {
   width: 100%;
-  min-height: 30vh;
-  background-color: transparent;
+  box-sizing: border-box;
+  background: var(--surface-cream);
+  border-top: 1px solid var(--site-text);
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  min-height: var(--nav-height, 64px);
+  padding: 0 clamp(20px, 8vw, 120px);
   box-sizing: border-box;
 }
 
-.sectionStickyVisual {
-  position: relative;
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.logoLink:focus-visible,
+.link:focus-visible {
+  outline: 2px solid var(--field-accent, #a67c52);
+  outline-offset: 3px;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: 24px;
+  filter: brightness(0);
+}
+
+.heading {
+  margin: 0;
+  justify-self: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+  font-weight: 100;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--site-text);
+}
+
+.links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 30vh;
-  max-height: 30vh;
-  min-height: 30vh;
-  overflow: hidden;
-  background-color: var(--page-bg, #faf9f6);
-  box-sizing: border-box;
-  /* For absolute stamp layer + centered chrome */
-  isolation: isolate;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  justify-self: end;
 }
 
-.stampSprawl {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
+.link {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--site-text);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
-.stampSprawlInner {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.link:hover {
+  opacity: 0.72;
 }
 
-.stampSprawlItem {
-  position: absolute;
-  transform-origin: center center;
-  pointer-events: auto;
-}
-
-.stampSprawlScale {
-  transform: rotate(var(--sprawl-r, 0deg));
-  transform-origin: center center;
-}
-
-/*
- * Scroll-driven motion (View Timeline): pass 1 uses `entry` (70–100%); pass 2 uses
- * `cover` (0–50%) so the second round runs after entry completes.
- * https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations
- */
-@keyframes thankYouStampRise {
-  from {
-    transform: translate(
-      -50%,
-      calc(-50% + var(--max-slide, 125px))
-    );
+@media (max-width: 640px) {
+  .bar {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    gap: 1.25rem;
+    min-height: 0;
+    padding: 1.25rem clamp(16px, 5vw, 24px) 1.5rem;
   }
 
-  to {
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Chrome fades/slides in first; stamps use later entry ranges in TS */
-@keyframes thankYouChromeReveal {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 8px);
+  .logoLink,
+  .links {
+    justify-self: center;
   }
 
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .sectionScrollDriven {
-    view-timeline-name: --thank-you;
-    view-timeline-axis: block;
-    timeline-scope: --thank-you;
+  .links {
+    justify-content: center;
   }
 
-  .thankYouChrome {
-    animation-name: thankYouChromeReveal;
-    animation-duration: auto;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    animation-fill-mode: both;
-    animation-timeline: --thank-you;
-    animation-range: entry 0% entry 20%;
+  .link {
+    font-size: 15px;
   }
 
-  .stampSprawlItem {
-    animation-name: thankYouStampRise;
-    animation-duration: auto;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    animation-fill-mode: both;
-    animation-timeline: --thank-you;
-    animation-range: entry var(--entry-range-start, 0%)
-      entry var(--entry-range-end, 100%);
-  }
-
-  .stampSprawlItemCover {
-    animation-name: thankYouStampRise;
-    animation-duration: auto;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    animation-fill-mode: both;
-    animation-timeline: --thank-you;
-    animation-range: cover var(--entry-range-start, 0%)
-      cover var(--entry-range-end, 100%);
-  }
-}
-
-/* Browsers without scroll-driven animations: stamps sit at rest; chrome static */
-@supports not (animation-timeline: view()) {
-  .thankYouChrome {
-    opacity: 1;
-    transform: translateX(-50%);
-  }
-
-  .stampSprawlItem,
-  .stampSprawlItemCover {
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Matches FieldNotesNav .nav — pinned to bottom so center sprawl isn’t covered */
-.thankYouChrome {
-  position: absolute;
-  bottom: clamp(0.65rem, 2vw, 1rem);
-  left: 50%;
-  z-index: 50;
-  width: max-content;
-  max-width: min(28rem, calc(100vw - 2.5rem));
-  padding: 0.45rem 0.65rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  background: rgb(252, 251, 248);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  pointer-events: none;
-}
-
-/* Same as MemberBenefitsSection .cardSubtitle (“Confluence” product tag) */
-.thankYouHeading {
-  margin: 0;
-  text-align: center;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #111111;
-  line-height: 1.2;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .thankYouChrome {
-    animation: none !important;
-    opacity: 1;
-    transform: translateX(-50%);
-  }
-
-  .stampSprawlItem,
-  .stampSprawlItemCover {
-    animation: none !important;
-    transform: translate(-50%, -50%) !important;
+  .heading {
+    font-size: 1.25rem;
   }
 }

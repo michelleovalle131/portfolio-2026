@@ -5,19 +5,15 @@ import { SplitViewportSection } from "../components/SplitViewportSection/SplitVi
 import { ThankYouStampsSection } from "../components/ThankYouStampsSection/ThankYouStampsSection";
 import { StampBalanceSection } from "../components/StampBalanceSection/StampBalanceSection";
 
-type HomePageProps = {
-  remixEpoch: number;
-};
-
-export function HomePage({ remixEpoch }: HomePageProps) {
+export function HomePage() {
   return (
     <>
-      <Hero remixEpoch={remixEpoch} />
+      <Hero />
       <StampBalanceSection />
       <MemberBenefitsSection />
       <SecondaryProjectsSection />
       <SplitViewportSection />
-      <ThankYouStampsSection remixEpoch={remixEpoch} />
+      <ThankYouStampsSection />
     </>
   );
 }

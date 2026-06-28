@@ -57,5 +57,5 @@
   text-transform: uppercase;
   line-height: 1.25;
   text-align: left;
-  color: #5c5c5c;
+  color: var(--site-text);
 }
