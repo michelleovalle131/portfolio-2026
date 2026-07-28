@@ -7,23 +7,81 @@
 }
 
 /* Page shell: dark fill on html/body; dots are one fixed layer behind #root */
+/*
+ * ─── Editorial Print — Design System ────────────────────────────────────────
+ *
+ * Visual language: paper, ink, color-plate sections, borderless photography.
+ *
+ * Ground         Warm greige (#F1EFE9) — the page never goes pure white
+ * Ink            Deep warm near-black (#1d1d16) — not pure black.
+ *                Exactly two ink values sitewide: `--ink` (full strength —
+ *                headings, body text, solid rules) and `--ink-muted` (one
+ *                translucent variant — secondary text, hairlines, dividers,
+ *                scrims, shadows). No other opacity of ink is used anywhere.
+ * Accent         Electric blue (#1B0AE8) — links, active states,
+ *                hover emphasis, and one CTA. Never used for decoration.
+ * Color plates   Named pastel fills used as full-bleed editorial chapters.
+ *                Each primary project gets its own plate. Never used as card
+ *                backgrounds within a cream section.
+ * Photography    Edge-to-edge crops, no mats or borders.
+ * Elevation      Flat throughout. Shadows reserved for floating hero stamps
+ *                only. In-page elements use hairline rules for separation.
+ * Typography     Canela Deck (display, used with restraint) + Inter (body/UI)
+ *                Eyebrow spec: 11px · 0.14em · weight 600 · uppercase
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 :root {
   --page-bg: var(--surface-cream);
-  --site-text: #1d1d16;
-  --site-text-muted: #1d1d16;
+  --content-wide: 2000px;      /* max layout width for centered sections        */
+  --ink: #1d1d16;
+  --ink-muted: rgba(29, 29, 22, 0.65);
   --nav-height: 64px;
   --font-display: "Canela Deck", Georgia, serif;
-  --field-accent: #a67c52;
-  --surface-cream: #f9f6f0;
-  --surface-warm: #f5f0dc;
-  --surface-blue: #dee7f6;
-  --surface-lavender: #e6def7;
-  --surface-blue-deep: #d8e5f8;
-  --accent-life: #e8d4cf;
-  --accent-craft: #ddd4b8;
-  --accent-mind: #b8cce8;
-  --page-dot-grid-color: rgba(0, 0, 0, 0.06);
-  --page-dot-grid-pitch: 26px;
+  /* Accent — the one true accent color; use for links, active states, hover emphasis */
+  --field-accent: #1B0AE8;
+  /* Surfaces — one token per distinct hue in use; each maps to one editorial role */
+  --surface-cream: #F1EFE9;   /* page ground / neutral sections               */
+  --surface-warm: #FFE2C0;    /* color plate — Life tier  (pale peach)         */
+  --surface-blush: #FDD5E5;   /* color plate — Craft tier (pale rose)          */
+  --surface-blue: #CCE8FF;/* color plate — Mind tier + Company Hub (ice blue) */
+  --surface-blue-deep: #d8e5f8; /* image placeholder fallback                  */
+  /* Project plates — one named token per project */
+  --plate-loom: #EED7FC;           /* soft purple      */
+  --plate-company-hub: var(--surface-blue); /* shares ice blue with Mind tier */
+  --plate-activation: #B8CEC8;     /* teal-sage        */
+  --plate-rovo: #C4D5E8;           /* considered blue  */
+
+  /* ── Type scale tokens (Canela Deck) ─────────────────────────────────────── */
+  /* Hero display title — Hero .displayTitle */
+  --type-display-size: clamp(2.6rem, 8.91vw, 8rem);
+  --type-display-lh:   1;
+  --type-display-ls:   -0.02em;
+  /* Section/display heading — SplitViewportSection .introHeading + ClosingSection .heading */
+  --type-section-size: clamp(2.7rem, 5.4vw, 4.5rem);
+  --type-section-lh:   1.05;
+  --type-section-ls:   -0.025em;
+  /* Card/tier title — MemberBenefitsSection .cardTitle + SplitViewportSection .tierTitle */
+  --type-card-size: clamp(2.18rem, 3.82vw, 3rem);
+  --type-card-lh:   1.1;
+  --type-card-ls:   -0.02em;
+  /* Subheading — StampBalanceSection .body + SecondaryProjectsSection .title */
+  --type-subheading-size: clamp(1.69rem, 2.78vw, 2.25rem);
+  --type-subheading-lh:   1.1;
+  --type-subheading-ls:   -0.02em;
+  /* Small — ThankYouStampsSection .heading + FieldNotesNav .navTitle */
+  --type-small-size: clamp(1.125rem, 2.2vw, 1.5rem);
+  --type-small-lh:   1.1;
+  --type-small-ls:   -0.02em;
+  /* Body copy — Inter 16px prose text */
+  --type-body-size:   16px;
+  --type-body-weight: 400;
+  --type-body-lh:     1.78;
+  --type-body-ls:     -0.01em;
+  /* Kicker / eyebrow — Inter 11px uppercase label */
+  --type-kicker-size:   11px;
+  --type-kicker-weight: 600;
+  --type-kicker-lh:     1.3;
+  --type-kicker-ls:     0.14em;
 }
 
 /*
@@ -53,7 +111,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--page-bg);
-  color: var(--site-text);
+  color: var(--ink);
 }
 
 #root {
@@ -64,20 +122,3 @@ body {
   z-index: 1;
 }
 
-/* Dotted grid hidden for now; restore by removing display:none */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  display: none;
-  background-image: radial-gradient(
-    circle at center,
-    var(--page-dot-grid-color) 1px,
-    transparent 1px
-  );
-  background-size: var(--page-dot-grid-pitch) var(--page-dot-grid-pitch);
-  background-position: 0 0;
-  background-repeat: repeat;
-}

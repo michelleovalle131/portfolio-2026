@@ -1,28 +1,18 @@
 /*
- * michelleovalle.vercel.app hero-imgs: img band matches max 500px-wide card × 320px tall
- * (gallery uses height 320px + width 100%; polaroid uses max-width 500 + same padding).
- * Image viewport: 172×150px. Polaroid outer = 196px wide (image + 12px padding each side).
+ * Plain photo frame — no white mat, no caption.
+ * Image viewport: 172×150px (matches previous photo band without polaroid padding).
  */
-.maskDefs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
 .polaroid {
   position: relative;
   box-sizing: border-box;
-  width: 196px;
-  min-width: 196px;
-  max-width: 196px;
+  width: 172px;
+  min-width: 172px;
+  max-width: 172px;
   flex-shrink: 0;
-  background: #ffffff;
-  padding: 12px;
   display: flex;
   flex-direction: column;
   pointer-events: auto;
+  overflow: hidden;
 }
 
 .image {
@@ -33,29 +23,8 @@
   height: 150px;
   min-height: 150px;
   flex-shrink: 0;
-  align-self: center;
-  background-color: #ffffff;
+  background-color: var(--surface-cream, #F1EFE9);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
-}
-
-.caption {
-  margin: 0;
-  padding: 10px 0 0 4px;
-  min-height: 2.6em;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  align-self: stretch;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1.25;
-  text-align: left;
-  color: var(--site-text);
 }

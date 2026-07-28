@@ -1,19 +1,21 @@
-import { Hero } from "../components/Hero/Hero";
-import { MemberBenefitsSection } from "../components/MemberBenefitsSection/MemberBenefitsSection";
+import { ContactSection } from "../components/ContactSection/ContactSection";
+import { HeroSection } from "../components/HeroSection/HeroSection";
+import { PrimaryProjectsSection } from "../components/PrimaryProjectsSection/PrimaryProjectsSection";
 import { SecondaryProjectsSection } from "../components/SecondaryProjectsSection/SecondaryProjectsSection";
-import { SplitViewportSection } from "../components/SplitViewportSection/SplitViewportSection";
-import { ThankYouStampsSection } from "../components/ThankYouStampsSection/ThankYouStampsSection";
-import { StampBalanceSection } from "../components/StampBalanceSection/StampBalanceSection";
+import { FunFactsSection } from "../components/FunFactsSection/FunFactsSection";
+import { Footer } from "../components/Footer/Footer";
+import { IntroSection } from "../components/IntroSection/IntroSection";
 
 export function HomePage() {
   return (
     <>
-      <Hero />
-      <StampBalanceSection />
-      <MemberBenefitsSection />
+      <HeroSection />
+      <IntroSection />
+      <PrimaryProjectsSection />
       <SecondaryProjectsSection />
-      <SplitViewportSection />
-      <ThankYouStampsSection />
+      <FunFactsSection />
+      <ContactSection />
+      <Footer />
     </>
   );
 }

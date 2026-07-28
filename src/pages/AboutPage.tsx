@@ -1,4 +1,4 @@
-import heroStyles from "../components/Hero/Hero.module.css";
+import heroStyles from "../components/HeroSection/HeroSection.module.css";
 import { ABOUT_EXPERIENCE } from "./aboutExperience";
 import { ABOUT_RECOGNITION } from "./aboutRecognition";
 import styles from "./AboutPage.module.css";

@@ -1,0 +1,282 @@
+.page {
+  padding-top: var(--nav-height, 64px);
+  min-height: 100dvh;
+  background: var(--surface-cream);
+}
+
+/* ─── Back link row (above hero, on cream) ──────────────────── */
+
+.heroNav {
+  padding: clamp(16px, 2vw, 24px) clamp(20px, 8vw, 120px);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-kicker-size);
+  font-weight: var(--type-kicker-weight);
+  letter-spacing: var(--type-kicker-ls);
+  text-transform: uppercase;
+  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.backLink:hover {
+  color: var(--ink, #1d1d16);
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--field-accent, #1B0AE8);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ─── Hero ─────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 420px;
+  max-height: 720px;
+  overflow: hidden;
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: saturate(0.95) contrast(0.97);
+}
+
+/* Color plate centered at the bottom of the hero */
+.heroPlate {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80%, 900px);
+  padding: clamp(24px, 3vw, 40px) clamp(28px, 4vw, 56px);
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--project-plate-color, var(--surface-blue-deep, #d8e5f8)) 85%, transparent);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kicker {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-kicker-size);
+  font-weight: var(--type-kicker-weight);
+  letter-spacing: var(--type-kicker-ls);
+  line-height: var(--type-kicker-lh);
+  text-transform: uppercase;
+  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ink, #1d1d16);
+}
+
+/* ─── Body ──────────────────────────────────────────────────── */
+
+.body {
+  max-width: min(80%, 900px);
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 72px) clamp(28px, 4vw, 56px) clamp(72px, 10vw, 120px);
+}
+
+/* ─── Markdown ──────────────────────────────────────────────── */
+
+.markdownBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.description {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--ink, #1d1d16);
+}
+
+.mdTitle {
+  margin: 0 0 8px;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink, #1d1d16);
+}
+
+.mdHeading {
+  margin: 8px 0 4px;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink, #1d1d16);
+}
+
+.mdLabel {
+  margin: 24px 0 4px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink, #1d1d16);
+}
+
+.mdParagraph {
+  margin: 0 0 4px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--ink, #1d1d16);
+}
+
+.mdList {
+  margin: 0 0 4px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mdListItem {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--ink, #1d1d16);
+}
+
+.mdDivider {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid var(--ink-muted, rgba(29, 29, 22, 0.65));
+}
+
+.mdEmphasis {
+  font-style: italic;
+}
+
+/* ─── Inline gallery ────────────────────────────────────────── */
+
+.inlineGallery {
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inlineGalleryHeroWrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--project-plate-color, var(--surface-blue-deep, #d8e5f8));
+}
+
+.inlineGalleryHeroMedia {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.inlineGalleryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.inlineGalleryItemWrap {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--project-plate-color, var(--surface-blue-deep, #d8e5f8));
+}
+
+.inlineGalleryItemMedia {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─── Not found ─────────────────────────────────────────────── */
+
+.notFound {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 96px) clamp(24px, 5vw, 48px);
+  text-align: center;
+}
+
+.notFoundTitle {
+  margin: 0 0 16px;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 400;
+  color: var(--ink, #1d1d16);
+}
+
+.notFoundLink {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--field-accent, #1B0AE8);
+  text-underline-offset: 3px;
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .heroPlate {
+    width: 100%;
+    left: 0;
+    transform: none;
+    padding: 24px 24px 28px;
+  }
+
+  .title {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+
+  .body {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .inlineGalleryGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

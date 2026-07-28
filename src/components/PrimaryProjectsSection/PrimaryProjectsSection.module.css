@@ -1,0 +1,189 @@
+.section {
+  width: 100%;
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  height: 87vh;
+  height: 87dvh;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Full-bleed background image — fills the section behind the plate */
+.cardBgImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center right;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+  filter: saturate(0.95) contrast(0.97);
+  transform: scale(1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.card:hover .cardBgImage {
+  transform: scale(1.035);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardBgImage {
+    transition: none;
+    will-change: auto;
+  }
+
+  .card:hover .cardBgImage {
+    transform: none;
+  }
+}
+
+/* Clickable link card — stacks children at bottom-left */
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--field-accent, #1B0AE8);
+  outline-offset: -4px;
+}
+
+/* Color plate — the editorial content block sitting over the image */
+.cardPlate {
+  position: relative;
+  z-index: 1;
+  width: min(50%, 700px);
+  background-color: color-mix(in srgb, var(--project-card-bg, var(--plate-loom)) 83%, transparent);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  padding: clamp(28px, 3.2vw, 48px) clamp(36px, 5vw, 80px) clamp(28px, 3.2vw, 48px) clamp(20px, 8vw, 120px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease;
+}
+
+.cardPlate:hover {
+  background-color: color-mix(in srgb, var(--project-card-bg, var(--plate-loom)) 90%, transparent);
+}
+
+.kicker {
+  margin: 0 0 16px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-kicker-size);
+  font-weight: var(--type-kicker-weight);
+  line-height: var(--type-kicker-lh);
+  letter-spacing: var(--type-kicker-ls);
+  text-transform: uppercase;
+  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+}
+
+.cardTitle {
+  margin: 0 0 20px;
+  width: min(18ch, 100%);
+  font-family: var(--font-display);
+  font-size: var(--type-card-size);
+  font-weight: 400;
+  line-height: var(--type-card-lh);
+  letter-spacing: var(--type-card-ls);
+  color: var(--ink);
+}
+
+.cardDescription {
+  margin: 0;
+  width: min(52ch, 100%);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  color: var(--ink);
+}
+
+.ctaRow {
+  margin-top: 36px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink-muted, rgba(29, 29, 22, 0.65));
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 40px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover .ctaRow {
+  color: var(--field-accent, #1B0AE8);
+  border-top-color: var(--field-accent, #1B0AE8);
+}
+
+.section + .section {
+  margin-top: clamp(12px, 1.5vw, 24px);
+}
+
+@media (max-width: 768px) {
+  .section {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .section + .section {
+    margin-top: 14px;
+  }
+
+  /* Stack image above plate instead of overlaying it, so the photo stays visible */
+  .card {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .cardBgImage {
+    position: static;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    inset: auto;
+  }
+
+  .cardPlate {
+    width: 100%;
+    background-color: var(--project-card-bg, var(--plate-loom));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 24px 24px 28px;
+  }
+
+  .cardTitle {
+    font-size: clamp(2.18rem, 9.82vw, 2.62rem);
+  }
+
+  .cardDescription {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .ctaRow {
+    margin-top: 28px;
+    font-size: 15px;
+    line-height: 36px;
+  }
+}

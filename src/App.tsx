@@ -1,7 +1,8 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { FieldNotesNav } from "./components/FieldNotesNav/FieldNotesNav";
+import { Nav } from "./components/Nav/Nav";
 import { AboutPage } from "./pages/AboutPage";
 import { HomePage } from "./pages/HomePage";
+import { ProjectPage } from "./pages/ProjectPage";
 import styles from "./App.module.css";
 import { useEffect } from "react";
 
@@ -25,11 +26,12 @@ function App() {
   return (
     <div className={styles.shell}>
       <ScrollToTop />
-      <FieldNotesNav />
+      <Nav />
       <div className={styles.main}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/projects/:id" element={<ProjectPage />} />
         </Routes>
       </div>
     </div>
