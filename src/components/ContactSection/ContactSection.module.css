@@ -34,7 +34,7 @@
   font-weight: 400;
   line-height: var(--type-section-lh);
   letter-spacing: var(--type-section-ls);
-  color: var(--surface-cream, #F1EFE9);
+  color: var(--plate-loom);
 }
 
 .body {

@@ -1,6 +1,6 @@
 import styles from "./ContactSection.module.css";
 
-const EMAIL = "hello@michelleovalle.com";
+const EMAIL = "movallecreative@gmail.com";
 
 export function ContactSection() {
   return (
@@ -12,11 +12,11 @@ export function ContactSection() {
       <div className={styles.inner}>
         <p className={styles.eyebrow}>Get in touch</p>
         <h2 className={styles.heading} id="closing-heading">
-          Let&apos;s build something worth talking about.
+          I&apos;m always happy to connect — about work, ideas, or just to
+          say hello.
         </h2>
         <p className={styles.body}>
-          I&apos;m always happy to connect about product design, systems
-          thinking, or just to say hello.
+          Shoot me an email and I&apos;ll get back to you shortly.
         </p>
         <a className={styles.cta} href={`mailto:${EMAIL}`}>
           Say hello

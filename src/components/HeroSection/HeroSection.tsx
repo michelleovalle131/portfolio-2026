@@ -50,6 +50,11 @@ const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
 
 const FOREGROUND_IMAGE_COUNT = 3;
 
+/** On mobile, only these corner/anchor stamps render — cuts clutter from 13 down to 5
+ *  and skips the mid-zone stamps that otherwise overlap the headline on narrow screens. */
+const MOBILE_VISIBLE_INDICES = new Set([1, 4, 9, 10, 12]);
+const MOBILE_QUERY = "(max-width: 768px)";
+
 /**
  * How fast each stamp rises per scroll-pixel (higher = arrives sooner).
  * translateY reaches 0 at scrollY = 100dvh / speed. The sticky frame's pin
@@ -65,6 +70,9 @@ const STAMP_SCROLL_SPEEDS = [
 
 /** Lower values = silkier but slower catch-up. */
 const SCROLL_LERP = 0.09;
+/** Mobile touch scroll already has native momentum smoothing, so the JS-side
+ *  lerp just adds extra lag on top of it — track scroll position directly there. */
+const SCROLL_LERP_MOBILE = 0.5;
 const SCROLL_SNAP_EPSILON = 0.08;
 
 /** Shuffled per load; `uniqueStampBackgrounds` assigns distinct photo URLs (no repeats on hero). */
@@ -99,6 +107,17 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     randomForegroundIndices(HERO_IMAGE_LAYOUT.length, FOREGROUND_IMAGE_COUNT),
   );
   const [imageAspectRatios, setImageAspectRatios] = useState<number[]>([]);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia(MOBILE_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (remixEpoch === 0) return;
@@ -184,13 +203,14 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const root = frameRef.current;
     if (!root) return;
+    const lerp = isMobile ? SCROLL_LERP_MOBILE : SCROLL_LERP;
     let raf = 0;
     let targetY = window.scrollY;
     let currentY = targetY;
 
     const tick = () => {
       const delta = targetY - currentY;
-      currentY += delta * SCROLL_LERP;
+      currentY += delta * lerp;
       if (Math.abs(delta) < SCROLL_SNAP_EPSILON) {
         currentY = targetY;
       }
@@ -213,7 +233,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
       window.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section id="home" className={styles.hero}>
@@ -224,6 +244,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
           aria-hidden
         >
           {HERO_IMAGE_LAYOUT.map((slot, i) => {
+            if (isMobile && !MOBILE_VISIBLE_INDICES.has(i)) return null;
             if (foregroundIndices.has(i)) return null;
             return renderStamp(slot, i, "back");
           })}
@@ -246,6 +267,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
 
         <div className={`${styles.stampLayer} ${styles.stampLayerFront}`} aria-hidden>
           {HERO_IMAGE_LAYOUT.map((slot, i) => {
+            if (isMobile && !MOBILE_VISIBLE_INDICES.has(i)) return null;
             if (!foregroundIndices.has(i)) return null;
             return renderStamp(slot, i, "front");
           })}

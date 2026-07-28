@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/michelleovalle/";
-const INSTAGRAM_URL = "https://www.instagram.com/mischi131/";
-const EMAIL = "hello@michelleovalle.com";
+const EMAIL = "movallecreative@gmail.com";
 
 export function Footer() {
   return (
@@ -36,14 +35,6 @@ export function Footer() {
             rel="noopener noreferrer"
           >
             LinkedIn
-          </a>
-          <a
-            className={styles.link}
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
           </a>
           <a className={styles.link} href={`mailto:${EMAIL}`}>
             Email
