@@ -79,6 +79,15 @@
   box-sizing: border-box;
 }
 
+/* Wider screens (27"+ monitors) — let tiles grow past the 560px cap */
+@media (min-width: 1600px) {
+  .marqueePhoto,
+  .marqueeText {
+    flex: 0 0 min(var(--tile-width, 38vw), 720px);
+    width: min(var(--tile-width, 38vw), 720px);
+  }
+}
+
 .marqueePhoto img {
   width: 100%;
   height: 100%;

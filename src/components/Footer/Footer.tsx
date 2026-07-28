@@ -37,7 +37,7 @@ export function Footer() {
             LinkedIn
           </a>
           <a className={styles.link} href={`mailto:${EMAIL}`}>
-            Email
+            Connect
           </a>
         </div>
       </div>
