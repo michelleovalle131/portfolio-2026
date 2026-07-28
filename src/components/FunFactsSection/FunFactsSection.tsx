@@ -90,7 +90,7 @@ export function FunFactsSection() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
   const manualScrollRef = useRef(false);
-  const resumeTimeoutRef = useRef<number>();
+  const resumeTimeoutRef = useRef<number | undefined>(undefined);
 
   const baseItems = useMemo<StripItem[]>(
     () =>
