@@ -65,4 +65,7 @@ function funFactsImgsPublicPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [react(), heroImgsPublicPlugin(), funFactsImgsPublicPlugin()],
+  server: {
+    port: process.env["PORT"] ? Number(process.env["PORT"]) : 5173,
+  },
 });

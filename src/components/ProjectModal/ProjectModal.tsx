@@ -1,8 +1,11 @@
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import type { GalleryItem, ModalProject } from "../../types/project";
 import styles from "./ProjectModal.module.css";
+
+const VIDEO_SRC_PATTERN = /\.(mp4|webm)$/i;
+const STICKY_BAR_HEIGHT = 56;
 
 const MARKDOWN_COMPONENTS: Components = {
   h1: ({ children }) => <h1 className={styles.mdTitle}>{children}</h1>,
@@ -20,7 +23,101 @@ type ProjectModalProps = {
   onClose: () => void;
 };
 
-type ModalTab = "about" | "gallery";
+/** Strips ProjectPage's `[[gallery:0-5]]` inline placement tokens — the modal
+ *  shows all gallery media in one continuous section instead of inline. */
+function stripGalleryTokens(markdown: string): string {
+  return markdown.replace(/\[\[gallery:\d+-\d+\]\]\n?/g, "");
+}
+
+/** Drops the markdown's opening paragraph when it repeats the header
+ *  description verbatim — the modal shows description above the body,
+ *  where ProjectPage (which doesn't) relies on that line as its lead-in. */
+function stripDuplicateLeadIn(markdown: string, description: string): string {
+  const [firstParagraph, ...rest] = markdown.split(/\n{2,}/);
+  if (firstParagraph?.trim() !== description.trim()) {
+    return markdown;
+  }
+  return rest.join("\n\n");
+}
+
+type AccordionSection = { title: string; body: string };
+
+/**
+ * Splits case-study markdown on `---` rules into accordion sections, using
+ * each chunk's leading `### Heading` as the section title. Any text before
+ * the first `###` (e.g. Rovo's one-sentence intro) has no title to collapse
+ * under, so it renders as plain lead-in copy above the first section.
+ */
+function parseAccordionSections(markdown: string): { intro: string; sections: AccordionSection[] } {
+  const chunks = markdown
+    .split(/\n-{3,}\n/)
+    .map((chunk) => chunk.trim())
+    .filter(Boolean);
+
+  let intro = "";
+  const sections: AccordionSection[] = [];
+
+  chunks.forEach((chunk, index) => {
+    const headingMatch = chunk.match(/^###\s+(.+)$/m);
+    if (!headingMatch) {
+      if (index === 0) {
+        intro = chunk;
+      }
+      return;
+    }
+    const headingIndex = headingMatch.index!;
+    const leadIn = chunk.slice(0, headingIndex).trim();
+    if (index === 0 && leadIn) {
+      intro = leadIn;
+    }
+    sections.push({
+      title: headingMatch[1]!.trim(),
+      body: chunk.slice(headingIndex + headingMatch[0].length).trim(),
+    });
+  });
+
+  return { intro, sections };
+}
+
+function AccordionItem({
+  title,
+  body,
+  isOpen,
+  onToggle,
+}: {
+  title: string;
+  body: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className={styles.accordionItem}>
+      <button
+        type="button"
+        className={styles.accordionTrigger}
+        aria-expanded={isOpen}
+        onClick={onToggle}
+      >
+        <span className={styles.accordionTitle}>{title}</span>
+        <span className={styles.accordionIcon} aria-hidden="true">
+          <span className={styles.accordionIconLineH} />
+          <span
+            className={[styles.accordionIconLineV, isOpen ? styles.accordionIconLineVOpen : ""].join(" ")}
+          />
+        </span>
+      </button>
+      <div
+        className={[styles.accordionPanelWrap, isOpen ? styles.accordionPanelWrapOpen : ""].join(" ")}
+      >
+        <div className={styles.accordionPanelInner}>
+          <div className={styles.accordionPanel}>
+            <ReactMarkdown components={MARKDOWN_COMPONENTS}>{body}</ReactMarkdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const GALLERY_PLACEHOLDER_COUNT = 4;
 
@@ -98,14 +195,64 @@ function GalleryMedia({ item, className }: { item: GalleryItem; className: strin
   );
 }
 
+/** The same hero image/video shown on the project's card, reused here as the
+ *  first thing in the modal's scroll content, right below the intro. */
+function HeroMedia({ src, alt, className }: { src: string; alt: string; className: string }) {
+  if (VIDEO_SRC_PATTERN.test(src)) {
+    return (
+      <video
+        className={className}
+        src={src}
+        aria-label={alt}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+    );
+  }
+  return <img className={className} src={src} alt={alt} decoding="async" />;
+}
+
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
-  const [activeTab, setActiveTab] = useState<ModalTab>("about");
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [openSections, setOpenSections] = useState<Set<number>>(new Set());
+  const [showStickyTitle, setShowStickyTitle] = useState(false);
+
+  const parsedAbout = useMemo(
+    () =>
+      project?.aboutMarkdown
+        ? parseAccordionSections(
+            stripDuplicateLeadIn(stripGalleryTokens(project.aboutMarkdown), project.description),
+          )
+        : null,
+    [project?.aboutMarkdown, project?.description],
+  );
 
   useEffect(() => {
-    if (project) {
-      setActiveTab("about");
+    setOpenSections(new Set());
+    setShowStickyTitle(false);
+  }, [project?.id]);
+
+  useEffect(() => {
+    const root = scrollAreaRef.current;
+    const target = titleRef.current;
+    if (!root || !target) {
+      return;
     }
+
+    // Fires once the real title scrolls up out from under the sticky bar —
+    // mirrors the homepage Nav's echo-title behavior, scoped to the modal's
+    // own scroll container instead of the window.
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyTitle(!entry.isIntersecting),
+      { root, rootMargin: `-${STICKY_BAR_HEIGHT}px 0px 0px 0px` },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
   }, [project?.id]);
 
   useEffect(() => {
@@ -146,142 +293,123 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         }
       }}
     >
+      <button
+        ref={closeButtonRef}
+        type="button"
+        className={styles.closeButton}
+        onClick={onClose}
+        aria-label="Close project details"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+
       <div
         className={styles.dialog}
         role="dialog"
         aria-modal="true"
         aria-labelledby="project-modal-title"
       >
+        {/* Echoes the real title once it scrolls up out of view — see the
+            IntersectionObserver above, same pattern as the homepage Nav. */}
         <div
-          className={styles.colorStrip}
-          aria-hidden="true"
-          style={project.plateColor ? ({ "--modal-plate-color": project.plateColor } as CSSProperties) : undefined}
-        />
-
-        <div
-          className={styles.plateHeader}
-          style={project.plateColor ? ({ "--modal-plate-color": project.plateColor } as CSSProperties) : undefined}
+          className={[styles.stickyBar, showStickyTitle ? styles.stickyBarVisible : ""].join(" ")}
+          style={{ height: STICKY_BAR_HEIGHT }}
         >
-          <button
-            ref={closeButtonRef}
-            type="button"
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="Close project details"
+          <p
+            className={[styles.stickyTitle, showStickyTitle ? styles.stickyTitleVisible : ""].join(" ")}
+            aria-hidden="true"
           >
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <p className={styles.kicker}>{project.kicker}</p>
-          <h2 id="project-modal-title" className={styles.title}>
             {project.title}
-          </h2>
-
-          <div className={styles.tabs} role="tablist" aria-label="Project details">
-            <button
-              type="button"
-              role="tab"
-              id="project-modal-tab-about"
-              aria-selected={activeTab === "about"}
-              aria-controls="project-modal-panel-about"
-              className={[styles.tab, activeTab === "about" ? styles.tabActive : ""]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={() => setActiveTab("about")}
-            >
-              About
-            </button>
-            <button
-              type="button"
-              role="tab"
-              id="project-modal-tab-gallery"
-              aria-selected={activeTab === "gallery"}
-              aria-controls="project-modal-panel-gallery"
-              className={[styles.tab, activeTab === "gallery" ? styles.tabActive : ""]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={() => setActiveTab("gallery")}
-            >
-              Gallery
-            </button>
-          </div>
+          </p>
         </div>
 
-        <div className={styles.scrollArea}>
+        <div ref={scrollAreaRef} className={styles.scrollArea}>
+          <div
+            className={styles.plateHeader}
+            style={project.plateColor ? ({ "--modal-plate-color": project.plateColor } as CSSProperties) : undefined}
+          >
+            <p className={styles.kicker}>{project.kicker}</p>
+            <h2 ref={titleRef} id="project-modal-title" className={styles.title}>
+              {project.title}
+            </h2>
+            <p className={styles.headerDescription}>{project.description}</p>
+          </div>
+
+          <div className={styles.heroMediaWrap}>
+            <HeroMedia src={project.imageSrc} alt={project.imageAlt} className={styles.heroMedia} />
+          </div>
+
           <div className={styles.body}>
-            {activeTab === "about" ? (
-              <div
-                id="project-modal-panel-about"
-                role="tabpanel"
-                aria-labelledby="project-modal-tab-about"
-                className={styles.aboutPanel}
-              >
-                {project.aboutMarkdown ? (
-                  <div className={styles.markdownBody}>
-                    <ReactMarkdown components={MARKDOWN_COMPONENTS}>
-                      {project.aboutMarkdown}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  <p className={styles.description}>{project.description}</p>
+            {parsedAbout && (
+              <div className={styles.markdownBody}>
+                {parsedAbout.intro && (
+                  <ReactMarkdown components={MARKDOWN_COMPONENTS}>{parsedAbout.intro}</ReactMarkdown>
                 )}
-              </div>
-            ) : (
-              <div
-                id="project-modal-panel-gallery"
-                role="tabpanel"
-                aria-labelledby="project-modal-tab-gallery"
-                className={styles.galleryPanel}
-              >
-                {project.gallery && project.gallery.length > 0 ? (
-                  <>
-                    <div
-                      className={styles.galleryHeroWrap}
-                      style={
-                        project.plateColor
-                          ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
-                          : undefined
+                <div className={styles.accordion}>
+                  {parsedAbout.sections.map((section, index) => (
+                    <AccordionItem
+                      key={index}
+                      title={section.title}
+                      body={section.body}
+                      isOpen={openSections.has(index)}
+                      onToggle={() =>
+                        setOpenSections((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(index)) {
+                            next.delete(index);
+                          } else {
+                            next.add(index);
+                          }
+                          return next;
+                        })
                       }
-                    >
-                      <GalleryMedia item={project.gallery[0]!} className={styles.galleryHeroMedia} />
-                    </div>
-                    {project.gallery.length > 1 && (
-                      <div className={styles.galleryGrid}>
-                        {project.gallery.slice(1).map((item, index) => (
-                          <div
-                            key={index}
-                            className={styles.galleryGridItemWrap}
-                            style={
-                              project.plateColor
-                                ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
-                                : undefined
-                            }
-                          >
-                            <GalleryMedia item={item} className={styles.galleryGridItem} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.galleryImageWrap}>
-                      <img
-                        className={styles.galleryImage}
-                        src={project.imageSrc}
-                        alt={project.imageAlt}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                    {Array.from({ length: GALLERY_PLACEHOLDER_COUNT - 1 }, (_, index) => (
-                      <div key={index} className={styles.galleryPlaceholder}>
-                        <span>Image {index + 2}</span>
-                      </div>
-                    ))}
-                  </>
-                )}
+                    />
+                  ))}
+                </div>
               </div>
             )}
+
+            <div className={styles.galleryPanel}>
+              {project.gallery && project.gallery.length > 0 ? (
+                <>
+                  <div
+                    className={styles.galleryHeroWrap}
+                    style={
+                      project.plateColor
+                        ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
+                        : undefined
+                    }
+                  >
+                    <GalleryMedia item={project.gallery[0]!} className={styles.galleryHeroMedia} />
+                  </div>
+                  {project.gallery.length > 1 && (
+                    <div className={styles.galleryGrid}>
+                      {project.gallery.slice(1).map((item, index) => (
+                        <div
+                          key={index}
+                          className={styles.galleryGridItemWrap}
+                          style={
+                            project.plateColor
+                              ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
+                              : undefined
+                          }
+                        >
+                          <GalleryMedia item={item} className={styles.galleryGridItem} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className={styles.galleryGrid}>
+                  {Array.from({ length: GALLERY_PLACEHOLDER_COUNT }, (_, index) => (
+                    <div key={index} className={styles.galleryPlaceholder}>
+                      <span>Image {index + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

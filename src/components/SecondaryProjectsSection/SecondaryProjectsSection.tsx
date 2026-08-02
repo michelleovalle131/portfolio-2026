@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SECONDARY_PROJECTS } from "../../data/projects";
 import styles from "./SecondaryProjectsSection.module.css";
 
 export function SecondaryProjectsSection() {
+  const location = useLocation();
   return (
     <section className={styles.section} aria-label="Secondary project highlights">
       <div className={styles.grid}>
@@ -10,6 +11,7 @@ export function SecondaryProjectsSection() {
           <Link
             key={project.id}
             to={`/projects/${project.id}`}
+            state={{ backgroundLocation: location }}
             className={styles.card}
           >
             <div className={styles.imageWrap}>

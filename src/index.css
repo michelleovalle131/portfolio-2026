@@ -33,6 +33,7 @@
 :root {
   --page-bg: var(--surface-cream);
   --content-wide: 2000px;      /* max layout width for centered sections        */
+  --content-narrow: 800px;     /* max width for centered readable text blocks   */
   --ink: #1d1d16;
   --ink-muted: rgba(29, 29, 22, 0.65);
   --nav-height: 64px;
@@ -40,7 +41,7 @@
   /* Accent — the one true accent color; use for links, active states, hover emphasis */
   --field-accent: #1B0AE8;
   /* Surfaces — one token per distinct hue in use; each maps to one editorial role */
-  --surface-cream: #F1EFE9;   /* page ground / neutral sections               */
+  --surface-cream: #f1f1f1;   /* page ground / neutral sections               */
   --surface-warm: #FFE2C0;    /* color plate — Life tier  (pale peach)         */
   --surface-blush: #FDD5E5;   /* color plate — Craft tier (pale rose)          */
   --surface-blue: #CCE8FF;/* color plate — Mind tier + Company Hub (ice blue) */

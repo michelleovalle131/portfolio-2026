@@ -155,18 +155,19 @@ Wherever AI is in-product, associate it with Rovo's brand clearly and consistent
 export const FEATURED_PROJECTS: Project[] = [
   {
     id: "recent-impact-loom",
-    imageSrc: "/imgs/loom-action.gif",
+    imageSrc: "/imgs/App notification-2.mp4",
     imageAlt: "Suggested Actions experience in Confluence with AI prompts and meeting follow-up guidance",
+    imgPosition: "top right",
     plateColor: "var(--plate-loom)",
     kicker: "Loom Meeting Recordings",
-    title: "Turn meetings into progress with AI-generated suggestions",
+    title: "Turn meetings into progress with instant AI suggestions",
     description:
-      "A one-click AI feature for Loom Meeting Recordings that detects action items and turns them into suggested next steps — helping users move straight from conversation to progress within Atlassian's Teamwork Collection.",
+      "Led the vision and launch of a one-click AI feature for Loom Meeting Recordings that detects action items and turns them into suggested next steps — helping users move straight from conversation to progress.",
     ctaHref: "https://www.atlassian.com/software/confluence",
   },
   {
     id: "recent-impact-company-hub",
-    imageSrc: "/imgs/hero-imgs/Company Hub App.png",
+    imageSrc: "/imgs/Vision.mp4",
     imageAlt: "Company Hub editor and publishing interface in Confluence",
     imgPosition: "center",
     plateColor: "var(--plate-company-hub)",
@@ -186,10 +187,10 @@ export const SECONDARY_PROJECTS: Project[] = [
     imageSrc: "/imgs/aha-to-mastery.png",
     imageAlt: "Confluence interface with suggested action prompts",
     plateColor: "var(--plate-activation)",
-    kicker: "Confluence · Activation Strategy",
-    title: "From Aha to mastery strategy",
+    kicker: "Personal Project",
+    title: "Cositas Bonitas — an AI-powered daily illustration practice",
     description:
-      "Built a clearer path from first value moment to repeat usage through rapid experiments and message testing.",
+      "Conceptualized, designed and shipped Cositas Bonitas — a web app that generates a daily illustration prompt, then learns your taste over time from what you draw and love.",
     ctaHref: "https://www.atlassian.com/software/confluence",
   },
   {
@@ -197,10 +198,10 @@ export const SECONDARY_PROJECTS: Project[] = [
     imageSrc: "/imgs/hero-imgs/Atlassian Rovo Campaign.png",
     imageAlt: "Product marketing composition highlighting Atlassian AI",
     plateColor: "var(--plate-rovo)",
-    kicker: "Rovo · Awareness Campaign",
-    title: "Increasing AI feature discoverability",
+    kicker: "Rovo in Confluence",
+    title: "Driving awareness of Atlassian's AI",
     description:
-      "Led a one-week sprint that improved awareness and engagement for Atlassian AI touchpoints in Confluence.",
+      "Led a one-week sprint that boosted awareness and engagement for Rovo to customers using Confluence.",
     aboutMarkdown: ROVO_AWARENESS_ABOUT_MARKDOWN,
     ctaHref: "https://www.atlassian.com/software/rovo",
   },
