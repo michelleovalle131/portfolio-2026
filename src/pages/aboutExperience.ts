@@ -16,15 +16,15 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     levelLine: "Sr Product Designer",
     dateRange: "January 2026–Present",
     description:
-      "Shaping how teams capture, review, and act on their meetings",
+      "Driving the vision for how AI-suggested actions can turn meeting discussions into progress",
   },
   {
     id: "confluence-activation",
-    headline: "Flywheel Activation on Confluence",
+    headline: "Flywheel on Confluence",
     levelLine: "Sr Product Designer",
     dateRange: "April 2025–December 2025",
     description:
-      "Led rapid ideation and prototyping to validate key hypotheses and improve activation/feature discovery across Confluence",
+      "Led rapid ideation and prototyping to validate key hypotheses and improve Activation and Feature Discovery efforts across Confluence",
   },
   {
     id: "company-hub",
@@ -40,7 +40,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     levelLine: "Product Designer",
     dateRange: "Nov 2022–Dec 2023",
     description:
-      "Led the launch of Confluence's Dark Mode in close collaboration with ADS, PM and Eng to deliver on a top customer request",
+      "Led the launch of Confluence's Dark Mode in close collaboration with ADS, PM and Eng to deliver on a top 10 customer request",
   },
   {
     id: "masters-shanghai",
@@ -48,7 +48,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     levelLine: "Shanghai, China",
     dateRange: "January 2019–August 2022",
     description:
-      "Completed while living abroad in Shanghai, China",
+      "Completed at Quinnipiac University while living abroad in Shanghai, China",
   },
   {
     id: "gmmb-agency",

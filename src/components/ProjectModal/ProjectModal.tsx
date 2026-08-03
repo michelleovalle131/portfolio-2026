@@ -311,10 +311,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       >
         {/* Echoes the real title once it scrolls up out of view — see the
             IntersectionObserver above, same pattern as the homepage Nav. */}
-        <div
-          className={[styles.stickyBar, showStickyTitle ? styles.stickyBarVisible : ""].join(" ")}
-          style={{ height: STICKY_BAR_HEIGHT }}
-        >
+        <div className={styles.stickyBar} style={{ height: STICKY_BAR_HEIGHT }}>
           <p
             className={[styles.stickyTitle, showStickyTitle ? styles.stickyTitleVisible : ""].join(" ")}
             aria-hidden="true"
@@ -372,29 +369,34 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             <div className={styles.galleryPanel}>
               {project.gallery && project.gallery.length > 0 ? (
                 <>
-                  <div
-                    className={styles.galleryHeroWrap}
-                    style={
-                      project.plateColor
-                        ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
-                        : undefined
-                    }
-                  >
-                    <GalleryMedia item={project.gallery[0]!} className={styles.galleryHeroMedia} />
+                  <div className={styles.galleryItemBlock}>
+                    <div
+                      className={styles.galleryHeroWrap}
+                      style={
+                        project.plateColor
+                          ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
+                          : undefined
+                      }
+                    >
+                      <GalleryMedia item={project.gallery[0]!} className={styles.galleryHeroMedia} />
+                    </div>
+                    <p className={styles.galleryCaption}>Caption goes here</p>
                   </div>
                   {project.gallery.length > 1 && (
                     <div className={styles.galleryGrid}>
                       {project.gallery.slice(1).map((item, index) => (
-                        <div
-                          key={index}
-                          className={styles.galleryGridItemWrap}
-                          style={
-                            project.plateColor
-                              ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
-                              : undefined
-                          }
-                        >
-                          <GalleryMedia item={item} className={styles.galleryGridItem} />
+                        <div key={index} className={styles.galleryItemBlock}>
+                          <div
+                            className={styles.galleryGridItemWrap}
+                            style={
+                              project.plateColor
+                                ? ({ "--modal-plate-color": project.plateColor } as CSSProperties)
+                                : undefined
+                            }
+                          >
+                            <GalleryMedia item={item} className={styles.galleryGridItem} />
+                          </div>
+                          <p className={styles.galleryCaption}>Caption goes here</p>
                         </div>
                       ))}
                     </div>

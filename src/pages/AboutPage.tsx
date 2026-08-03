@@ -13,7 +13,7 @@ export function AboutPage() {
             Michelle Ovalle
           </h1>
           <p className={styles.lede}>
-            Shaping products through thoughtful, intentional design.
+            Bringing thoughtful, intentional design to complex products.
           </p>
         </header>
 

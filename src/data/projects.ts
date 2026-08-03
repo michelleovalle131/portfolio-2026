@@ -15,8 +15,6 @@ export type Project = {
 };
 
 const COMPANY_HUB_GALLERY: GalleryItem[] = [
-  { type: "video", src: "/imgs/Vision.mp4", alt: "Company Hub vision walkthrough" },
-  { type: "video", src: "/imgs/Wanderly hub.mp4", alt: "Wanderly Hub demo" },
   {
     type: "image",
     src: "/imgs/bluecap-Phone-in-Hand-Mockup copy.jpg",
@@ -34,14 +32,7 @@ const COMPANY_HUB_GALLERY: GalleryItem[] = [
     alt: "Company Hub responsive layout demo",
   },
   { type: "video", src: "/imgs/cohub-spotlight-demo.mp4", alt: "Company Hub spotlight feature demo" },
-  { type: "image", src: "/imgs/Headline-2 copy.png", alt: "Company Hub headline module" },
   { type: "image", src: "/imgs/Preview copy.png", alt: "Company Hub preview screen" },
-  {
-    type: "image",
-    src: "/imgs/Screenshot 2025-11-23 at 2.28.54 PM copy.png",
-    alt: "Company Hub product screenshot",
-  },
-  { type: "video", src: "/imgs/Spaces (1).mp4", alt: "Company Hub spaces feature demo" },
   { type: "image", src: "/imgs/Spotlghts-2.png", alt: "Company Hub spotlights module" },
   { type: "image", src: "/imgs/CoHub (1) copy.png", alt: "Company Hub interface" },
 ];
@@ -50,62 +41,52 @@ const COMPANY_HUB_ABOUT_MARKDOWN = `Led the design and launch of a customizable 
 
 ### My role
 
-- Defined and championed the FY25, FY26, and Unified Hubs visions, aligning leadership around a clear, future-looking direction and establishing Company Hub as the design standard across a multi-product platform.
-- Introduced a new editorialized visual system grounded in scalability and customer research—that elevated the product's visual quality and influenced design direction across three teams.
-- Drove cross-functional collaboration across design, product, and engineering to ship over 15 high-quality experiences to customers.
-- Accelerated delivery and team effectiveness by exceeding roadmap commitments, creating buffer for FY26 work, and strengthening team culture through mentorship and craft rituals.
+I owned end-to-end design across strategy, vision, and execution — partnering closely with product and engineering. I led the FY25, FY26, and Unified Hubs visioning process, ran MVP research and validation, and defined the editorialized visual system that became the design standard across the platform. I also mentored designers on the team and helped shape our craft practices.
 
 ---
 
 ### Problem we set out to solve
 
-## Companies lack a single trusted place for top down, verified communication
+**Companies lack a single trusted place for top-down, verified communication**
 
-Employees spend significant time searching across multiple products and surfaces to find critical information—leading to wasted time, frustration, and low confidence in whether they found the 'right' most up-to-date answers. As Confluence is positioned as a centralized source of company knowledge, customers increasingly looked to us to solve this problem and bring clarity to their workflows.
+Employees spend significant time searching across multiple products and surfaces for critical information — wasting time, causing frustration, and leaving them unsure if they've found the most current answer. As Confluence is positioned as a centralized source of company knowledge, customers increasingly looked to us to bring clarity to that experience.
 
 ---
 
-### MVP
+### Evaluating an MVP with customers
 
-## Ship an MVP experience for a select group of customers to test and validate concept
-
-To validate interest and understand customer needs, we built an MVP and tested it through interviews, landscape research, and usability studies. The MVP included a new entry point within Confluence navigation, and some basic content formatting elements. The insights we gained during this process helped us shape a solution that better served both customers and the market.
+To validate interest and understand customer needs, we built and tested an MVP that included a new entry point within Confluence navigation and a set of basic content-formatting elements. What we learned helped shape a solution that better served customers.
 
 ### MVP insights
 
-- Customers liked the elements, but wanted more ways to visually customize the look and feel of their hub. This was the top request.
-- Customers also wanted more powerful tools to tailor hub content to specific audiences and to keep it fresh without so much manual effort.
+- Customers liked the elements but wanted more ways to visually customize their hub's look and feel — the top request we heard.
+- They also wanted more powerful tools to tailor hub content to specific audiences and keep it fresh without heavy manual effort.
 
 ---
 
-### Crafting a bold vision for Company Hub
+### From MVP to Vision
 
-## Transforming Company Hub from a single page feature in Confluence into a more beautiful and powerful system
+**Transforming Company Hub from a single-page feature in Confluence into a more beautiful and powerful system**
 
 Using insights from the MVP, I led a "blue sky" visioning process for Company Hub, designing a compelling end-to-end experience for our three primary user groups. The vision addressed key user feedback while imagining an ideal future state for the product.
 
 ### Vision outcomes
 
-- Editorialized aesthetic for a distinct and modern take on intranets
-- Leadership green-lit the next phase with enthusiastic support
-- Enabled a shift from incremental fixes to transformative improvements
+- Delivered an editorialized aesthetic for a distinct, modern take on intranets
+- Earned enthusiastic leadership buy-in to green-light the next phase
+- Shifted the roadmap from incremental fixes to transformative improvements
 
 [[gallery:0-5]]
 
 ---
 
-### From vision to impact
+### From Vision to Impact
 
-## Shipping a more robust, enhanced experience
-
-These updates reflect how customer insights and strong design direction came together in practical, shippable experiences.
-
-### Impact of my work on Company Hub
-
-- **Building alignment** — FY25 and FY26 vision work secured green-lit leadership approvals and created palpable excitement for what we wanted to build.
-- **Paving the future** — My work on building a high-quality visual experience, site creation UX, clear IA, and AI-driven concepts paved the way for Company Hub to become the foundation for all hub-related experiences across the company's products.
-- **Increasing adoption** — 54% wall-to-wall adoption among Company Hub customers (vs. 34% for non-adopters).
-- **Proving value** — Improvements led to monthly uplift in adoption over 6 months.
+- **Building alignment** — FY25 and FY26 vision work won leadership approval and built genuine excitement for what we were building, establishing Company Hub as the design standard across a multi-product platform.
+- **Paving the future** — Work on visual quality, site-creation UX, clear IA, and AI-driven concepts elevated design direction across three teams and laid the foundation for Company Hub to become the model for all hub experiences across our products.
+- **Accelerating delivery** — Exceeded roadmap commitments, creating buffer for FY26 work.
+- **Driving adoption** — 54% wall-to-wall adoption among Company Hub customers, vs. 34% for non-adopters.
+- **Proving value** — Adoption climbed steadily every month for six months straight.
 
 [[gallery:6-12]]
 `;
@@ -155,7 +136,7 @@ Wherever AI is in-product, associate it with Rovo's brand clearly and consistent
 export const FEATURED_PROJECTS: Project[] = [
   {
     id: "recent-impact-loom",
-    imageSrc: "/imgs/App notification-2.mp4",
+    imageSrc: "/imgs/M1CA-Port-web.mp4",
     imageAlt: "Suggested Actions experience in Confluence with AI prompts and meeting follow-up guidance",
     imgPosition: "top right",
     plateColor: "var(--plate-loom)",
