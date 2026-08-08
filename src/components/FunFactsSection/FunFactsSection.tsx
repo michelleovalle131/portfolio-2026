@@ -9,7 +9,7 @@ const TIERS = [
     panelSurface: "var(--surface-warm)",
     imageSrc: "/imgs/fun-facts/My lovely family.JPEG",
     panelImageSrc: "/imgs/fun-facts/Sister cities copy.jpeg",
-    body: "From El Paso to Sydney to Shanghai, I've called three countries and six cities home. Each place has shaped how I see, connect, and create. Today, home is Chicago — my favorite city yet — with my husband and our sweet dog, Abu.",
+    body: "From El Paso to Sydney to Shanghai, I've called three countries and six cities home. Each place has shaped how I see, connect, and create. Today, my husband, our sweet dog Abu, and I call Chicago home — my favorite city yet.",
   },
   {
     id: "craft",

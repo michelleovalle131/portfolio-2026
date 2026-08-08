@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigationType } from "react-router-dom";
 import type { Location } from "react-router-dom";
 import { Nav } from "./components/Nav/Nav";
 import { AboutPage } from "./pages/AboutPage";
@@ -10,8 +10,11 @@ import { useEffect } from "react";
 
 function ScrollToTop({ skip }: { skip: boolean }) {
   const { pathname, hash } = useLocation();
+  // POP covers the browser back button and the modal's navigate(-1) close —
+  // both should restore the scroll position the user had, not jump to top.
+  const navigationType = useNavigationType();
   useEffect(() => {
-    if (skip) return;
+    if (skip || navigationType === "POP") return;
     if (hash) {
       const id = hash.replace("#", "");
       const el = document.getElementById(id);
@@ -21,7 +24,7 @@ function ScrollToTop({ skip }: { skip: boolean }) {
       }
     }
     window.scrollTo(0, 0);
-  }, [pathname, hash, skip]);
+  }, [pathname, hash, skip, navigationType]);
   return null;
 }
 

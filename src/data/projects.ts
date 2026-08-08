@@ -11,37 +11,64 @@ export type Project = {
   description: string;
   aboutMarkdown?: string;
   gallery?: GalleryItem[];
+  /** Optional small heading shown above the gallery, before the first image. */
+  galleryIntro?: string;
   ctaHref?: string;
+  /** Overrides the default "View project" CTA label. */
+  ctaLabel?: string;
+  /** When true, the card renders as non-interactive — no link, no modal. */
+  disabled?: boolean;
 };
 
 const COMPANY_HUB_GALLERY: GalleryItem[] = [
   {
     type: "image",
-    src: "/imgs/bluecap-Phone-in-Hand-Mockup copy.jpg",
-    alt: "Company Hub shown on a phone mockup",
+    src: "/imgs/CoHub (1) copy.png",
+    alt: "Company Hub interface",
+    caption: "Company Hub was a full system — spanning custom Information Architecture, an editing suite, and admin insights.",
+  },
+  {
+    type: "video",
+    src: "/imgs/Cards-[copy].mp4",
+    alt: "Company Hub cards interaction",
+    caption: "Elements are incredibly customizable to fit different content and stylistic needs.",
+  },
+  {
+    type: "video",
+    src: "/imgs/cohub-spotlight-demo.mp4",
+    alt: "Company Hub spotlight feature demo",
+    caption: "Every element's configuration panel is designed so customers can style with confidence, no design background required.",
   },
   {
     type: "image",
-    src: "/imgs/bluecap-AdobeStock_908347774 copy.jpg",
-    alt: "Company Hub product photography mockup",
+    src: "/imgs/Spotlghts-2.png",
+    alt: "Company Hub spotlights module",
+    caption: "Built-in dynamic updating means Company Hub content stays current without manual upkeep.",
   },
-  { type: "video", src: "/imgs/Cards-[copy].mp4", alt: "Company Hub cards interaction" },
+  {
+    type: "image",
+    src: "/imgs/bluecap-Phone-in-Hand-Mockup copy.jpg",
+    alt: "Company Hub shown on a phone mockup",
+    caption: "Company Hub is fully responsive, giving employees the same experience whether they're on desktop or on the go.",
+  },
   {
     type: "video",
     src: "/imgs/cohub-responsiveness-medium.mp4",
     alt: "Company Hub responsive layout demo",
   },
-  { type: "video", src: "/imgs/cohub-spotlight-demo.mp4", alt: "Company Hub spotlight feature demo" },
-  { type: "image", src: "/imgs/Preview copy.png", alt: "Company Hub preview screen" },
-  { type: "image", src: "/imgs/Spotlghts-2.png", alt: "Company Hub spotlights module" },
-  { type: "image", src: "/imgs/CoHub (1) copy.png", alt: "Company Hub interface" },
+  {
+    type: "image",
+    src: "/imgs/bluecap-AdobeStock_908347774 copy.jpg",
+    alt: "Company Hub product photography mockup",
+    caption: "As part of the FY26 vision, we explored bringing Company Hub into physical workspaces. Conceptual image only.",
+  },
 ];
 
 const COMPANY_HUB_ABOUT_MARKDOWN = `Led the design and launch of a customizable company-wide hub—where all employees can go for up-to-date announcements, news, verified resources, and more.
 
 ### My role
 
-I owned end-to-end design across strategy, vision, and execution — partnering closely with product and engineering. I led the FY25, FY26, and Unified Hubs visioning process, ran MVP research and validation, and defined the editorialized visual system that became the design standard across the platform. I also mentored designers on the team and helped shape our craft practices.
+I owned the end-to-end design for Company Hub, partnering closely with product and engineering from strategy through execution. That included leading the FY25, FY26, and Unified Hubs visioning process, running MVP research, and defining the editorialized visual system that became the design standard across the platform. I also mentored designers on the team and helped shape our craft practices.
 
 ---
 
@@ -49,13 +76,19 @@ I owned end-to-end design across strategy, vision, and execution — partnering 
 
 **Companies lack a single trusted place for top-down, verified communication**
 
-Employees spend significant time searching across multiple products and surfaces for critical information — wasting time, causing frustration, and leaving them unsure if they've found the most current answer. As Confluence is positioned as a centralized source of company knowledge, customers increasingly looked to us to bring clarity to that experience.
+Employees spend significant time searching across multiple products and surfaces for critical information — wasting time, causing frustration, and leaving them unsure if they've found the most current answer.
+
+With Confluence acting as a centralized source of company knowledge, customers were already looking to us to provide that experience.
+
+![Company Hub problem framing](</imgs/Frame 2087326028 (4) copy.png>)
 
 ---
 
 ### Evaluating an MVP with customers
 
 To validate interest and understand customer needs, we built and tested an MVP that included a new entry point within Confluence navigation and a set of basic content-formatting elements. What we learned helped shape a solution that better served customers.
+
+![Company Hub MVP](/imgs/hub-mvp.png)
 
 ### MVP insights
 
@@ -80,13 +113,13 @@ Using insights from the MVP, I led a "blue sky" visioning process for Company Hu
 
 ---
 
-### From Vision to Impact
+### Impact
 
-- **Building alignment** — FY25 and FY26 vision work won leadership approval and built genuine excitement for what we were building, establishing Company Hub as the design standard across a multi-product platform.
+- **Building alignment** — FY25 and FY26 vision work won leadership approval and built genuine excitement for what we were building.
 - **Paving the future** — Work on visual quality, site-creation UX, clear IA, and AI-driven concepts elevated design direction across three teams and laid the foundation for Company Hub to become the model for all hub experiences across our products.
 - **Accelerating delivery** — Exceeded roadmap commitments, creating buffer for FY26 work.
-- **Driving adoption** — 54% wall-to-wall adoption among Company Hub customers, vs. 34% for non-adopters.
-- **Proving value** — Adoption climbed steadily every month for six months straight.
+- **Driving adoption** — Higher wall-to-wall adoption among Company Hub customers compared to non-adopters.
+- **Proving value** — Adoption climbed steadily every month for six months straight after GA.
 
 [[gallery:6-12]]
 `;
@@ -136,15 +169,17 @@ Wherever AI is in-product, associate it with Rovo's brand clearly and consistent
 export const FEATURED_PROJECTS: Project[] = [
   {
     id: "recent-impact-loom",
-    imageSrc: "/imgs/M1CA-Port-web.mp4",
+    imageSrc: "/imgs/M1CA-hero.jpg",
     imageAlt: "Suggested Actions experience in Confluence with AI prompts and meeting follow-up guidance",
     imgPosition: "top right",
     plateColor: "var(--plate-loom)",
-    kicker: "Loom Meeting Recordings",
+    kicker: "TEAM26 Announcement",
     title: "Turn meetings into progress with instant AI suggestions",
     description:
       "Led the vision and launch of a one-click AI feature for Loom Meeting Recordings that detects action items and turns them into suggested next steps — helping users move straight from conversation to progress.",
     ctaHref: "https://www.atlassian.com/software/confluence",
+    ctaLabel: "Coming soon",
+    disabled: true,
   },
   {
     id: "recent-impact-company-hub",
@@ -158,6 +193,7 @@ export const FEATURED_PROJECTS: Project[] = [
       "Led the design and launch of a customizable company-wide hub—where all employees can go for up-to-date announcements, news, verified resources, and more.",
     aboutMarkdown: COMPANY_HUB_ABOUT_MARKDOWN,
     gallery: COMPANY_HUB_GALLERY,
+    galleryIntro: "From concept to customers: what shipped",
     ctaHref: "https://www.atlassian.com/software/confluence",
   },
 ];

@@ -2,6 +2,8 @@ export type GalleryItem = {
   type: "image" | "video";
   src: string;
   alt: string;
+  /** Optional caption shown below the media in the project modal. */
+  caption?: string;
 };
 
 export type ModalProject = {
@@ -21,4 +23,6 @@ export type ModalProject = {
    * single `imageSrc` + placeholder tiles when omitted.
    */
   gallery?: GalleryItem[];
+  /** Optional small heading shown above the gallery, before the first image. */
+  galleryIntro?: string;
 };

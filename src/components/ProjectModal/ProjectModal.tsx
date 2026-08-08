@@ -16,6 +16,7 @@ const MARKDOWN_COMPONENTS: Components = {
   li: ({ children }) => <li className={styles.mdListItem}>{children}</li>,
   hr: () => <hr className={styles.mdDivider} />,
   em: ({ children }) => <em className={styles.mdEmphasis}>{children}</em>,
+  img: ({ src, alt }) => <img className={styles.mdImage} src={src} alt={alt ?? ""} loading="lazy" decoding="async" />,
 };
 
 type ProjectModalProps = {
@@ -219,7 +220,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [openSections, setOpenSections] = useState<Set<number>>(new Set());
+  const [openSectionIndex, setOpenSectionIndex] = useState<number | null>(null);
   const [showStickyTitle, setShowStickyTitle] = useState(false);
 
   const parsedAbout = useMemo(
@@ -233,7 +234,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
   );
 
   useEffect(() => {
-    setOpenSections(new Set());
+    setOpenSectionIndex(null);
     setShowStickyTitle(false);
   }, [project?.id]);
 
@@ -309,18 +310,21 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         aria-modal="true"
         aria-labelledby="project-modal-title"
       >
-        {/* Echoes the real title once it scrolls up out of view — see the
-            IntersectionObserver above, same pattern as the homepage Nav. */}
-        <div className={styles.stickyBar} style={{ height: STICKY_BAR_HEIGHT }}>
-          <p
-            className={[styles.stickyTitle, showStickyTitle ? styles.stickyTitleVisible : ""].join(" ")}
-            aria-hidden="true"
-          >
-            {project.title}
-          </p>
-        </div>
-
         <div ref={scrollAreaRef} className={styles.scrollArea}>
+          {/* Sticky within the scroll container (like the homepage Nav is
+              fixed over the page) so content actually passes beneath it —
+              that's what makes the frosted-glass blur visible. Echoes the
+              real title once it scrolls up out of view — see the
+              IntersectionObserver above. */}
+          <div className={styles.stickyBar} style={{ height: STICKY_BAR_HEIGHT }}>
+            <p
+              className={[styles.stickyTitle, showStickyTitle ? styles.stickyTitleVisible : ""].join(" ")}
+              aria-hidden="true"
+            >
+              {project.title}
+            </p>
+          </div>
+
           <div
             className={styles.plateHeader}
             style={project.plateColor ? ({ "--modal-plate-color": project.plateColor } as CSSProperties) : undefined}
@@ -348,17 +352,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       key={index}
                       title={section.title}
                       body={section.body}
-                      isOpen={openSections.has(index)}
+                      isOpen={openSectionIndex === index}
                       onToggle={() =>
-                        setOpenSections((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(index)) {
-                            next.delete(index);
-                          } else {
-                            next.add(index);
-                          }
-                          return next;
-                        })
+                        setOpenSectionIndex((prev) => (prev === index ? null : index))
                       }
                     />
                   ))}
@@ -369,6 +365,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             <div className={styles.galleryPanel}>
               {project.gallery && project.gallery.length > 0 ? (
                 <>
+                  {project.galleryIntro && (
+                    <p className={styles.galleryIntro}>{project.galleryIntro}</p>
+                  )}
                   <div className={styles.galleryItemBlock}>
                     <div
                       className={styles.galleryHeroWrap}
@@ -380,7 +379,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                     >
                       <GalleryMedia item={project.gallery[0]!} className={styles.galleryHeroMedia} />
                     </div>
-                    <p className={styles.galleryCaption}>Caption goes here</p>
+                    {project.gallery[0]!.caption && (
+                      <p className={styles.galleryCaption}>{project.gallery[0]!.caption}</p>
+                    )}
                   </div>
                   {project.gallery.length > 1 && (
                     <div className={styles.galleryGrid}>
@@ -396,7 +397,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                           >
                             <GalleryMedia item={item} className={styles.galleryGridItem} />
                           </div>
-                          <p className={styles.galleryCaption}>Caption goes here</p>
+                          {item.caption && <p className={styles.galleryCaption}>{item.caption}</p>}
                         </div>
                       ))}
                     </div>

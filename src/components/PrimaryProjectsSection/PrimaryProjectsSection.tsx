@@ -9,18 +9,9 @@ export function PrimaryProjectsSection() {
   const location = useLocation();
   return (
     <>
-      {FEATURED_PROJECTS.map((project) => (
-        <section
-          key={project.id}
-          id={project.id}
-          className={styles.section}
-          aria-label="Project highlight"
-        >
-          <Link
-            to={`/projects/${project.id}`}
-            state={{ backgroundLocation: location }}
-            className={styles.card}
-          >
+      {FEATURED_PROJECTS.map((project) => {
+        const cardContent = (
+          <>
             {/* Full-bleed atmospheric background */}
             {VIDEO_SRC_PATTERN.test(project.imageSrc) ? (
               <video
@@ -59,12 +50,38 @@ export function PrimaryProjectsSection() {
               <h2 className={styles.cardTitle}>{project.title}</h2>
               <p className={styles.cardDescription}>{project.description}</p>
               <div className={styles.ctaRow}>
-                <span>View project</span>
+                <span>{project.ctaLabel ?? "View project"}</span>
               </div>
             </div>
-          </Link>
-        </section>
-      ))}
+          </>
+        );
+
+        return (
+          <section
+            key={project.id}
+            id={project.id}
+            className={styles.section}
+            aria-label="Project highlight"
+          >
+            {project.disabled ? (
+              <div
+                className={[styles.card, styles.cardDisabled].join(" ")}
+                aria-disabled="true"
+              >
+                {cardContent}
+              </div>
+            ) : (
+              <Link
+                to={`/projects/${project.id}`}
+                state={{ backgroundLocation: location }}
+                className={styles.card}
+              >
+                {cardContent}
+              </Link>
+            )}
+          </section>
+        );
+      })}
     </>
   );
 }

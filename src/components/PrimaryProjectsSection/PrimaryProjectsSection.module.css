@@ -55,6 +55,29 @@
   color: inherit;
 }
 
+.cardDisabled {
+  cursor: default;
+}
+
+.cardDisabled .cardBgImage,
+.cardDisabled .ctaRow,
+.cardDisabled .cardPlate {
+  transition: none;
+}
+
+.cardDisabled:hover .cardBgImage {
+  transform: none;
+}
+
+.cardDisabled:hover .ctaRow {
+  color: var(--ink);
+  border-top-color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+}
+
+.cardDisabled:hover .cardPlate {
+  background-color: color-mix(in srgb, var(--project-card-bg, var(--plate-loom)) 83%, transparent);
+}
+
 .card:focus-visible {
   outline: 2px solid var(--field-accent, #1B0AE8);
   outline-offset: -4px;
