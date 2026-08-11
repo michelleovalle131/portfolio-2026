@@ -17,6 +17,11 @@ const MARKDOWN_COMPONENTS: Components = {
   hr: () => <hr className={styles.mdDivider} />,
   em: ({ children }) => <em className={styles.mdEmphasis}>{children}</em>,
   img: ({ src, alt }) => <img className={styles.mdImage} src={src} alt={alt ?? ""} loading="lazy" decoding="async" />,
+  a: ({ href, children }) => (
+    <a className={styles.mdLink} href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ),
 };
 
 type ProjectModalProps = {

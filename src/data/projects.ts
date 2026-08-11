@@ -88,12 +88,12 @@ With Confluence acting as a centralized source of company knowledge, customers w
 
 To validate interest and understand customer needs, we built and tested an MVP that included a new entry point within Confluence navigation and a set of basic content-formatting elements. What we learned helped shape a solution that better served customers.
 
-![Company Hub MVP](/imgs/hub-mvp.png)
-
 ### MVP insights
 
 - Customers liked the elements but wanted more ways to visually customize their hub's look and feel — the top request we heard.
 - They also wanted more powerful tools to tailor hub content to specific audiences and keep it fresh without heavy manual effort.
+
+![Company Hub MVP](/imgs/hub-mvp.png)
 
 ---
 
@@ -166,6 +166,17 @@ Wherever AI is in-product, associate it with Rovo's brand clearly and consistent
 - 🎯 Established clear brand association between AI features and Rovo.
 `;
 
+const COSITAS_BONITAS_ABOUT_MARKDOWN = `Cositas Bonitas is a daily illustration practice app. Each day brings a drawing prompt — a subject and a short poem — pulled from four curated categories: Botanicals, Wildlife, Food & Drink, and Still Life. It's designed to be low-effort: five minutes is plenty to keep the practice alive.
+
+I built it because I wanted a reason to draw every day.
+
+The prompts are designed to sit in a specific sweet spot — directive enough to give you somewhere to start, open enough to leave room for your own eye. The goal isn't to copy a photo. It's to take the prompt as a nudge: look around, find your own inspiration, guided by the idea in front of you.
+
+After you draw, you upload your work and rate the prompt. That feedback shapes what the app offers next, so prompts grow more attuned to what you actually enjoy drawing — not just a random cycle through categories. Over time, you build something else too: a visual journal of everything you've made along the way.
+
+[Check out Cositas Bonitas](https://cositas-bonitas.vercel.app)
+`;
+
 export const FEATURED_PROJECTS: Project[] = [
   {
     id: "recent-impact-loom",
@@ -208,7 +219,8 @@ export const SECONDARY_PROJECTS: Project[] = [
     title: "Cositas Bonitas — an AI-powered daily illustration practice",
     description:
       "Conceptualized, designed and shipped Cositas Bonitas — a web app that generates a daily illustration prompt, then learns your taste over time from what you draw and love.",
-    ctaHref: "https://www.atlassian.com/software/confluence",
+    aboutMarkdown: COSITAS_BONITAS_ABOUT_MARKDOWN,
+    ctaHref: "https://cositas-bonitas.vercel.app",
   },
   {
     id: "rovo-awareness",

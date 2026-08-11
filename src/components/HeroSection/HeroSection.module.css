@@ -74,6 +74,22 @@
   width: var(--stamp-width);
 }
 
+/* The vw-based clamp above floors out at its minimum on narrow phones
+   (16.76vw / 20.4vw round to ~0 well before the px floor kicks in), so
+   stamps were rendering at a fixed ~190–241px regardless of viewport —
+   over half the screen width on a typical phone. Scale them down here so
+   the left-edge clamp in .stampParallax doesn't have to shove right-side
+   stamps into the same territory as left-side ones. */
+@media (max-width: 768px) {
+  .sizeMedium {
+    --stamp-width: clamp(120px, 34vw, 170px);
+  }
+
+  .sizeLarge {
+    --stamp-width: clamp(150px, 42vw, 200px);
+  }
+}
+
 .heroPhoto {
   display: block;
   width: 100%;

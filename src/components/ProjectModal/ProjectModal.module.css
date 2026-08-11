@@ -304,6 +304,12 @@
   font-style: italic;
 }
 
+.mdLink {
+  color: var(--field-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
 .accordion {
   display: flex;
   flex-direction: column;
@@ -311,10 +317,6 @@
 }
 
 .accordionItem {
-  border-top: 1px solid var(--ink-muted, rgba(29, 29, 22, 0.65));
-}
-
-.accordionItem:last-child {
   border-bottom: 1px solid var(--ink-muted, rgba(29, 29, 22, 0.65));
 }
 

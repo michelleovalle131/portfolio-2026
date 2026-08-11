@@ -50,9 +50,13 @@ const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
 
 const FOREGROUND_IMAGE_COUNT = 3;
 
-/** On mobile, only these corner/anchor stamps render — cuts clutter from 13 down to 5
- *  and skips the mid-zone stamps that otherwise overlap the headline on narrow screens. */
-const MOBILE_VISIBLE_INDICES = new Set([1, 4, 9, 10, 12]);
+/** On mobile, only these stamps render — cuts clutter from 13 down to 7 and
+ *  skips the mid-zone stamps that otherwise overlap the headline. A tight
+ *  top row (1,2,3,4 — all top ≈2-8%) and a tight bottom row (8,10,12 — all
+ *  top ≈58-68%) leave a ~50% vertical gap between the two rows, so the two
+ *  groups never collide even though stamps render larger on mobile now (see
+ *  renderStamp's isMobile size override below). */
+const MOBILE_VISIBLE_INDICES = new Set([1, 2, 3, 4, 8, 10, 12]);
 const MOBILE_QUERY = "(max-width: 768px)";
 
 /**
@@ -70,9 +74,9 @@ const STAMP_SCROLL_SPEEDS = [
 
 /** Lower values = silkier but slower catch-up. */
 const SCROLL_LERP = 0.09;
-/** Mobile touch scroll already has native momentum smoothing, so the JS-side
- *  lerp just adds extra lag on top of it — track scroll position directly there. */
-const SCROLL_LERP_MOBILE = 0.5;
+/** Close to the desktop value so stamps visibly trail the scroll on mobile
+ *  too, instead of snapping to position almost instantly. */
+const SCROLL_LERP_MOBILE = 0.13;
 const SCROLL_SNAP_EPSILON = 0.08;
 
 /** Shuffled per load; `uniqueStampBackgrounds` assigns distinct photo URLs (no repeats on hero). */
@@ -165,6 +169,9 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     const bg = stampBackgrounds[i] ?? FALLBACK_BACKGROUNDS[0]!;
     const src = extractImgSrc(bg);
     const aspectRatio = imageAspectRatios[i] ?? 3 / 4;
+    /** On mobile all visible stamps render at the larger size — the "medium"
+     *  size read as noticeably too small once the set was pared down to 7. */
+    const size: HeroImageSize = isMobile ? "large" : slot.size;
     const stampStyle = {
       ["--stamp-left" as string]: slot.left,
       ["--stamp-top" as string]: slot.top,
@@ -177,7 +184,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
         key={`hero-stamp-${layer}-${i}`}
         className={[
           styles.stampParallax,
-          styles[`size${slot.size[0]!.toUpperCase()}${slot.size.slice(1)}`],
+          styles[`size${size[0]!.toUpperCase()}${size.slice(1)}`],
         ].join(" ")}
         style={stampStyle}
       >
