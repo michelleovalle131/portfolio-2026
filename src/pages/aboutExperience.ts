@@ -14,7 +14,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     id: "loom-recordings",
     headline: "Meeting Recordings on Loom",
     levelLine: "Sr Product Designer",
-    dateRange: "January 2026–Present",
+    dateRange: "Jan 2026–Present",
     description:
       "Driving the vision for how AI-suggested actions can turn meeting discussions into progress",
   },
@@ -22,7 +22,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     id: "confluence-activation",
     headline: "Flywheel on Confluence",
     levelLine: "Sr Product Designer",
-    dateRange: "April 2025–December 2025",
+    dateRange: "Apr 2025–Dec 2025",
     description:
       "Led rapid ideation and prototyping to validate key hypotheses and improve Activation and Feature Discovery efforts across Confluence",
   },
@@ -30,7 +30,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     id: "company-hub",
     headline: "Company Hub on Confluence",
     levelLine: "Sr Product Designer",
-    dateRange: "January 2024–Oct 2025",
+    dateRange: "Jan 2024–Oct 2025",
     description:
       "Delivered a 0→1 MVP to GA and set FY25, FY26, and Unified Hubs product visions—establishing Company Hub as the design standard across a multi-product platform",
   },
@@ -46,7 +46,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     id: "masters-shanghai",
     headline: "MS Interactive Media & Communication",
     levelLine: "Shanghai, China",
-    dateRange: "January 2019–August 2022",
+    dateRange: "Jan 2019–Aug 2022",
     description:
       "Completed at Quinnipiac University while living abroad in Shanghai, China",
   },

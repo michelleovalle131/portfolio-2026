@@ -48,7 +48,7 @@ const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
   { size: "large", left: "86%", top: "58%" },
 ] as const;
 
-const FOREGROUND_IMAGE_COUNT = 3;
+const FOREGROUND_IMAGE_COUNT = 5;
 
 /** On mobile, only these stamps render — cuts clutter from 13 down to 7 and
  *  skips the mid-zone stamps that otherwise overlap the headline. A tight
@@ -88,13 +88,43 @@ function initialBackgrounds(): string[] {
   ]);
 }
 
-function randomForegroundIndices(total: number, count: number): Set<number> {
-  const indices = Array.from({ length: total }, (_, i) => i);
-  for (let i = indices.length - 1; i > 0; i--) {
+/** Minimum left/top separation (in layout percentage points) two foreground
+ *  stamps must keep from each other — picking two neighboring slots as
+ *  foreground stacks them both above the text with nothing to break up the
+ *  overlap, which reads as one big collision instead of layered depth. */
+const FOREGROUND_MIN_GAP = 22;
+
+function randomForegroundIndices(
+  layout: readonly HeroImagePlacement[],
+  count: number,
+): Set<number> {
+  const order = layout.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [indices[i], indices[j]] = [indices[j]!, indices[i]!];
+    [order[i], order[j]] = [order[j]!, order[i]!];
   }
-  return new Set(indices.slice(0, Math.min(count, total)));
+
+  const chosen: number[] = [];
+  const isFarEnough = (i: number) =>
+    chosen.every((c) => {
+      const a = layout[i]!;
+      const b = layout[c]!;
+      const leftGap = Math.abs(parseFloat(a.left) - parseFloat(b.left));
+      const topGap = Math.abs(parseFloat(a.top) - parseFloat(b.top));
+      return leftGap >= FOREGROUND_MIN_GAP || topGap >= FOREGROUND_MIN_GAP;
+    });
+
+  for (const i of order) {
+    if (chosen.length >= count) break;
+    if (isFarEnough(i)) chosen.push(i);
+  }
+  // Fill any remainder (not enough well-spaced slots) with whatever's left.
+  for (const i of order) {
+    if (chosen.length >= count) break;
+    if (!chosen.includes(i)) chosen.push(i);
+  }
+
+  return new Set(chosen);
 }
 
 type HeroProps = {
@@ -108,7 +138,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     initialBackgrounds(),
   );
   const [foregroundIndices, setForegroundIndices] = useState(() =>
-    randomForegroundIndices(HERO_IMAGE_LAYOUT.length, FOREGROUND_IMAGE_COUNT),
+    randomForegroundIndices(HERO_IMAGE_LAYOUT, FOREGROUND_IMAGE_COUNT),
   );
   const [imageAspectRatios, setImageAspectRatios] = useState<number[]>([]);
   const [isMobile, setIsMobile] = useState(
@@ -127,7 +157,7 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     if (remixEpoch === 0) return;
     setStampBackgrounds(initialBackgrounds());
     setForegroundIndices(
-      randomForegroundIndices(HERO_IMAGE_LAYOUT.length, FOREGROUND_IMAGE_COUNT),
+      randomForegroundIndices(HERO_IMAGE_LAYOUT, FOREGROUND_IMAGE_COUNT),
     );
   }, [remixEpoch]);
 

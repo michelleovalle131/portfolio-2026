@@ -42,7 +42,7 @@
   /* Accent — the one true accent color; use for links, active states, hover emphasis */
   --field-accent: #1B0AE8;
   /* Surfaces — one token per distinct hue in use; each maps to one editorial role */
-  --surface-cream: #f1f1f1;   /* page ground / neutral sections               */
+  --surface-cream: #f9f7f2;   /* page ground / neutral sections               */
   --surface-warm: #FFE2C0;    /* color plate — Life tier  (pale peach)         */
   --surface-blush: #FDD5E5;   /* color plate — Craft tier (pale rose)          */
   --surface-blue: #CCE8FF;/* color plate — Mind tier + Company Hub (ice blue) */

@@ -8,6 +8,13 @@ export type RecognitionEntry = {
 
 export const ABOUT_RECOGNITION: RecognitionEntry[] = [
   {
+    id: "shipit-2026",
+    headline: "Atlassian ShipIt Hackathon",
+    dateRange: "2026",
+    description:
+      "Updated Cover Images for Meeting Recordings, 1st place in 'Customer Impact' category",
+  },
+  {
     id: "shipit-2023",
     headline: "Atlassian ShipIt Hackathon",
     dateRange: "2023",
