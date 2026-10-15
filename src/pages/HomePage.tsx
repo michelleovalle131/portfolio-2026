@@ -11,6 +11,7 @@ export function HomePage() {
       <IntroSection />
       <FeaturedProjectSection
         id="ai-overlays"
+        layout="split"
         pageNumber="02/03"
         title="From Talking Head Video to Dynamic Presentation"
         description="An AI agent that turns a talking-head Loom into a dynamic video presentation, generating motion graphics from your words and your team’s context."

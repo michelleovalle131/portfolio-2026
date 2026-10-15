@@ -11,6 +11,8 @@ type FeaturedProjectSectionProps = {
   /** Product UI shown centered over the backdrop. */
   screenshotSrc: string;
   screenshotAlt: string;
+  /** "stacked": full-width image under the title. "split": image fills the right 10 columns. */
+  layout?: "stacked" | "split";
 };
 
 export function FeaturedProjectSection({
@@ -21,11 +23,18 @@ export function FeaturedProjectSection({
   backgroundSrc,
   screenshotSrc,
   screenshotAlt,
+  layout = "stacked",
 }: FeaturedProjectSectionProps) {
   const headingId = `${id}-heading`;
 
   return (
-    <section className={styles.section} id={id} aria-labelledby={headingId}>
+    <section
+      className={[styles.section, layout === "split" ? styles.split : ""]
+        .filter(Boolean)
+        .join(" ")}
+      id={id}
+      aria-labelledby={headingId}
+    >
       <div className={`editorialGrid ${styles.grid}`}>
         <p className={styles.pageNumber} aria-hidden>
           {pageNumber}
