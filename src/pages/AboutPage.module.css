@@ -16,7 +16,7 @@
 
 .eyebrow {
   margin: 0 0 10px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -37,7 +37,7 @@
 
 .lede {
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-lh);
@@ -93,7 +93,7 @@
 /* Section labels — same treatment as eyebrow, for h2 semantics */
 .sectionHeading {
   margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -146,7 +146,7 @@
 .jobLevel {
   margin: 0 0 clamp(0.45rem, 1.2vw, 0.6rem);
   max-width: 28rem;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: 600;
   line-height: var(--type-body-lh);
@@ -158,7 +158,7 @@
 .jobDescription {
   margin: 0;
   max-width: 28rem;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-lh);
@@ -173,7 +173,7 @@
   margin-left: auto;
   text-align: right;
   white-space: nowrap;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);

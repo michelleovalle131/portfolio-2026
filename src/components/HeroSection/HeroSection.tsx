@@ -1,314 +1,128 @@
-import {
-  type CSSProperties,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  labelFromStampBackground,
-  STAMP_IMAGE_URLS,
-  uniqueStampBackgrounds,
-} from "./stampImagePool";
-import { STAMP_META } from "./stampMeta";
+import { useEffect, useMemo, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { HERO_GRID_CELLS, type HeroGridCell } from "./heroGridCells";
+import { STAMP_IMAGE_URLS } from "./stampImagePool";
 import styles from "./HeroSection.module.css";
 
-/** Extracts the URL from a CSS background shorthand like `url("...") center / cover no-repeat`. */
-function extractImgSrc(background: string): string | null {
-  const m = background.match(/url\(\s*["']?([^"')]+)["']?\s*\)/);
-  return m ? m[1]! : null;
-}
-
-const FALLBACK_BACKGROUNDS = STAMP_META.map((s) => s.fallbackBg);
-
-type HeroImageSize = "medium" | "large";
-
-type HeroImagePlacement = {
-  size: HeroImageSize;
-  left: string;
-  top: string;
-};
-
-const HERO_IMAGE_LAYOUT: HeroImagePlacement[] = [
-  // top zone — settle above the headline
-  { size: "medium", left: "3%", top: "70%" },
-  { size: "medium", left: "0%", top: "8%" },
-  { size: "large", left: "31%", top: "2%" },
-  { size: "medium", left: "59%", top: "4%" },
-  { size: "medium", left: "87%", top: "8%" },
-  // middle zone — overlap the headline
-  { size: "medium", left: "14%", top: "26%" },
-  { size: "medium", left: "75%", top: "38%" },
-  { size: "medium", left: "90%", top: "28%" },
-  // bottom zone — settle below the headline
-  { size: "medium", left: "48%", top: "58%" },
-  { size: "large", left: "38%", top: "72%" },
-  { size: "large", left: "2%", top: "68%" },
-  { size: "medium", left: "58%", top: "78%" },
-  { size: "large", left: "86%", top: "58%" },
-] as const;
-
-const FOREGROUND_IMAGE_COUNT = 5;
-
-/** On mobile, only these stamps render — cuts clutter from 13 down to 7 and
- *  skips the mid-zone stamps that otherwise overlap the headline. A tight
- *  top row (1,2,3,4 — all top ≈2-8%) and a tight bottom row (8,10,12 — all
- *  top ≈58-68%) leave a ~50% vertical gap between the two rows, so the two
- *  groups never collide even though stamps render larger on mobile now (see
- *  renderStamp's isMobile size override below). */
-const MOBILE_VISIBLE_INDICES = new Set([1, 2, 3, 4, 8, 10, 12]);
-const MOBILE_QUERY = "(max-width: 768px)";
-
-/**
- * How fast each stamp rises per scroll-pixel (higher = arrives sooner).
- * translateY reaches 0 at scrollY = 100dvh / speed. The sticky frame's pin
- * duration is `.hero`'s height minus 100dvh — at 180dvh that's ~80dvh.
- * Speeds are tuned (3x the original pre-130dvh values, slower than the
- * ~3.5x used at 150dvh) so the rise itself reads even more gradual, and
- * even the slowest stamp settles at only ~49% of the pin duration —
- * leaving a long held pause before the frame unpins.
- */
-const STAMP_SCROLL_SPEEDS = [
-  3.0, 4.65, 2.7, 3.6, 4.65, 3.9, 4.5, 2.64, 3.3, 2.85, 4.35, 3.6, 2.55,
-] as const;
-
-/** Lower values = silkier but slower catch-up. */
-const SCROLL_LERP = 0.09;
-/** Close to the desktop value so stamps visibly trail the scroll on mobile
- *  too, instead of snapping to position almost instantly. */
-const SCROLL_LERP_MOBILE = 0.13;
-const SCROLL_SNAP_EPSILON = 0.08;
-
-/** Shuffled per load; `uniqueStampBackgrounds` assigns distinct photo URLs (no repeats on hero). */
-function initialBackgrounds(): string[] {
-  return uniqueStampBackgrounds(HERO_IMAGE_LAYOUT.length, STAMP_IMAGE_URLS, [
-    ...FALLBACK_BACKGROUNDS,
-    FALLBACK_BACKGROUNDS[0]!,
-    FALLBACK_BACKGROUNDS[1]!,
-  ]);
-}
-
-/** Minimum left/top separation (in layout percentage points) two foreground
- *  stamps must keep from each other — picking two neighboring slots as
- *  foreground stacks them both above the text with nothing to break up the
- *  overlap, which reads as one big collision instead of layered depth. */
-const FOREGROUND_MIN_GAP = 22;
-
-function randomForegroundIndices(
-  layout: readonly HeroImagePlacement[],
-  count: number,
-): Set<number> {
-  const order = layout.map((_, i) => i);
-  for (let i = order.length - 1; i > 0; i--) {
+function shuffleInPlace<T>(arr: T[]): void {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [order[i], order[j]] = [order[j]!, order[i]!];
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
   }
+}
 
-  const chosen: number[] = [];
-  const isFarEnough = (i: number) =>
-    chosen.every((c) => {
-      const a = layout[i]!;
-      const b = layout[c]!;
-      const leftGap = Math.abs(parseFloat(a.left) - parseFloat(b.left));
-      const topGap = Math.abs(parseFloat(a.top) - parseFloat(b.top));
-      return leftGap >= FOREGROUND_MIN_GAP || topGap >= FOREGROUND_MIN_GAP;
-    });
-
-  for (const i of order) {
-    if (chosen.length >= count) break;
-    if (isFarEnough(i)) chosen.push(i);
-  }
-  // Fill any remainder (not enough well-spaced slots) with whatever's left.
-  for (const i of order) {
-    if (chosen.length >= count) break;
-    if (!chosen.includes(i)) chosen.push(i);
-  }
-
-  return new Set(chosen);
+function cellsWithShuffledPhotos(urls: string[]): HeroGridCell[] {
+  const shuffled = [...urls];
+  shuffleInPlace(shuffled);
+  let photoIndex = 0;
+  return HERO_GRID_CELLS.map((cell) => {
+    if (!cell.imageSrc) return cell;
+    const next = shuffled[photoIndex % shuffled.length] ?? cell.imageSrc;
+    photoIndex += 1;
+    return { ...cell, imageSrc: next };
+  });
 }
 
 type HeroProps = {
-  /** Increments on Reprint so stamp photos reshuffle like a full page reload. */
+  /** Reshuffles grid photos (keeps layout slots). */
   remixEpoch?: number;
 };
 
 export function HeroSection({ remixEpoch = 0 }: HeroProps) {
-  const frameRef = useRef<HTMLDivElement>(null);
-  const [stampBackgrounds, setStampBackgrounds] = useState(() =>
-    initialBackgrounds(),
+  const [cells, setCells] = useState(() =>
+    cellsWithShuffledPhotos(STAMP_IMAGE_URLS),
   );
-  const [foregroundIndices, setForegroundIndices] = useState(() =>
-    randomForegroundIndices(HERO_IMAGE_LAYOUT, FOREGROUND_IMAGE_COUNT),
-  );
-  const [imageAspectRatios, setImageAspectRatios] = useState<number[]>([]);
-  const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia(MOBILE_QUERY).matches,
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia(MOBILE_QUERY);
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   useEffect(() => {
     if (remixEpoch === 0) return;
-    setStampBackgrounds(initialBackgrounds());
-    setForegroundIndices(
-      randomForegroundIndices(HERO_IMAGE_LAYOUT, FOREGROUND_IMAGE_COUNT),
-    );
+    setCells(cellsWithShuffledPhotos(STAMP_IMAGE_URLS));
   }, [remixEpoch]);
 
-  const stampLabels = useMemo(() => {
-    const labels = STAMP_META.map((s) => s.label);
-    return stampBackgrounds.map((bg, i) => {
-      const fromFile = labelFromStampBackground(bg);
-      return fromFile || labels[i % labels.length]!;
-    });
-  }, [stampBackgrounds]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const nextRatios = Array<number>(stampBackgrounds.length).fill(3 / 4);
-    const loads = stampBackgrounds.map((background, index) => {
-      const src = extractImgSrc(background);
-      if (!src) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        const image = new Image();
-        image.onload = () => {
-          if (!cancelled && image.naturalWidth > 0 && image.naturalHeight > 0) {
-            nextRatios[index] = image.naturalWidth / image.naturalHeight;
-          }
-          resolve();
-        };
-        image.onerror = () => resolve();
-        image.src = src;
-      });
-    });
-    Promise.all(loads).then(() => {
-      if (!cancelled) setImageAspectRatios(nextRatios);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [stampBackgrounds]);
-
-  const renderStamp = (slot: HeroImagePlacement, i: number, layer: "back" | "front") => {
-    const bg = stampBackgrounds[i] ?? FALLBACK_BACKGROUNDS[0]!;
-    const src = extractImgSrc(bg);
-    const aspectRatio = imageAspectRatios[i] ?? 3 / 4;
-    /** On mobile all visible stamps render at the larger size — the "medium"
-     *  size read as noticeably too small once the set was pared down to 7. */
-    const size: HeroImageSize = isMobile ? "large" : slot.size;
-    const stampStyle = {
-      ["--stamp-left" as string]: slot.left,
-      ["--stamp-top" as string]: slot.top,
-      ["--stamp-speed" as string]: String(STAMP_SCROLL_SPEEDS[i] ?? 1),
-      ["--stamp-aspect" as string]: String(aspectRatio),
-    } satisfies CSSProperties;
-
-    return (
-      <div
-        key={`hero-stamp-${layer}-${i}`}
-        className={[
-          styles.stampParallax,
-          styles[`size${size[0]!.toUpperCase()}${size.slice(1)}`],
-        ].join(" ")}
-        style={stampStyle}
-      >
-        {src ? (
-          <img
-            className={styles.heroPhoto}
-            src={src}
-            alt={stampLabels[i] ?? "Hero image"}
-            draggable={false}
-          />
-        ) : (
-          <div
-            className={styles.heroPhotoFallback}
-            style={{ background: bg }}
-            aria-label={stampLabels[i] ?? "Hero image"}
-          />
-        )}
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const root = frameRef.current;
-    if (!root) return;
-    const lerp = isMobile ? SCROLL_LERP_MOBILE : SCROLL_LERP;
-    let raf = 0;
-    let targetY = window.scrollY;
-    let currentY = targetY;
-
-    const tick = () => {
-      const delta = targetY - currentY;
-      currentY += delta * lerp;
-      if (Math.abs(delta) < SCROLL_SNAP_EPSILON) {
-        currentY = targetY;
-      }
-      root.style.setProperty("--scroll-y", `${currentY}px`);
-      raf = currentY === targetY ? 0 : requestAnimationFrame(tick);
-    };
-
-    const sync = () => {
-      targetY = window.scrollY;
-      if (raf === 0) {
-        raf = requestAnimationFrame(tick);
-      }
-    };
-
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
-    sync();
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
-    };
-  }, [isMobile]);
+  const gridCellStyles = useMemo(
+    () =>
+      cells.map((cell) => ({
+        gridColumn: `${cell.col} / span ${cell.colSpan}`,
+        gridRow: `${cell.row} / span ${cell.rowSpan}`,
+      })),
+    [cells],
+  );
 
   return (
-    <section id="home" className={styles.hero}>
-      {/* Sticky frame keeps stamps + text locked to the viewport while the section scrolls */}
-      <div ref={frameRef} className={styles.stickyFrame}>
-        <div
-          className={`${styles.stampLayer} ${styles.stampLayerBack}`}
-          aria-hidden
-        >
-          {HERO_IMAGE_LAYOUT.map((slot, i) => {
-            if (isMobile && !MOBILE_VISIBLE_INDICES.has(i)) return null;
-            if (foregroundIndices.has(i)) return null;
-            return renderStamp(slot, i, "back");
-          })}
+    <section id="home" className={styles.hero} aria-labelledby="hero-title">
+      <div className={styles.neutralPanel} aria-hidden />
+
+      <div className={`editorialGrid ${styles.grid}`}>
+        <p className={styles.name}>michelle ovalle</p>
+
+        <div className={styles.utilCardstock}>
+          <img
+            className={styles.utilIcon}
+            src="/imgs/hero-grid/64ed1.svg"
+            alt=""
+            width={24}
+            height={24}
+            decoding="async"
+          />
+          <span>cardstock</span>
         </div>
 
-        <div className={styles.textViewport}>
-          <div className={styles.textStack}>
-            <p className={styles.kicker}>Michelle Ovalle</p>
-            <h1 id="hero-title" className={styles.displayTitle}>
-              Design with
-              <br />
-              heart &amp; mind
-            </h1>
-            <p className={styles.standfirst}>
-              Shaping and shipping. One thoughtfully crafted decision at a
-              time.
-            </p>
+        <div className={styles.utilLight}>
+          <img
+            className={styles.utilIcon}
+            src="/imgs/hero-grid/b37d3.svg"
+            alt=""
+            width={24}
+            height={24}
+            decoding="async"
+          />
+          <span>light mode</span>
+        </div>
+
+        <NavLink className={styles.aboutLink} to="/about">
+          about
+        </NavLink>
+
+        <h1 id="hero-title" className={styles.headline}>
+          Shaping and shipping delightful products, one thoughtfully crafted
+          decision at a time.
+        </h1>
+
+        {cells.map((cell, index) => (
+          <div
+            key={`hero-cell-${index}`}
+            className={styles.imageCell}
+            style={gridCellStyles[index]}
+          >
+            <div className={styles.printFrame}>
+              {cell.imageSrc ? (
+                <img
+                  className={[
+                    styles.printPhoto,
+                    cell.photoMultiply ? styles.printPhotoMultiply : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  src={cell.imageSrc}
+                  alt=""
+                  draggable={false}
+                />
+              ) : null}
+            </div>
+            <span className={styles.cellLabel}>
+              {String(index + 1).padStart(2, "0")}
+            </span>
           </div>
+        ))}
+
+        <div className={styles.tagline} aria-hidden>
+          <span>design</span>
+          <span>with</span>
+          <span>heart</span>
+          <span>and</span>
+          <span>mind</span>
         </div>
 
-        <div className={`${styles.stampLayer} ${styles.stampLayerFront}`} aria-hidden>
-          {HERO_IMAGE_LAYOUT.map((slot, i) => {
-            if (isMobile && !MOBILE_VISIBLE_INDICES.has(i)) return null;
-            if (!foregroundIndices.has(i)) return null;
-            return renderStamp(slot, i, "front");
-          })}
-        </div>
+        <p className={styles.role}>Sr product designer</p>
       </div>
     </section>
   );

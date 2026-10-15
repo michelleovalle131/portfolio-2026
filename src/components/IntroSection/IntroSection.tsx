@@ -1,95 +1,126 @@
-import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styles from "./IntroSection.module.css";
 
-const PORTRAIT_SRC = "/imgs/stamp-balance-portrait.png";
+const PORTRAIT_SRC = "/imgs/intro-portrait.jpg";
 
-export function IntroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
+const CHICAGO_TZ = "America/Chicago";
+const WEATHER_URL =
+  "https://api.open-meteo.com/v1/forecast?latitude=41.88&longitude=-87.63&current=temperature_2m,weather_code,is_day&temperature_unit=fahrenheit";
+const WEATHER_REFRESH_MS = 15 * 60_000;
+
+/** "3:30pm" in Chicago time. */
+function chicagoTime(now: Date): string {
+  return now
+    .toLocaleTimeString("en-US", {
+      timeZone: CHICAGO_TZ,
+      hour: "numeric",
+      minute: "2-digit",
+    })
+    .replace(/\s/g, "")
+    .toLowerCase();
+}
+
+/** WMO weather code → emoji (https://open-meteo.com/en/docs). */
+function weatherEmoji(code: number, isDay: boolean): string {
+  if (code === 0) return isDay ? "☀️" : "🌙";
+  if (code === 1) return isDay ? "🌤️" : "🌙";
+  if (code === 2) return isDay ? "⛅" : "☁️";
+  if (code === 3) return "☁️";
+  if (code === 45 || code === 48) return "🌫️";
+  if (code >= 51 && code <= 57) return isDay ? "🌦️" : "🌧️"; // drizzle
+  if (code >= 61 && code <= 67) return "🌧️"; // rain / freezing rain
+  if (code >= 71 && code <= 77) return "🌨️"; // snow
+  if (code >= 80 && code <= 82) return isDay ? "🌦️" : "🌧️"; // showers
+  if (code === 85 || code === 86) return "🌨️"; // snow showers
+  if (code >= 95) return "⛈️"; // thunderstorm
+  return isDay ? "🌤️" : "🌙";
+}
+
+function useChicagoNow() {
+  const [time, setTime] = useState(() => chicagoTime(new Date()));
+  const [weather, setWeather] = useState<{ emoji: string; temp: string } | null>(
+    null,
+  );
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+    const id = window.setInterval(() => setTime(chicagoTime(new Date())), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reducedMotion.matches) {
-      section.style.setProperty("--intro-image-progress", "1");
-      return;
-    }
-
-    let raf = 0;
-    const syncScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const viewportH = window.innerHeight || 1;
-        const start = viewportH * 0.92;
-        const end = viewportH * 0.38;
-        const raw = (start - rect.top) / (start - end);
-        const progress = Math.max(0, Math.min(1, raw));
-        const delayedProgress = Math.max(
-          0,
-          Math.min(1, (progress - 0.12) / 0.88),
-        );
-        section.style.setProperty(
-          "--intro-image-progress",
-          String(delayedProgress),
-        );
-      });
-    };
-
-    window.addEventListener("scroll", syncScroll, { passive: true });
-    window.addEventListener("resize", syncScroll);
-    syncScroll();
+  useEffect(() => {
+    const controller = new AbortController();
+    const load = () =>
+      fetch(WEATHER_URL, { signal: controller.signal })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const current = data?.current;
+          if (!current) return;
+          setWeather({
+            emoji: weatherEmoji(current.weather_code, current.is_day === 1),
+            temp: `${Math.round(current.temperature_2m)}°`,
+          });
+        })
+        // Weather is decorative — keep the last reading (or just the clock) on failure
+        .catch(() => {});
+    load();
+    const id = window.setInterval(load, WEATHER_REFRESH_MS);
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", syncScroll);
-      window.removeEventListener("resize", syncScroll);
+      window.clearInterval(id);
+      controller.abort();
     };
   }, []);
 
-  return (
-    <section
-      ref={sectionRef}
-      className={styles.section}
-      id="intro"
-      aria-labelledby="intro-heading"
-    >
-      <div className={styles.inner}>
-        <div className={styles.imageCard}>
-          <img
-            className={styles.portraitImg}
-            src={PORTRAIT_SRC}
-            alt="Michelle smiling at her desk"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
+  return { time, weather };
+}
 
-        <div className={styles.copyBlock}>
-          <p className={styles.kicker}>Hello from Chicago</p>
-          <h2 className={styles.body} id="intro-heading">
-            I&apos;m Michelle — an experienced Product Designer who thrives at the
-            intersection of systems thinking, craft, and making a real
-            impact on others.
-          </h2>
-          <p className={styles.description}>
-            I love untangling ambiguous problems, partnering closely with
-            my cross-functional peers, and staying curious as design tools
-            and practices keep evolving. Right now, I&apos;m helping
-            teams do their best work on{" "}
+export function IntroSection() {
+  const { time, weather } = useChicagoNow();
+
+  return (
+    <section className={styles.section} id="intro" aria-labelledby="intro-heading">
+      <div className={`editorialGrid ${styles.grid}`}>
+        <p className={styles.pageNumber} aria-hidden>
+          01/03
+        </p>
+
+        <p className={styles.local}>
+          <span className={styles.visuallyHidden}>Local time in Chicago: </span>
+          {time}
+          {weather && (
+            <>
+              {" "}
+              <span className={styles.weatherEmoji}>{weather.emoji}</span>{" "}
+              {weather.temp}
+            </>
+          )}
+        </p>
+
+        <h2 className={styles.headline} id="intro-heading">
+          Hello from Chicago. I&apos;m Michelle—an experienced Product Designer
+          who thrives at the intersection of systems thinking, craft, and
+          making a real impact.
+        </h2>
+
+        <div className={styles.body}>
+          <p>
+            I love untangling ambiguous problems, partnering closely with my
+            cross-functional peers, and staying curious as design tools and
+            practices keep evolving.
+          </p>
+          <p>
+            Right now, I&apos;m helping teams do their best work on{" "}
             <a
-              href="https://www.loom.com"
               className={styles.inlineLink}
+              href="https://www.loom.com/"
               target="_blank"
               rel="noopener noreferrer"
             >
               Loom
             </a>{" "}
-            Meeting Recordings at{" "}
+            at{" "}
             <a
-              href="https://www.atlassian.com"
               className={styles.inlineLink}
+              href="https://www.atlassian.com/"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -97,9 +128,16 @@ export function IntroSection() {
             </a>
             .
           </p>
-          <Link className={styles.cta} to="/about">
-            Learn more
-          </Link>
+        </div>
+
+        <div className={styles.portrait}>
+          <img
+            className={styles.portraitImg}
+            src={PORTRAIT_SRC}
+            alt="Michelle smiling at her desk"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </section>

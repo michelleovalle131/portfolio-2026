@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import FUN_FACTS_URLS from "virtual:fun-facts-imgs";
 import styles from "./FunFactsSection.module.css";
 
@@ -86,11 +86,29 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
+function PauseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="4" y="3" width="2.5" height="10" rx="0.5" fill="currentColor" />
+      <rect x="9.5" y="3" width="2.5" height="10" rx="0.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M5 3.5L12 8L5 12.5V3.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function FunFactsSection() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
   const manualScrollRef = useRef(false);
   const resumeTimeoutRef = useRef<number | undefined>(undefined);
+  const [isPaused, setIsPaused] = useState(false);
 
   const baseItems = useMemo<StripItem[]>(
     () =>
@@ -130,6 +148,10 @@ export function FunFactsSection() {
   }, [loopItems.length]);
 
   useEffect(() => {
+    pausedRef.current = isPaused;
+  }, [isPaused]);
+
+  useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) {
       return;
@@ -161,19 +183,8 @@ export function FunFactsSection() {
     };
     rafId = requestAnimationFrame(step);
 
-    const pause = () => {
-      pausedRef.current = true;
-    };
-    const resume = () => {
-      pausedRef.current = false;
-    };
-    wrap.addEventListener("pointerenter", pause);
-    wrap.addEventListener("pointerleave", resume);
-
     return () => {
       cancelAnimationFrame(rafId);
-      wrap.removeEventListener("pointerenter", pause);
-      wrap.removeEventListener("pointerleave", resume);
     };
   }, []);
 
@@ -207,7 +218,7 @@ export function FunFactsSection() {
 
     window.clearTimeout(resumeTimeoutRef.current);
     resumeTimeoutRef.current = window.setTimeout(() => {
-      pausedRef.current = false;
+      pausedRef.current = isPaused;
     }, 1800);
   };
 
@@ -248,6 +259,15 @@ export function FunFactsSection() {
           )}
         </div>
 
+        <button
+          type="button"
+          className={[styles.navArrow, styles.navArrowPause].join(" ")}
+          onClick={() => setIsPaused((prev) => !prev)}
+          aria-label={isPaused ? "Play" : "Pause"}
+          aria-pressed={isPaused}
+        >
+          {isPaused ? <PlayIcon /> : <PauseIcon />}
+        </button>
         <button
           type="button"
           className={[styles.navArrow, styles.navArrowLeft].join(" ")}

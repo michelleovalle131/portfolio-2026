@@ -60,7 +60,7 @@
 }
 
 .link {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.4;

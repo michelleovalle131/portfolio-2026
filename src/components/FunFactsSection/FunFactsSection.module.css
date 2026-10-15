@@ -11,7 +11,7 @@
 
 .introEyebrow {
   margin: 0 0 16px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -110,7 +110,7 @@
 
 .tierKicker {
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -131,7 +131,7 @@
 
 .tierBody {
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-lh);
@@ -181,6 +181,10 @@
 
 .navArrowLeft {
   right: calc(var(--arrow-edge) + var(--arrow-size) + var(--arrow-gap));
+}
+
+.navArrowPause {
+  right: calc(var(--arrow-edge) + (var(--arrow-size) + var(--arrow-gap)) * 2);
 }
 
 /* ───────────── Reduced motion ───────────── */

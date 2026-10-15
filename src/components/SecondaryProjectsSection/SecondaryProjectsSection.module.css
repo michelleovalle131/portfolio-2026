@@ -44,17 +44,21 @@
   object-fit: cover;
   object-position: center;
   transform: scale(1);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: grayscale(1);
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.5s ease;
   will-change: transform;
 }
 
 .card:hover .image {
   transform: scale(1.035);
+  filter: grayscale(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .image {
-    transition: none;
+    transition: filter 0.5s ease;
     will-change: auto;
   }
 
@@ -74,7 +78,7 @@
 
 .meta {
   margin: 0 0 12px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -95,7 +99,7 @@
 
 .description {
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-lh);
@@ -107,7 +111,7 @@
   margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid var(--ink-muted, rgba(29, 29, 22, 0.65));
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 400;
   line-height: 40px;

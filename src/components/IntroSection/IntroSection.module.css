@@ -1,153 +1,161 @@
 .section {
-  width: 100%;
-  max-width: var(--content-wide);
-  margin: 0 auto;
-  --intro-image-progress: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: var(--surface-cream);
-  box-sizing: border-box;
-  padding: 0 clamp(20px, 8vw, 120px);
-  display: flex;
-  align-items: center;
+  position: relative;
+  background: var(--surface-cardstock, #f9f7f3);
+  color: var(--ink);
 }
 
-.inner {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(32px, 6vw, 64px);
+/* Mono / handwritten header row — same print-muted treatment as the hero */
+.pageNumber {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 20px;
+  line-height: 1.32;
+  letter-spacing: 0.4px;
+  color: var(--ink-print-muted);
+  mix-blend-mode: multiply;
 }
 
-.portraitImg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-}
-
-.imageCard {
-  flex: 1 1 0;
-  max-width: 610px;
-  aspect-ratio: 61 / 60;
-  overflow: hidden;
-  transform: translate3d(
-    0,
-    calc(200px - (200px * var(--intro-image-progress, 0))),
-    0
-  );
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section {
-    --intro-image-progress: 1;
-  }
-
-  .imageCard {
-    transform: none;
-    will-change: auto;
-  }
-}
-
-.copyBlock {
-  flex: 1 1 0;
-  max-width: 620px;
-}
-
-.kicker {
-  margin: 0 0 16px;
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: var(--type-kicker-size);
-  font-weight: var(--type-kicker-weight);
-  letter-spacing: var(--type-kicker-ls);
-  line-height: var(--type-kicker-lh);
+.local {
+  grid-column: 13 / span 4;
+  grid-row: 1;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.32;
+  letter-spacing: 0.28px;
   text-transform: uppercase;
-  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+  text-align: right;
+  color: var(--ink-print-muted);
+  mix-blend-mode: multiply;
+}
+
+/* Emoji reads small at the 14px mono size — bump it to 24px, keep it on the text line */
+.weatherEmoji {
+  font-size: 24px;
+  line-height: 0;
+  vertical-align: -0.1em;
+}
+
+.headline {
+  grid-column: 1 / span 16;
+  grid-row: 2 / span 4;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.44vw, 64px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-box: trim-both cap alphabetic;
 }
 
 .body {
-  margin: 0 0 24px;
-  font-family: var(--font-display);
-  font-size: var(--type-subheading-size);
-  font-weight: 400;
-  line-height: var(--type-subheading-lh);
-  letter-spacing: var(--type-subheading-ls);
-  color: var(--ink);
+  grid-column: 1 / span 5;
+  grid-row: 9 / span 8;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: 1.32em;
+  font-family: var(--font-sans);
+  font-size: clamp(1.125rem, 1.67vw, 24px);
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
 }
 
-.description {
-  margin: 0 0 24px;
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: var(--type-body-size);
-  font-weight: var(--type-body-weight);
-  line-height: var(--type-body-lh);
-  letter-spacing: var(--type-body-ls);
-  color: var(--ink);
+.body p {
+  margin: 0;
 }
 
 .inlineLink {
-  color: var(--field-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-}
-
-.cta {
-  display: inline-flex;
-  align-items: center;
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: var(--surface-cream, #F1EFE9);
-  background: var(--ink, #1d1d16);
+  color: inherit;
   text-decoration: none;
-  border-radius: 0;
-  padding: 12px 24px;
-  transition: opacity 0.2s ease;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: color 0.2s ease, background-size 0.25s ease;
 }
 
-.cta:hover {
-  opacity: 0.88;
+.inlineLink:hover {
+  color: var(--field-accent);
+  background-size: 100% 1px;
 }
 
-@media (max-width: 768px) {
-  .section {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 48px 20px;
+.inlineLink:focus-visible {
+  outline: 2px solid var(--field-accent);
+  outline-offset: 2px;
+}
+
+/* Spot-print portrait: photo multiplied, accent plate multiplied on top */
+.portrait {
+  grid-column: 9 / span 8;
+  grid-row: 7 / span 10;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-spot, #c8e9ff);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.portraitImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  mix-blend-mode: multiply;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    min-height: auto;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    row-gap: 24px;
   }
 
-  .inner {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
+  .pageNumber {
+    grid-column: 1 / span 8;
   }
 
-  .imageCard {
-    flex: 0 0 auto;
-    width: min(400px, 100%);
-    max-width: 100%;
-    transform: none;
-    will-change: auto;
+  .local {
+    grid-column: 9 / span 8;
   }
 
-  .copyBlock {
-    flex: 0 0 auto;
-    max-width: 100%;
+  .headline {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 16px;
+  }
+
+  .portrait {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    aspect-ratio: 4 / 3;
   }
 
   .body {
-    font-size: clamp(1.2rem, 5.5vw, 1.4rem);
-    line-height: 1.4;
-  }
-
-  .description {
-    font-size: 15px;
-    line-height: 1.7;
+    grid-column: 1 / -1;
+    grid-row: 4;
   }
 }

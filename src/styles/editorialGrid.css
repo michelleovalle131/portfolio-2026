@@ -1,0 +1,18 @@
+/*
+ * Shared 16×16 editorial grid — spot-print sections align to the same rhythm.
+ * Frame is full viewport height at the design artboard ratio (1440×1024).
+ */
+.editorialGrid {
+  --grid-columns: 16;
+  --grid-rows: 16;
+  display: grid;
+  width: 100%;
+  max-width: var(--content-wide, 1440px);
+  min-height: min(100dvh, calc(100vw * (1024 / 1440)));
+  margin-inline: auto;
+  box-sizing: border-box;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--grid-rows), minmax(0, 1fr));
+  gap: var(--grid-gap, 8px);
+  padding: var(--grid-padding, 24px);
+}

@@ -4,3 +4,7 @@ dist
 .DS_Store
 .claude/
 DESIGN-AUDIT.md
+
+# Large unused media — kept locally, not in git
+public/imgs/Success.gif
+public/imgs/Success.mp4

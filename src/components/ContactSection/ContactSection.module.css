@@ -17,7 +17,7 @@
 
 .eyebrow {
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-kicker-size);
   font-weight: var(--type-kicker-weight);
   letter-spacing: var(--type-kicker-ls);
@@ -40,7 +40,7 @@
 .body {
   margin: 0;
   max-width: 420px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--type-body-size);
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-lh);
@@ -52,7 +52,7 @@
   display: inline-flex;
   align-items: center;
   margin-top: 12px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 400;
   line-height: 1.25;

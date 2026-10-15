@@ -1,4 +1,5 @@
 @import "./styles/fonts.css";
+@import "./styles/editorialGrid.css";
 
 *,
 *::before,
@@ -26,7 +27,8 @@
  * Photography    Edge-to-edge crops, no mats or borders.
  * Elevation      Flat throughout. Shadows reserved for floating hero stamps
  *                only. In-page elements use hairline rules for separation.
- * Typography     Canela Deck (display, used with restraint) + Inter (body/UI)
+ * Typography     Gambarino (display, used with restraint) + Switzer (body/UI) + Paper Mono (labels)
+ *                + Homemade Apple (handwritten gallery numbers)
  *                Eyebrow spec: 11px · 0.14em · weight 600 · uppercase
  * ─────────────────────────────────────────────────────────────────────────────
  */
@@ -37,8 +39,22 @@
   --gallery-width: 1200px;     /* max width for modal gallery/hero images       */
   --ink: #1d1d16;
   --ink-muted: rgba(29, 29, 22, 0.75);
+  /* Spot-print system — one accent plate + neutral cardstock */
+  --accent-spot: #c8e9ff;
+  --surface-cardstock: #f9f7f3;
+  --surface-print-plate: #edebe6; /* hero gallery cell fill, set to multiply */
+  /* Neutrals — mirror Figma color styles by name */
+  --neutral-dark-80: rgba(90, 90, 90, 0.8); /* Figma "Neutral - Dark - 80" · #5A5A5A @ 80% */
+  --ink-print-muted: var(--neutral-dark-80);
+  --grid-gap: 8px;
+  --grid-padding: 24px;
+  --grid-columns: 16;
+  --grid-rows: 16;
+  --font-mono: "Paper Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
   --nav-height: 64px;
-  --font-display: "Canela Deck", Georgia, serif;
+  --font-display: "Gambarino", Georgia, serif;
+  --font-sans: "Switzer", system-ui, sans-serif;
+  --font-hand: "Homemade Apple", cursive;
   /* Accent — the one true accent color; use for links, active states, hover emphasis */
   --field-accent: #1B0AE8;
   /* Surfaces — one token per distinct hue in use; each maps to one editorial role */
@@ -53,7 +69,7 @@
   --plate-activation: #B8CEC8;     /* teal-sage        */
   --plate-rovo: #C4D5E8;           /* considered blue  */
 
-  /* ── Type scale tokens (Canela Deck) ─────────────────────────────────────── */
+  /* ── Type scale tokens (Gambarino) ───────────────────────────────────────── */
   /* Hero display title — Hero .displayTitle */
   --type-display-size: clamp(2.6rem, 8.91vw, 8rem);
   --type-display-lh:   1;
@@ -109,7 +125,7 @@ body {
   min-height: 100%;
   min-height: 100dvh;
   margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--page-bg);

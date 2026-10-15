@@ -1,23 +1,42 @@
-/* Canela Deck display family — licensed trial files in /public/fonts */
+/* Gambarino — display serif (Fontshare, FFL) — /public/fonts/gambarino */
 @font-face {
-  font-family: "Canela Deck";
-  src: url("/fonts/Canela-Thin-Trial.otf") format("opentype");
-  font-weight: 100;
+  font-family: "Gambarino";
+  src: url("/fonts/gambarino/Gambarino-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Switzer — body sans, variable 100–900 (Fontshare, FFL) — /public/fonts/switzer */
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-Variable.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Canela Deck";
-  src: url("/fonts/Canela-Light-Trial.otf") format("opentype");
-  font-weight: 300;
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-VariableItalic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Paper Mono — mono labels, variable 100–800 (OFL) — /public/fonts/paper-mono */
+@font-face {
+  font-family: "Paper Mono";
+  src: url("/fonts/paper-mono/PaperMono-Variable.woff2") format("woff2");
+  font-weight: 100 800;
   font-style: normal;
   font-display: swap;
 }
 
+/* Homemade Apple — handwritten gallery labels (Google Fonts, Apache 2.0) — /public/fonts/homemade-apple */
 @font-face {
-  font-family: "Canela Deck";
-  src: url("/fonts/Canela-Regular-Trial.otf") format("opentype");
+  font-family: "Homemade Apple";
+  src: url("/fonts/homemade-apple/HomemadeApple-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

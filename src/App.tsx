@@ -39,8 +39,12 @@ function App() {
   const backgroundLocation = (location.state as { backgroundLocation?: Location } | null)
     ?.backgroundLocation;
 
+  const isHome = location.pathname === "/";
+
   return (
-    <div className={styles.shell}>
+    <div
+      className={[styles.shell, isHome ? "shellHome" : ""].filter(Boolean).join(" ")}
+    >
       <ScrollToTop skip={!!backgroundLocation} />
       <Nav />
       <div className={styles.main}>
