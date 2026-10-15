@@ -1,7 +1,28 @@
 /*
  * Shared 16×16 editorial grid — spot-print sections align to the same rhythm.
- * Frame is full viewport height at the design artboard ratio (1440×1024).
+ *
+ * On desktop the grid is locked to the design artboard (1440×1024): it is as
+ * wide as the window allows without its height exceeding the viewport, and is
+ * centered with side margins on short, wide windows. Section backgrounds stay
+ * full-bleed. Type tied to the frame scales with it, so text and photos keep
+ * the same proportions as Figma at any window shape.
  */
+:root {
+  --frame-w: min(100vw, var(--content-wide, 2000px), calc(100dvh * (1440 / 1024)));
+  --frame-h: calc(var(--frame-w) * (1024 / 1440));
+  /* 64px and 24px at the 1440px artboard */
+  --type-frame-headline: clamp(1.5rem, calc(var(--frame-w) * 0.0444), 64px);
+  --type-frame-body: clamp(1rem, calc(var(--frame-w) * 0.0167), 24px);
+}
+
+@media (max-width: 900px) {
+  :root {
+    /* Phones stack content at auto height — size type by width as before */
+    --type-frame-headline: clamp(2rem, 4.44vw, 64px);
+    --type-frame-body: clamp(1.125rem, 1.67vw, 24px);
+  }
+}
+
 .editorialGrid {
   --grid-columns: 16;
   --grid-rows: 16;
@@ -15,4 +36,12 @@
   grid-template-rows: repeat(var(--grid-rows), minmax(0, 1fr));
   gap: var(--grid-gap, 8px);
   padding: var(--grid-padding, 24px);
+}
+
+@media (min-width: 901px) {
+  .editorialGrid {
+    max-width: var(--frame-w);
+    height: var(--frame-h);
+    min-height: 0;
+  }
 }
