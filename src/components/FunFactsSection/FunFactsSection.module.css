@@ -1,245 +1,268 @@
-/* ───────────── Section intro ───────────── */
-
-.sectionIntro {
-  width: 100%;
-  max-width: var(--content-wide);
-  margin: 0 auto;
-  background: var(--surface-cream);
-  padding: clamp(56px, 7vw, 96px) clamp(20px, 8vw, 120px) clamp(48px, 6vw, 80px);
-  box-sizing: border-box;
-}
-
-.introEyebrow {
-  margin: 0 0 16px;
-  font-family: var(--font-sans);
-  font-size: var(--type-kicker-size);
-  font-weight: var(--type-kicker-weight);
-  letter-spacing: var(--type-kicker-ls);
-  line-height: var(--type-kicker-lh);
-  text-transform: uppercase;
-  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
-}
-
-.introHeading {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--type-section-size);
-  font-weight: 400;
-  line-height: var(--type-section-lh);
-  letter-spacing: var(--type-section-ls);
-  color: var(--ink);
-}
-
-/* ───────────── Section shell ───────────── */
-
 .section {
   position: relative;
-  width: 100%;
-  height: 80vh;
-  height: 80dvh;
-  overflow: hidden;
-  background: var(--surface-cream);
+  background: var(--surface-cardstock, #f9f7f3);
+  color: var(--ink);
 }
 
-/* Real, non-duplicated tier copy for assistive tech — the scroll strip below is decorative */
-.srTierList {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+/* Cap at one viewport: a definite height lets the 16 rows divide the frame
+   instead of growing to fit their text on short screens */
+.grid {
+  height: min(100dvh, calc(100vw * (1024 / 1440)));
 }
 
-/* ───────────── Marquee (native horizontal scroll, driven by rAF + arrow buttons) ───────────── */
-
-.marqueeWrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: stretch;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.marqueeWrap::-webkit-scrollbar {
-  display: none;
-}
-
-.marqueePhoto,
-.marqueeText {
-  flex: 0 0 min(var(--tile-width, 38vw), 560px);
-  width: min(var(--tile-width, 38vw), 560px);
-  height: 100%;
-  box-sizing: border-box;
-}
-
-/* Wider screens (27"+ monitors) — let tiles grow past the 560px cap */
-@media (min-width: 1600px) {
-  .marqueePhoto,
-  .marqueeText {
-    flex: 0 0 min(var(--tile-width, 38vw), 720px);
-    width: min(var(--tile-width, 38vw), 720px);
-  }
-}
-
-.marqueePhoto img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  pointer-events: none;
-  filter: saturate(0.88) contrast(0.95);
-}
-
-/* Text tiles — travel with the reel like a printed plate slotted between photos */
-.marqueeText {
-  padding: clamp(28px, 3.4vw, 48px) clamp(24px, 2.8vw, 40px);
-  background-color: var(--plate-bg, var(--surface-warm));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
-}
-
-.tierKicker {
+.pageNumber {
+  grid-column: 1 / span 5;
+  grid-row: 1;
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--type-kicker-size);
-  font-weight: var(--type-kicker-weight);
-  letter-spacing: var(--type-kicker-ls);
-  line-height: var(--type-kicker-lh);
-  text-transform: uppercase;
-  color: var(--ink-muted, rgba(29, 29, 22, 0.65));
+  font-family: var(--font-hand);
+  font-size: 20px;
+  line-height: 1.32;
+  letter-spacing: 0.4px;
+  color: var(--ink-print-muted);
+  mix-blend-mode: multiply;
 }
 
-.tierTitle {
+.label {
+  grid-column: 13 / span 4;
+  grid-row: 1;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.32;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--ink-print-muted);
+  mix-blend-mode: multiply;
+}
+
+.headline {
+  grid-column: 1 / span 12;
+  grid-row: 2 / span 3;
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--type-card-size);
+  font-size: clamp(2rem, 4.44vw, 64px);
   font-weight: 400;
-  line-height: var(--type-card-lh);
-  letter-spacing: var(--type-card-ls);
-  color: var(--ink);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-box: trim-both cap alphabetic;
 }
 
-.tierBody {
+/* ── Slides: every slide's content is stacked in place and crossfaded ── */
+
+.photo {
+  grid-row: 6 / span 10;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.photoPrint {
+  grid-column: 1 / span 6;
+}
+
+.photoColor {
+  grid-column: 7 / span 6;
+}
+
+.photoImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 0.6s ease, filter 0.25s ease;
+}
+
+.isActive {
+  opacity: 1;
+}
+
+/* Left plate is printed: grayscale + accent tint, revealed in colour on hover
+   (same treatment as the hero gallery) */
+.photoPrint .photoImg {
+  filter: grayscale(1) contrast(1.12);
+}
+
+.photoPrint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-spot, #c8e9ff);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.photoPrint:hover .photoImg {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+.photoPrint:hover::after {
+  opacity: 0;
+}
+
+.body {
+  grid-column: 14 / span 3;
+  grid-row: 6 / span 9;
+  display: grid;
+  align-content: start;
+}
+
+.bodyText {
+  grid-area: 1 / 1;
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--type-body-size);
-  font-weight: var(--type-body-weight);
-  line-height: var(--type-body-lh);
-  letter-spacing: var(--type-body-ls);
-  color: var(--ink);
+  font-size: clamp(1.125rem, 1.67vw, 24px);
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
+  text-align: right;
+  text-wrap: pretty;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
-/* ───────────── Nav arrows — ink/cream coloring like the "Learn more" CTA,
-   squared off, with the same frosted-glass plate treatment (color-mix +
-   backdrop-filter) used on the primary project cards — paired bottom-right */
+.caption {
+  grid-row: 16;
+  display: grid;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.32;
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+  color: var(--ink-print-muted);
+  mix-blend-mode: multiply;
+}
 
-.navArrow {
-  --arrow-size: 44px;
-  --arrow-edge: clamp(12px, 2vw, 24px);
-  --arrow-gap: 8px;
-  position: absolute;
-  bottom: var(--arrow-edge);
-  z-index: 3;
-  width: var(--arrow-size);
-  height: var(--arrow-size);
+.captionPrint {
+  grid-column: 1 / span 6;
+}
+
+.captionColor {
+  grid-column: 7 / span 6;
+}
+
+.captionText {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.captionText.isActive,
+.bodyText.isActive {
+  opacity: 1;
+}
+
+/* ── Controls ── */
+
+.controls {
+  grid-column: 13 / span 4;
+  grid-row: 16;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.control {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  border-radius: 0;
-  background: color-mix(in srgb, var(--ink, #1d1d16) 85%, transparent);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  color: var(--surface-cream, #F1EFE9);
-  cursor: pointer;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  transition: opacity 0.15s ease;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navArrow:hover {
-  opacity: 0.88;
+.control:hover {
+  background: var(--surface-print-plate);
+  color: var(--field-accent);
 }
 
-.navArrow:focus-visible {
-  outline: 2px solid var(--field-accent, #1B0AE8);
+.control:focus-visible {
+  outline: 2px solid var(--field-accent);
   outline-offset: 2px;
 }
 
-.navArrowRight {
-  right: var(--arrow-edge);
-}
-
-.navArrowLeft {
-  right: calc(var(--arrow-edge) + var(--arrow-size) + var(--arrow-gap));
-}
-
-.navArrowPause {
-  right: calc(var(--arrow-edge) + (var(--arrow-size) + var(--arrow-gap)) * 2);
-}
-
-/* ───────────── Reduced motion ───────────── */
-
 @media (prefers-reduced-motion: reduce) {
-  .marqueeWrap {
-    scroll-behavior: auto;
+  .photoImg,
+  .bodyText,
+  .captionText {
+    transition: none;
   }
 }
 
-/* ───────────── Mobile ───────────── */
-
-@media (max-width: 768px) {
-  .sectionIntro {
-    padding: 48px 24px 40px;
-  }
-
-  .introHeading {
-    font-size: clamp(2.25rem, 8.1vw, 2.7rem);
-  }
-
-  .section {
+@media (max-width: 900px) {
+  .grid {
     height: auto;
-    display: flex;
-    flex-direction: column;
+    min-height: auto;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    row-gap: 16px;
   }
 
-  .marqueeWrap {
-    position: relative;
-    flex-shrink: 0;
-    height: 62vh;
-    min-height: 380px;
-    inset: auto;
+  .pageNumber {
+    grid-column: 1 / span 8;
   }
 
-  .marqueePhoto,
-  .marqueeText {
-    --tile-width: 82vw;
+  .label {
+    grid-column: 9 / span 8;
   }
 
-  .marqueeText {
+  .headline {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin: 16px 0 8px;
+  }
+
+  .photo {
+    aspect-ratio: 3 / 4;
+  }
+
+  .photoPrint {
+    grid-column: 1 / span 8;
+    grid-row: 3;
+  }
+
+  .photoColor {
+    grid-column: 9 / span 8;
+    grid-row: 3;
+  }
+
+  .captionPrint {
+    grid-column: 1 / span 8;
+    grid-row: 4;
+  }
+
+  .captionColor {
+    grid-column: 9 / span 8;
+    grid-row: 4;
+  }
+
+  .body {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    margin-top: 8px;
+  }
+
+  .bodyText {
+    text-align: left;
+  }
+
+  .controls {
+    grid-column: 1 / -1;
+    grid-row: 6;
     justify-content: flex-start;
-    padding-top: clamp(32px, 10vw, 48px);
-  }
-
-  .tierTitle {
-    font-size: clamp(2.18rem, 9.82vw, 2.62rem);
-  }
-
-  .tierBody {
-    font-size: 15px;
-    line-height: 1.7;
-  }
-
-  .navArrow {
-    --arrow-size: 38px;
+    margin-left: -8px;
   }
 }

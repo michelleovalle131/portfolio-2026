@@ -1,4 +1,3 @@
-import { ContactSection } from "../components/ContactSection/ContactSection";
 import { HeroSection } from "../components/HeroSection/HeroSection";
 import { FunFactsSection } from "../components/FunFactsSection/FunFactsSection";
 import { Footer } from "../components/Footer/Footer";
@@ -27,7 +26,6 @@ export function HomePage() {
           <SecondaryProjectsSection /> — Cositas Bonitas + Rovo awareness
       */}
       <FunFactsSection />
-      <ContactSection />
       <Footer />
     </>
   );

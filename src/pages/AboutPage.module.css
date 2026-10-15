@@ -52,7 +52,7 @@
   padding: 0;
 }
 
-/* Inverted, edge-to-edge — same dark treatment as the homepage ContactSection */
+/* Inverted, edge-to-edge — inverted dark treatment */
 .recognition {
   width: 100%;
   background: var(--ink, #1d1d16);

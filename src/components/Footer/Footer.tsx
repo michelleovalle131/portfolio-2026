@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/michelleovalle/";
@@ -6,40 +5,28 @@ const EMAIL = "movallecreative@gmail.com";
 
 export function Footer() {
   return (
-    <footer
-      id="thank-you"
-      className={styles.footer}
-      aria-labelledby="thank-you-heading"
-    >
-      <div className={styles.bar}>
-        <Link className={styles.logoLink} to="/" aria-label="Home">
-          <img
-            className={styles.logo}
-            src="/imgs/MO-Logo.svg"
-            alt=""
-            width={24}
-            height={24}
-            decoding="async"
-          />
-        </Link>
+    <footer id="contact" className={styles.footer} aria-labelledby="contact-heading">
+      <div className={`editorialGrid ${styles.grid}`}>
+        <p className={styles.label}>Thanks for visiting</p>
 
-        <h2 className={styles.heading} id="thank-you-heading">
-          Thank you
+        <h2 className={styles.heading} id="contact-heading">
+          I&apos;m always happy to connect — about work, ideas, or just to say
+          hello.
         </h2>
 
-        <div className={styles.links}>
-          <a
-            className={styles.link}
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
-          <a className={styles.link} href={`mailto:${EMAIL}`}>
-            Connect
-          </a>
-        </div>
+        <a className={`${styles.button} ${styles.email}`} href={`mailto:${EMAIL}`}>
+          Email
+        </a>
+        <a
+          className={`${styles.button} ${styles.linkedin}`}
+          href={LINKEDIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
+        </a>
+
+        <p className={styles.copyright}>Copyright {new Date().getFullYear()}.</p>
       </div>
     </footer>
   );
