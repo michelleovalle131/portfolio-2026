@@ -2,6 +2,11 @@
   position: relative;
 }
 
+/* Hero embeds its own top chrome on the home grid (global hook for Nav.module.css) */
+:global(.shellHome) {
+  --nav-height: 0px;
+}
+
 .main {
   display: block;
 }
