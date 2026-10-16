@@ -1,0 +1,184 @@
+/*
+ * Pulled sheets — each full-frame section is a print. Once a sheet reaches the
+ * top it stays put, and the next one slides up over it, landing on the stack
+ * like a fresh pull coming off the press. The footer is a short slip sheet
+ * laid on top of the last print.
+ *
+ * Desktop only: there every section is capped at one viewport (see
+ * editorialGrid.css), so a pinned sheet is always fully read before it is
+ * covered. Phone sections run taller than the screen and scroll normally.
+ */
+@media (min-width: 901px) {
+  .press {
+    /* The tilted sheet's corners must not widen the page */
+    overflow-x: clip;
+  }
+
+  .press > section {
+    position: sticky;
+    top: 0;
+  }
+
+  .press > footer {
+    position: relative;
+  }
+
+  /* Motion layer — scroll-linked, so it tracks the reader exactly. Browsers
+     without scroll-driven animations (and reduced-motion readers) still get
+     the stacking, just without the lay-down. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .press > section:not(:first-child),
+      .press > footer {
+        animation: lay-down linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 100%;
+        transform-origin: 50% 0;
+      }
+    }
+  }
+}
+
+/* The sheet arrives a touch skewed and lifted off the stack, then settles
+   flat and in register. */
+@keyframes lay-down {
+  from {
+    transform: rotate(-1.4deg) translateY(2%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/*
+ * Fold-out booklet (/?motion=fold) — the four sections are the panels of a
+ * leporello. Scrolling down pins the booklet and draws it left to right: each
+ * panel arrives angled on its crease, lies flat as it reaches the centre, and
+ * folds away as the next one opens. The footer follows as a normal page.
+ *
+ * The tall .fold track supplies the scroll distance (one screen per panel);
+ * its view timeline drives the row's sideways travel and each panel's fold.
+ * Phones, and browsers without scroll-driven animations, read it as a normal
+ * vertical page — every rule below is gated on both.
+ */
+@media (min-width: 901px) {
+  @supports (animation-timeline: view()) {
+    .fold {
+      --panels: 4;
+      height: calc(var(--panels) * 100dvh);
+      view-timeline: --booklet block;
+    }
+
+    .foldViewport {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow: hidden;
+      perspective: 2400px;
+      /* Panels size to the visible width (100vw would include the scrollbar) */
+      container-type: inline-size;
+    }
+
+    .foldRow {
+      display: flex;
+      width: calc(var(--panels) * 100cqw);
+      height: 100%;
+      animation: booklet-travel linear both;
+      animation-timeline: --booklet;
+      animation-range: contain 0% contain 100%;
+    }
+
+    .foldRow > section {
+      --step: calc(100% / (var(--panels) - 1));
+      position: relative;
+      flex: none;
+      width: 100cqw;
+      height: 100%;
+      transform-origin: 0 50%;
+      /* Panel i is flat at timeline position i / (panels - 1) */
+      animation: booklet-panel linear both;
+      animation-timeline: --booklet;
+      animation-range: contain calc((var(--i) - 1) * var(--step))
+        contain calc((var(--i) + 1) * var(--step));
+    }
+
+    .foldRow > section:nth-child(1) { --i: 0; }
+    .foldRow > section:nth-child(2) { --i: 1; }
+    .foldRow > section:nth-child(3) { --i: 2; }
+    .foldRow > section:nth-child(4) { --i: 3; }
+
+    /* Crease shading along each panel's leading edge */
+    .foldRow > section::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        to right,
+        rgba(29, 29, 22, var(--crease, 0)) 0,
+        transparent 18%
+      );
+      z-index: 2;
+    }
+  }
+}
+
+@keyframes booklet-travel {
+  to {
+    transform: translateX(calc(-100% + 100cqw));
+  }
+}
+
+/* Arriving: angled back on its left crease. Centre: flat. Leaving: angled the
+   other way as it folds behind the next panel. */
+@keyframes booklet-panel {
+  from {
+    transform: rotateY(-14deg);
+    --crease: 0.18;
+  }
+  50% {
+    transform: none;
+    --crease: 0;
+  }
+  to {
+    transform: rotateY(10deg);
+    --crease: 0.12;
+  }
+}
+
+@property --crease {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Dev-only switch for comparing scroll prototypes (not rendered in builds) */
+.motionSwitch {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  translate: -50% 0;
+  z-index: 200;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface-cardstock, #f9f7f3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.24px;
+  text-transform: uppercase;
+}
+
+.motionSwitch a {
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.motionSwitch a.motionActive {
+  background: var(--ink);
+  color: var(--surface-cardstock, #f9f7f3);
+}

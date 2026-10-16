@@ -10,6 +10,8 @@
 :root {
   --frame-w: min(100vw, var(--content-wide, 2000px), calc(100dvh * (1440 / 1024)));
   --frame-h: calc(var(--frame-w) * (1024 / 1440));
+  /* Footer height on desktop: 5 grid rows + 4 gaps + 48px padding (see Footer) */
+  --footer-h: calc((var(--frame-h) - 168px) * 5 / 16 + 80px);
   /* 64px and 24px at the 1440px artboard */
   --type-frame-headline: clamp(1.5rem, calc(var(--frame-w) * 0.0444), 64px);
   --type-frame-body: clamp(1rem, calc(var(--frame-w) * 0.0167), 24px);

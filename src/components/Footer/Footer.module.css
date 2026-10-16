@@ -30,7 +30,8 @@
 }
 
 .heading {
-  grid-column: 1 / -1;
+  /* Same width as the fun facts photos above (columns 1–12) */
+  grid-column: 1 / span 12;
   grid-row: 2 / span 2;
   margin: 0;
   font-family: var(--font-display);
@@ -104,6 +105,7 @@
   }
 
   .heading {
+    grid-column: 1 / -1;
     grid-row: 2;
     margin: 16px 0 24px;
   }

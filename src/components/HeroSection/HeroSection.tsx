@@ -12,6 +12,8 @@ import {
   readCardstockIndex,
 } from "../../styles/cardstock";
 import styles from "./HeroSection.module.css";
+import { InkText } from "../InkText/InkText";
+import { LocalTime } from "../LocalTime/LocalTime";
 
 function shuffleInPlace<T>(arr: T[]): void {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -126,8 +128,8 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
             className={styles.utilIcon}
             src="/imgs/hero-grid/b37d3.svg"
             alt=""
-            width={24}
-            height={24}
+            width={20}
+            height={20}
             decoding="async"
           />
           <span>light mode</span>
@@ -138,8 +140,9 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
         </NavLink>
 
         <h1 id="hero-title" className={styles.headline}>
-          Shaping and shipping delightful products, one thoughtfully crafted
-          decision at a time.
+          <InkText>
+            {"Shaping and shipping delightful products, one thoughtfully crafted decision at a time."}
+          </InkText>
         </h1>
 
         {gallery === "3x3" ? (
@@ -148,7 +151,7 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
           galleryCells
         )}
 
-        <div className={styles.tagline} aria-hidden>
+        <div className={styles.tagline} aria-hidden data-ink="float">
           <span>design</span>
           <span>with</span>
           <span>heart</span>
@@ -156,7 +159,7 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
           <span>mind</span>
         </div>
 
-        <p className={styles.role}>Sr product designer</p>
+        <LocalTime className={styles.role} />
       </div>
     </section>
   );

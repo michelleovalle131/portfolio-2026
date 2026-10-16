@@ -1,11 +1,12 @@
 import styles from "./FeaturedProjectSection.module.css";
+import { InkText } from "../InkText/InkText";
 
 type FeaturedProjectSectionProps = {
   id: string;
   /** Handwritten section counter, e.g. "02/03". */
   pageNumber: string;
-  /** Mono label in the top-right corner, e.g. the project name. */
-  label: string;
+  /** Optional mono label in the top-right corner, e.g. the project name. */
+  label?: string;
   title: string;
   description: string;
   /** Atmospheric backdrop, multiplied onto the accent plate. */
@@ -39,18 +40,24 @@ export function FeaturedProjectSection({
       aria-labelledby={headingId}
     >
       <div className={`editorialGrid ${styles.grid}`}>
-        <p className={styles.pageNumber} aria-hidden>
+        <p className={styles.pageNumber} aria-hidden data-ink="pen">
           {pageNumber}
         </p>
-        <p className={styles.label}>{label}</p>
+        {label && (
+          <p className={styles.label} data-ink="stamp">
+            {label}
+          </p>
+        )}
 
         <h2 className={styles.title} id={headingId}>
-          {title}
+          <InkText>{title}</InkText>
         </h2>
 
-        <div className={styles.media}>
+        <div className={styles.media} data-ink-box>
           <img
             className={styles.backdrop}
+            data-ink="rise"
+            data-ink-pass="1"
             src={backgroundSrc}
             alt=""
             loading="lazy"
@@ -58,6 +65,8 @@ export function FeaturedProjectSection({
           />
           <img
             className={styles.screenshot}
+            data-ink="rise"
+            data-ink-pass="2"
             src={screenshotSrc}
             alt={screenshotAlt}
             loading="lazy"
@@ -65,7 +74,7 @@ export function FeaturedProjectSection({
           />
         </div>
 
-        <p className={styles.description}>{description}</p>
+        <p className={styles.description} data-ink="stamp">{description}</p>
       </div>
     </section>
   );

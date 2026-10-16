@@ -1,0 +1,127 @@
+/*
+ * Screenprint — motion prototype (/?motion=ink).
+ *
+ * Images print like they're coming off a press, tied to scroll: they land in
+ * fine bands as their section arrives and lift again if you scroll back up,
+ * fully printed by the time the section's top edge reaches the top of the
+ * screen. Type doesn't move.
+ *
+ *   [data-ink="rise"]     images print into their parked, spot-coloured box
+ *                         in bands; [data-ink-pass="1"|"2"] layers a box as two
+ *                         screens, the second printed over the first
+ *   [data-ink="float"]    the hero badge floats up from behind the section
+ *                         below and turns into its resting tilt
+ *
+ * Headings still carry <InkText> word spans and copy carries "stamp"/"pen"
+ * hooks from the earlier type motion; they're inert without styles here.
+ *
+ * HomePage marks a section [data-inked] when it is well into view and clears
+ * the mark once it has fully left — that cue drives the badge, and the image
+ * prints in browsers without scroll-driven animation. Without motion the page
+ * simply shows printed.
+ */
+
+:root {
+  --ink-start: 0.15s;
+}
+
+/* Rises from below the hero's clipped bottom edge — so it appears from behind
+   the section underneath — hinging on its lower-right corner (which keeps the
+   whole badge hidden at the start) and settling with a slight overshoot.
+   Composes with the badge's own -2deg tilt. */
+@keyframes ink-float {
+  from { translate: 0 175%; rotate: -12deg; }
+  to { translate: 0 0; rotate: 0deg; }
+}
+
+/* A photo printed into a fixed box, band by band from the top */
+@keyframes ink-rise {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* The footer laid onto the parked 03/03 like a fresh sheet off the press:
+   arriving a touch skewed and lifted, casting a soft shadow up onto the
+   section beneath, then settling flat (same feel as the pulled-sheets mode). */
+@keyframes ink-lay-down {
+  from {
+    transform: rotate(-1.4deg) translateY(2%);
+    box-shadow: 0 -24px 48px -12px rgba(29, 29, 22, 0.28);
+  }
+  60% {
+    box-shadow: 0 -16px 36px -12px rgba(29, 29, 22, 0.18);
+  }
+  to {
+    transform: none;
+    box-shadow: 0 -2px 8px -4px rgba(29, 29, 22, 0.08);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ── Waiting to be printed ── */
+  .motion-ink :is(section, footer):not([data-inked]) [data-ink="float"] {
+    translate: 0 175%;
+    rotate: -12deg;
+  }
+
+  .motion-ink :is(section, footer):not([data-inked]) [data-ink="rise"] {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  /* ── Timed: the badge on load, and image prints as a fallback ── */
+  .motion-ink [data-ink="float"] {
+    transform-origin: 100% 100%;
+  }
+
+  .motion-ink [data-inked] [data-ink="float"] {
+    animation: ink-float 1.2s cubic-bezier(0.25, 1.25, 0.4, 1)
+      calc(var(--ink-start) + 0.35s) both;
+  }
+
+  .motion-ink [data-inked] [data-ink="rise"] {
+    animation: ink-rise 1.4s steps(24, jump-end) calc(var(--ink-start) + 0.3s) both;
+  }
+
+  /* ── Scroll-linked image printing ── */
+  @supports (animation-timeline: view()) {
+    .motion-ink :is(section, footer) {
+      view-timeline: --ink-sheet block;
+    }
+
+    /* Starts once over half the box is on screen (bands print from the top,
+       so the printed part is always visible), done as the section reaches
+       the top */
+    .motion-ink :is(section, footer):not(#home) [data-ink-box] > [data-ink="rise"] {
+      animation: ink-rise steps(24, jump-end) both;
+      animation-timeline: --ink-sheet;
+      animation-range: entry 72% entry 100%;
+    }
+
+    /* Two-screen boxes (the featured image): backdrop first, then the UI
+       screenshot printed over it */
+    .motion-ink :is(section, footer):not(#home) [data-ink-box] > [data-ink="rise"][data-ink-pass="1"] {
+      animation-range: entry 55% entry 88%;
+    }
+
+    .motion-ink :is(section, footer):not(#home) [data-ink-box] > [data-ink="rise"][data-ink-pass="2"] {
+      animation-range: entry 78% entry 100%;
+    }
+  }
+}
+
+/* Footer slides up over the parked 03/03 — only when that section is parked
+   (desktop, scroll-driven support), since otherwise it isn't held in place.
+   The pin keeps 03/03 stuck for a footer's height past its last spread; the
+   footer's negative margin pulls it into that stretch. */
+@supports (animation-timeline: view()) {
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .motion-ink:has([data-ink-pin]) #contact {
+      position: relative;
+      margin-top: calc(-1 * var(--footer-h));
+      transform-origin: 50% 0;
+      animation: ink-lay-down linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}

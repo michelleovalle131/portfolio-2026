@@ -1,0 +1,15 @@
+/* Emoji reads small at the 12px mono size — set it at 24px, kept on the text line */
+.weatherEmoji {
+  font-size: 24px;
+  line-height: 0;
+  vertical-align: -0.1em;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

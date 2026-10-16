@@ -100,7 +100,7 @@
   font-weight: 600;
   line-height: 1.32;
   letter-spacing: -0.02em;
-  text-align: right;
+  text-align: left;
   text-wrap: pretty;
   opacity: 0;
   transition: opacity 0.6s ease;
@@ -260,5 +260,100 @@
     grid-row: 6;
     justify-content: flex-start;
     margin-left: -8px;
+  }
+}
+
+/*
+ * Strip carousel (desktop, scrollStrip prop) — the three spreads sit side by
+ * side and slide sideways one at a time (autoplay + controls; the track's
+ * transform is set from the component). The section parks at the top for a
+ * footer's height of scrolling, so the footer can slide up over it.
+ */
+.pin > .section {
+  position: sticky;
+  top: 0;
+}
+
+/* Only hold the section back where the footer actually slides over it.
+   After parking it rests on its own for --park-hold of scrolling, then the
+   footer (pulled up by its own height) slides in over it. */
+@supports (animation-timeline: view()) {
+  .pin {
+    --park-hold: 40dvh;
+    height: calc(var(--frame-h) + var(--park-hold) + var(--footer-h));
+  }
+}
+
+/* The spreads share the area the slideshow used: all columns, rows 6–16 */
+.strip {
+  grid-column: 1 / -1;
+  grid-row: 6 / span 11;
+  min-height: 0;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.stripTrack {
+  display: flex;
+  gap: var(--grid-gap, 8px);
+  height: 100%;
+}
+
+/* Controls sit over the strip's bottom-right corner, in its caption row */
+.pin .controls {
+  position: relative;
+  z-index: 1;
+}
+
+/* One spread = three equal panels on the page grid's rhythm: print photo,
+   colour photo, then the copy — each six page columns wide. Page column =
+   (strip width − 15 gaps) / 16, so a spread is 18 columns + 17 gaps. */
+.spread {
+  --col: calc((100cqw - 15 * var(--grid-gap, 8px)) / 16);
+  flex: none;
+  width: calc(18 * var(--col) + 17 * var(--grid-gap, 8px));
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+  grid-template-rows: repeat(11, minmax(0, 1fr));
+  gap: var(--grid-gap, 8px);
+}
+
+.spread .photoPrint {
+  grid-column: 1 / span 6;
+  grid-row: 1 / span 10;
+}
+
+.spread .photoColor {
+  grid-column: 7 / span 6;
+  grid-row: 1 / span 10;
+}
+
+/* An ink-black panel the same size as the photos, light copy set at its top */
+.spread .spreadBody {
+  grid-area: 1 / 13 / span 10 / span 6;
+  padding: 16px 16px 0;
+  background: var(--ink);
+  color: var(--surface-cardstock, #f9f7f3);
+}
+
+.spread .captionPrint {
+  grid-column: 1 / span 6;
+  grid-row: 11;
+}
+
+.spread .captionColor {
+  grid-column: 7 / span 6;
+  grid-row: 11;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No footer slide-over, so no need to hold the section back */
+  .pin {
+    height: auto;
+  }
+
+  .pin > .section {
+    position: relative;
   }
 }

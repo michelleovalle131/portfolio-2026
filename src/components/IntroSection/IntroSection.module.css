@@ -4,7 +4,7 @@
   color: var(--ink);
 }
 
-/* Mono / handwritten header row — same print-muted treatment as the hero */
+/* Handwritten edition number — same print-muted treatment as the hero */
 .pageNumber {
   grid-column: 1 / span 5;
   grid-row: 1;
@@ -15,27 +15,6 @@
   letter-spacing: 0.4px;
   color: var(--ink-print-muted);
   mix-blend-mode: multiply;
-}
-
-.local {
-  grid-column: 13 / span 4;
-  grid-row: 1;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  text-align: right;
-  color: var(--ink-print-muted);
-  mix-blend-mode: multiply;
-}
-
-/* Emoji reads small at the 14px mono size — bump it to 24px, keep it on the text line */
-.weatherEmoji {
-  font-size: 24px;
-  line-height: 0;
-  vertical-align: -0.1em;
 }
 
 .headline {
@@ -117,14 +96,6 @@
   mix-blend-mode: multiply;
 }
 
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
 
 @media (max-width: 900px) {
   .grid {
@@ -139,9 +110,6 @@
     grid-column: 1 / span 8;
   }
 
-  .local {
-    grid-column: 9 / span 8;
-  }
 
   .headline {
     grid-column: 1 / -1;

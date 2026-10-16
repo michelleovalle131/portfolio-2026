@@ -73,8 +73,8 @@
 /* Live swatch of the current cardstock colour */
 .swatch {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--accent-spot);
@@ -99,8 +99,8 @@
 
 .utilIcon {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
@@ -181,14 +181,24 @@
     text-align: left;
   }
 
+  /* The Chicago line reads right-aligned across its two columns */
+  .is3x3 .role {
+    text-align: right;
+  }
+
   /* Start of gallery column 2 */
-  .is3x3 .utilLight {
+  .is3x3 .utilLight,
+  .is3x3 .role {
     margin-left: calc((100% - 2 * var(--grid-gap, 8px)) / 3 + var(--grid-gap, 8px));
   }
 
-  /* Start of gallery column 3 */
-  .is3x3 .aboutLink,
+  /* Chicago time + weather: across gallery columns 2–3 */
   .is3x3 .role {
+    width: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + var(--grid-gap, 8px));
+  }
+
+  /* Start of gallery column 3 */
+  .is3x3 .aboutLink {
     margin-left: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + 2 * var(--grid-gap, 8px));
   }
 }
@@ -273,15 +283,14 @@
   transform: rotate(-2deg);
 }
 
-/* Right-aligned to the gallery's right edge (column 16) */
+/* Live Chicago time and weather, below the gallery. A plain line of text
+   (not flex), so the emoji sits inline on the same baseline as the words. */
 .role {
   grid-column: 9 / span 8;
   grid-row: 16;
-  align-self: stretch;
+  align-self: end;
   justify-self: end;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  display: block;
   margin: 0;
   max-width: 100%;
   font-family: var(--font-mono);
@@ -345,7 +354,6 @@
     grid-column: 1 / -1;
     grid-row: 20;
     justify-self: start;
-    justify-content: flex-start;
     text-align: left;
   }
 }
