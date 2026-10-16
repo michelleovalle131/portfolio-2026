@@ -48,7 +48,8 @@
   --neutral-dark-80: rgba(90, 90, 90, 0.8); /* Figma "Neutral - Dark - 80" · #5A5A5A @ 80% */
   --ink-print-muted: var(--neutral-dark-80);
   --grid-gap: 8px;
-  --grid-padding: 24px;
+  --grid-padding: 24px;        /* left / right */
+  --grid-padding-block: 48px;  /* top / bottom */
   --grid-columns: 16;
   --grid-rows: 16;
   --font-mono: "Paper Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;

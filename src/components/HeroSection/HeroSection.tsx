@@ -113,26 +113,33 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
       <div className={`editorialGrid ${styles.grid}`}>
         <p className={styles.name}>michelle ovalle</p>
 
-        <button
-          type="button"
-          className={styles.utilCardstock}
-          onClick={cycleCardstock}
-          aria-label={`Cardstock color: ${CARDSTOCK_COLORS[cardstockIndex]!.name}. Switch to ${nextCardstock.name}`}
-        >
-          <span className={styles.swatch} aria-hidden />
-          <span>cardstock</span>
-        </button>
+        {/* Icon-only controls; their labels show as tooltips on hover/focus */}
+        <div className={styles.utils}>
+          <button
+            type="button"
+            className={`${styles.utilCardstock} ${styles.tip}`}
+            onClick={cycleCardstock}
+            data-tooltip={`Cardstock · ${CARDSTOCK_COLORS[cardstockIndex]!.name}`}
+            aria-label={`Cardstock color: ${CARDSTOCK_COLORS[cardstockIndex]!.name}. Switch to ${nextCardstock.name}`}
+          >
+            <span className={styles.swatch} aria-hidden />
+          </button>
 
-        <div className={styles.utilLight}>
-          <img
-            className={styles.utilIcon}
-            src="/imgs/hero-grid/b37d3.svg"
-            alt=""
-            width={20}
-            height={20}
-            decoding="async"
-          />
-          <span>light mode</span>
+          <span
+            className={`${styles.utilLight} ${styles.tip}`}
+            data-tooltip="Light mode"
+            role="img"
+            aria-label="Light mode"
+          >
+            <img
+              className={styles.utilIcon}
+              src="/imgs/hero-grid/b37d3.svg"
+              alt=""
+              width={20}
+              height={20}
+              decoding="async"
+            />
+          </span>
         </div>
 
         <NavLink className={styles.aboutLink} to="/about">

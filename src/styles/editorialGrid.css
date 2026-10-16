@@ -10,8 +10,11 @@
 :root {
   --frame-w: min(100vw, var(--content-wide, 2000px), calc(100dvh * (1440 / 1024)));
   --frame-h: calc(var(--frame-w) * (1024 / 1440));
-  /* Footer height on desktop: 5 grid rows + 4 gaps + 48px padding (see Footer) */
-  --footer-h: calc((var(--frame-h) - 168px) * 5 / 16 + 80px);
+  /* One row of the 16-row frame: frame height less top/bottom padding and
+     15 gaps, split 16 ways */
+  --frame-row: calc((var(--frame-h) - 2 * var(--grid-padding-block, 48px) - 15 * var(--grid-gap, 8px)) / 16);
+  /* Footer height on desktop: 5 rows + 4 gaps + top/bottom padding (see Footer) */
+  --footer-h: calc(5 * var(--frame-row) + 4 * var(--grid-gap, 8px) + 2 * var(--grid-padding-block, 48px));
   /* 64px and 24px at the 1440px artboard */
   --type-frame-headline: clamp(1.5rem, calc(var(--frame-w) * 0.0444), 64px);
   --type-frame-body: clamp(1rem, calc(var(--frame-w) * 0.0167), 24px);
@@ -37,7 +40,7 @@
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
   grid-template-rows: repeat(var(--grid-rows), minmax(0, 1fr));
   gap: var(--grid-gap, 8px);
-  padding: var(--grid-padding, 24px);
+  padding: var(--grid-padding-block, 48px) var(--grid-padding, 24px);
 }
 
 @media (min-width: 901px) {

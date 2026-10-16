@@ -28,9 +28,10 @@
 /* Rises from below the hero's clipped bottom edge — so it appears from behind
    the section underneath — hinging on its lower-right corner (which keeps the
    whole badge hidden at the start) and settling with a slight overshoot.
+   240% clears the badge's height plus the grid's 48px bottom margin.
    Composes with the badge's own -2deg tilt. */
 @keyframes ink-float {
-  from { translate: 0 175%; rotate: -12deg; }
+  from { translate: 0 240%; rotate: -12deg; }
   to { translate: 0 0; rotate: 0deg; }
 }
 
@@ -60,7 +61,7 @@
 @media (prefers-reduced-motion: no-preference) {
   /* ── Waiting to be printed ── */
   .motion-ink :is(section, footer):not([data-inked]) [data-ink="float"] {
-    translate: 0 175%;
+    translate: 0 240%;
     rotate: -12deg;
   }
 

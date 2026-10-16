@@ -10,7 +10,7 @@
  * (53.5px at 1440 × 1024), so the footer keeps the page's rhythm.
  */
 .grid {
-  --row-height: calc((var(--frame-h) - 48px - 120px) / 16);
+  --row-height: var(--frame-row);
   height: auto;
   min-height: auto;
   grid-template-rows: repeat(5, minmax(var(--row-height), auto));

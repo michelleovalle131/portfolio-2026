@@ -8,15 +8,17 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./HomePage.module.css";
 
 /**
- * Scroll motion prototypes, switchable from the address bar while we compare:
- *   /                pulled sheets (default)
- *   /?motion=fold    fold-out booklet — sections unfold left to right
- *   /?motion=ink     screenprint — heading ink floods in as each section arrives
+ * Scroll motion. The live site always uses Screenprint. On the local dev
+ * server the other prototypes stay available to keep testing, from the
+ * address bar or the switch at the bottom of the page:
+ *   /                  screenprint (default) — images print in on scroll
+ *   /?motion=sheets    pulled sheets — sections stack as you scroll
+ *   /?motion=fold      fold-out booklet — sections unfold left to right
  */
 const MODES = [
-  { id: "sheets", label: "Pulled sheets", to: "/" },
+  { id: "ink", label: "Screenprint", to: "/" },
+  { id: "sheets", label: "Pulled sheets", to: "/?motion=sheets" },
   { id: "fold", label: "Booklet", to: "/?motion=fold" },
-  { id: "ink", label: "Screenprint", to: "/?motion=ink" },
 ] as const;
 
 /** Marks each section (and the footer) [data-inked] once it is well into
@@ -52,7 +54,9 @@ export function HomePage() {
   const motion = new URLSearchParams(useLocation().search)
     .get("motion")
     ?.match(/^[a-z]+/)?.[0];
-  const mode = MODES.find((m) => m.id === motion)?.id ?? "sheets";
+  const mode = import.meta.env.DEV
+    ? (MODES.find((m) => m.id === motion)?.id ?? "ink")
+    : "ink";
   const isFold = mode === "fold";
   const pageRef = useRef<HTMLDivElement>(null);
   useInkOnEnter(pageRef, mode === "ink");

@@ -25,13 +25,21 @@
   z-index: 1;
 }
 
+/* The hero sits at the very top of the page, so its top margin is tighter
+   than the other sections' 48px */
+@media (min-width: 901px) {
+  .grid {
+    padding-top: 24px;
+  }
+}
+
 .name {
   grid-column: 1 / span 7;
   grid-row: 1;
-  align-self: stretch;
+  align-self: start;
   margin: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 400;
@@ -40,25 +48,25 @@
   text-transform: uppercase;
 }
 
+/* Cardstock + Light mode, side by side at the start of the gallery columns */
+.utils {
+  grid-column: 9 / span 8;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .utilCardstock {
-  /* Button reset — reads as the other header labels */
+  /* Button reset */
+  display: flex;
   padding: 0;
   border: 0;
   background: none;
   color: inherit;
   cursor: pointer;
-  grid-column: 9 / span 2;
-  grid-row: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  /* Narrow columns would wrap the label; let it run into the empty columns instead */
-  white-space: nowrap;
 }
 
 .utilCardstock:hover .swatch {
@@ -83,18 +91,40 @@
 }
 
 .utilLight {
-  grid-column: 11 / span 2;
-  grid-row: 1;
   display: flex;
-  align-items: center;
-  gap: 8px;
+}
+
+/* Tooltip: an ink chip with the label in mono, just below the icon */
+.tip {
+  position: relative;
+}
+
+.tip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  translate: -50% 4px;
+  z-index: 10;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--surface-cardstock, #f9f7f3);
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.32;
   letter-spacing: 0.24px;
   text-transform: uppercase;
-  /* Narrow columns would wrap the label; let it run into the empty columns instead */
   white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, translate 0.15s ease;
+}
+
+.tip:hover::after,
+.tip:focus-visible::after {
+  opacity: 1;
+  translate: -50% 0;
 }
 
 .utilIcon {
@@ -107,9 +137,9 @@
 .aboutLink {
   grid-column: 15 / span 2;
   grid-row: 1;
-  align-self: stretch;
+  align-self: start;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   margin: 0;
   font-family: var(--font-mono);
@@ -172,34 +202,20 @@
  * offset by whole gallery columns; % margins resolve against that span.
  */
 @media (min-width: 901px) {
-  .is3x3 .utilLight,
-  .is3x3 .aboutLink,
+  /* Chicago time + weather: across gallery columns 2–3, right-aligned */
   .is3x3 .role {
     grid-column: 9 / span 8;
     justify-self: start;
-    justify-content: flex-start;
-    text-align: left;
-  }
-
-  /* The Chicago line reads right-aligned across its two columns */
-  .is3x3 .role {
+    margin-left: calc((100% - 2 * var(--grid-gap, 8px)) / 3 + var(--grid-gap, 8px));
+    width: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + var(--grid-gap, 8px));
     text-align: right;
   }
 
-  /* Start of gallery column 2 */
-  .is3x3 .utilLight,
-  .is3x3 .role {
-    margin-left: calc((100% - 2 * var(--grid-gap, 8px)) / 3 + var(--grid-gap, 8px));
-  }
-
-  /* Chicago time + weather: across gallery columns 2–3 */
-  .is3x3 .role {
-    width: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + var(--grid-gap, 8px));
-  }
-
-  /* Start of gallery column 3 */
+  /* About: right-aligned to the gallery's right edge */
   .is3x3 .aboutLink {
-    margin-left: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + 2 * var(--grid-gap, 8px));
+    grid-column: 9 / span 8;
+    justify-self: end;
+    justify-content: flex-end;
   }
 }
 
@@ -322,8 +338,7 @@
     grid-row: 1;
   }
 
-  .utilCardstock,
-  .utilLight,
+  .utils,
   .aboutLink {
     display: none;
   }
