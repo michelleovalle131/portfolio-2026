@@ -4,6 +4,8 @@ type FeaturedProjectSectionProps = {
   id: string;
   /** Handwritten section counter, e.g. "02/03". */
   pageNumber: string;
+  /** Mono label in the top-right corner, e.g. the project name. */
+  label: string;
   title: string;
   description: string;
   /** Atmospheric backdrop, multiplied onto the accent plate. */
@@ -18,6 +20,7 @@ type FeaturedProjectSectionProps = {
 export function FeaturedProjectSection({
   id,
   pageNumber,
+  label,
   title,
   description,
   backgroundSrc,
@@ -39,7 +42,7 @@ export function FeaturedProjectSection({
         <p className={styles.pageNumber} aria-hidden>
           {pageNumber}
         </p>
-        <p className={styles.label}>Featured project</p>
+        <p className={styles.label}>{label}</p>
 
         <h2 className={styles.title} id={headingId}>
           {title}

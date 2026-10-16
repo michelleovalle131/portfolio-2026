@@ -26,7 +26,9 @@ export function Footer() {
           LinkedIn
         </a>
 
-        <p className={styles.copyright}>Copyright {new Date().getFullYear()}.</p>
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} Michelle Ovalle. All rights reserved.
+        </p>
       </div>
     </footer>
   );
