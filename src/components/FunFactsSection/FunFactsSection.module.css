@@ -21,9 +21,9 @@
   grid-row: 1;
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.28px;
+  letter-spacing: 0.24px;
   text-transform: uppercase;
   text-align: right;
   color: var(--ink-print-muted);
@@ -74,29 +74,15 @@
   opacity: 1;
 }
 
-/* Left plate is printed: grayscale + accent tint, revealed in colour on hover
-   (same treatment as the hero gallery) */
-.photoPrint .photoImg {
+/* Both photos print in black and white, multiplied onto the cardstock, and
+   reveal in full colour on hover — same treatment as the hero gallery */
+.photoImg {
   filter: grayscale(1) contrast(1.12);
 }
 
-.photoPrint::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--accent-spot, #c8e9ff);
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.photoPrint:hover .photoImg {
+.photo:hover .photoImg {
   filter: none;
   mix-blend-mode: normal;
-}
-
-.photoPrint:hover::after {
-  opacity: 0;
 }
 
 .body {
@@ -123,11 +109,12 @@
 .caption {
   grid-row: 16;
   display: grid;
-  align-items: center;
+  /* Sit at the top of the row, right under the photos */
+  align-items: start;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.28px;
+  letter-spacing: 0.24px;
   text-transform: uppercase;
   color: var(--ink-print-muted);
   mix-blend-mode: multiply;
@@ -139,6 +126,21 @@
 
 .captionColor {
   grid-column: 7 / span 6;
+}
+
+/* Captions appear with their photo's colour reveal. Captions are later
+   siblings of the photos, so each photo's hover reaches its own caption.
+   Touch screens have no hover, so captions stay visible there. */
+@media (hover: hover) {
+  .caption {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .photoPrint:hover ~ .captionPrint,
+  .photoColor:hover ~ .captionColor {
+    opacity: 1;
+  }
 }
 
 .captionText {

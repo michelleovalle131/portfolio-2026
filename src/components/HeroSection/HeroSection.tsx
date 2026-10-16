@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { HERO_GRID_CELLS, type HeroGridCell } from "./heroGridCells";
+import {
+  HERO_GRID_CELLS,
+  HERO_GRID_CELLS_3X3,
+  type HeroGridCell,
+} from "./heroGridCells";
 import { STAMP_IMAGE_URLS } from "./stampImagePool";
+import {
+  CARDSTOCK_COLORS,
+  applyCardstock,
+  readCardstockIndex,
+} from "../../styles/cardstock";
 import styles from "./HeroSection.module.css";
 
 function shuffleInPlace<T>(arr: T[]): void {
@@ -11,11 +20,14 @@ function shuffleInPlace<T>(arr: T[]): void {
   }
 }
 
-function cellsWithShuffledPhotos(urls: string[]): HeroGridCell[] {
+function cellsWithShuffledPhotos(
+  layout: HeroGridCell[],
+  urls: string[],
+): HeroGridCell[] {
   const shuffled = [...urls];
   shuffleInPlace(shuffled);
   let photoIndex = 0;
-  return HERO_GRID_CELLS.map((cell) => {
+  return layout.map((cell) => {
     if (!cell.imageSrc) return cell;
     const next = shuffled[photoIndex % shuffled.length] ?? cell.imageSrc;
     photoIndex += 1;
@@ -26,17 +38,29 @@ function cellsWithShuffledPhotos(urls: string[]): HeroGridCell[] {
 type HeroProps = {
   /** Reshuffles grid photos (keeps layout slots). */
   remixEpoch?: number;
+  /** "4x3": 12 cells on the page grid (Figma). "3x3": 9 larger cells in the same area. */
+  gallery?: "4x3" | "3x3";
 };
 
-export function HeroSection({ remixEpoch = 0 }: HeroProps) {
+export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
+  const layout = gallery === "3x3" ? HERO_GRID_CELLS_3X3 : HERO_GRID_CELLS;
   const [cells, setCells] = useState(() =>
-    cellsWithShuffledPhotos(STAMP_IMAGE_URLS),
+    cellsWithShuffledPhotos(layout, STAMP_IMAGE_URLS),
   );
 
   useEffect(() => {
     if (remixEpoch === 0) return;
-    setCells(cellsWithShuffledPhotos(STAMP_IMAGE_URLS));
-  }, [remixEpoch]);
+    setCells(cellsWithShuffledPhotos(layout, STAMP_IMAGE_URLS));
+  }, [remixEpoch, layout]);
+
+  const [cardstockIndex, setCardstockIndex] = useState(readCardstockIndex);
+  const nextCardstock = CARDSTOCK_COLORS[(cardstockIndex + 1) % CARDSTOCK_COLORS.length]!;
+  const cycleCardstock = () =>
+    setCardstockIndex((i) => (i + 1) % CARDSTOCK_COLORS.length);
+
+  useEffect(() => {
+    applyCardstock(cardstockIndex);
+  }, [cardstockIndex]);
 
   const gridCellStyles = useMemo(
     () =>
@@ -47,24 +71,55 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
     [cells],
   );
 
+  const galleryCells = cells.map((cell, index) => (
+    <div
+      key={`hero-cell-${index}`}
+      className={styles.imageCell}
+      style={gridCellStyles[index]}
+    >
+      <div className={styles.printFrame}>
+        {cell.imageSrc ? (
+          <img
+            className={[
+              styles.printPhoto,
+              cell.photoMultiply ? styles.printPhotoMultiply : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            src={cell.imageSrc}
+            alt=""
+            draggable={false}
+          />
+        ) : null}
+      </div>
+      <span className={styles.cellLabel}>
+        {String(index + 1).padStart(2, "0")}
+      </span>
+    </div>
+  ));
+
   return (
-    <section id="home" className={styles.hero} aria-labelledby="hero-title">
+    <section
+      id="home"
+      className={[styles.hero, gallery === "3x3" ? styles.is3x3 : ""]
+        .filter(Boolean)
+        .join(" ")}
+      aria-labelledby="hero-title"
+    >
       <div className={styles.neutralPanel} aria-hidden />
 
       <div className={`editorialGrid ${styles.grid}`}>
         <p className={styles.name}>michelle ovalle</p>
 
-        <div className={styles.utilCardstock}>
-          <img
-            className={styles.utilIcon}
-            src="/imgs/hero-grid/64ed1.svg"
-            alt=""
-            width={24}
-            height={24}
-            decoding="async"
-          />
+        <button
+          type="button"
+          className={styles.utilCardstock}
+          onClick={cycleCardstock}
+          aria-label={`Cardstock color: ${CARDSTOCK_COLORS[cardstockIndex]!.name}. Switch to ${nextCardstock.name}`}
+        >
+          <span className={styles.swatch} aria-hidden />
           <span>cardstock</span>
-        </div>
+        </button>
 
         <div className={styles.utilLight}>
           <img
@@ -87,32 +142,11 @@ export function HeroSection({ remixEpoch = 0 }: HeroProps) {
           decision at a time.
         </h1>
 
-        {cells.map((cell, index) => (
-          <div
-            key={`hero-cell-${index}`}
-            className={styles.imageCell}
-            style={gridCellStyles[index]}
-          >
-            <div className={styles.printFrame}>
-              {cell.imageSrc ? (
-                <img
-                  className={[
-                    styles.printPhoto,
-                    cell.photoMultiply ? styles.printPhotoMultiply : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  src={cell.imageSrc}
-                  alt=""
-                  draggable={false}
-                />
-              ) : null}
-            </div>
-            <span className={styles.cellLabel}>
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          </div>
-        ))}
+        {gallery === "3x3" ? (
+          <div className={styles.gallery3x3}>{galleryCells}</div>
+        ) : (
+          galleryCells
+        )}
 
         <div className={styles.tagline} aria-hidden>
           <span>design</span>

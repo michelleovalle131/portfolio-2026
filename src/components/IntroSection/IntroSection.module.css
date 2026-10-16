@@ -22,9 +22,9 @@
   grid-row: 1;
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.28px;
+  letter-spacing: 0.24px;
   text-transform: uppercase;
   text-align: right;
   color: var(--ink-print-muted);

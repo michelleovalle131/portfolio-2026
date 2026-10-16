@@ -7,12 +7,14 @@ import { FeaturedProjectSection } from "../components/FeaturedProjectSection/Fea
 export function HomePage() {
   return (
     <>
-      <HeroSection />
+      {/* gallery="4x3" restores the 12-cell Figma grid */}
+      <HeroSection gallery="3x3" />
       <IntroSection />
       <FeaturedProjectSection
         id="ai-overlays"
         layout="split"
         pageNumber="02/03"
+        label="Loom AI Overlays"
         title="From Talking Head Video to Dynamic Presentation"
         description="An AI agent that turns a talking-head Loom into a dynamic video presentation, generating motion graphics from your words and your team’s context."
         backgroundSrc="/imgs/ai-overlays-bg.webp"

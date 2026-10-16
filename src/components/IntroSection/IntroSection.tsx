@@ -84,7 +84,8 @@ export function IntroSection() {
         </p>
 
         <p className={styles.local}>
-          <span className={styles.visuallyHidden}>Local time in Chicago: </span>
+          Chicago, IL{" "}
+          <span className={styles.visuallyHidden}>local time </span>
           {time}
           {weather && (
             <>
@@ -96,7 +97,7 @@ export function IntroSection() {
         </p>
 
         <h2 className={styles.headline} id="intro-heading">
-          Hello from Chicago. I&apos;m Michelle—an experienced Product Designer
+          I&apos;m Michelle—an experienced Product Designer
           who thrives at the intersection of systems thinking, craft, and
           making a real impact.
         </h2>

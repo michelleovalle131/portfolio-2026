@@ -1,6 +1,7 @@
 .footer {
   position: relative;
   background: var(--accent-spot, #c8e9ff);
+  transition: background-color 0.3s ease;
   color: var(--ink);
 }
 
@@ -20,9 +21,9 @@
   grid-row: 1;
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.28px;
+  letter-spacing: 0.24px;
   text-transform: uppercase;
   color: var(--ink-print-muted);
   mix-blend-mode: multiply;
@@ -48,9 +49,9 @@
   min-height: 44px;
   border: 1px solid var(--ink);
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.28px;
+  letter-spacing: 0.24px;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ink);
@@ -77,15 +78,15 @@
 }
 
 .copyright {
-  grid-column: 13 / span 4;
+  grid-column: 9 / span 8;
   grid-row: 5;
   align-self: end;
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--type-frame-body);
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.32;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   text-align: right;
   color: var(--ink-print-muted);
   mix-blend-mode: multiply;
