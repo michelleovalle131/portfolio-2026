@@ -7,6 +7,8 @@ export type HeroGridCell = {
   imageSrc?: string;
   /** Extra multiply on the photo layer (Figma uses this on some cells) */
   photoMultiply?: boolean;
+  /** Pure negative space: no frame, no photo, no number */
+  blank?: boolean;
 };
 
 /** Static layout from Figma node 249:1547; image paths are exported hero-grid assets.
@@ -95,8 +97,9 @@ export const HERO_GRID_CELLS: HeroGridCell[] = [
 ];
 
 /** 3×3 alternative: positions are within the gallery's own 3-column grid
- * (see .gallery3x3), not the 16-column page grid. Every cell shows a photo;
- * the photos themselves are shuffled from the hero pool on load. */
+ * (see .gallery3x3), not the 16-column page grid. Three cells are left as
+ * negative space so the photos step down the grid; the photos themselves are
+ * shuffled from the hero pool on load. */
 export const HERO_GRID_CELLS_3X3: HeroGridCell[] = [
   {
     col: 1,
@@ -117,14 +120,14 @@ export const HERO_GRID_CELLS_3X3: HeroGridCell[] = [
     row: 1,
     colSpan: 1,
     rowSpan: 1,
-    imageSrc: "/imgs/hero-grid/e0394.png",
+    blank: true,
   },
   {
     col: 1,
     row: 2,
     colSpan: 1,
     rowSpan: 1,
-    imageSrc: "/imgs/hero-grid/602b6.png",
+    blank: true,
   },
   {
     col: 2,
@@ -160,7 +163,7 @@ export const HERO_GRID_CELLS_3X3: HeroGridCell[] = [
     row: 3,
     colSpan: 1,
     rowSpan: 1,
-    imageSrc: "/imgs/hero-grid/add46.png",
+    blank: true,
   },
 ];
 

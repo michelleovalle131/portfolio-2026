@@ -1,5 +1,5 @@
 /**
- * Cardstock — the site's one spot colour (`--accent-spot`), swappable by the
+ * Cardstock — the site's one spot colour (`--cardstock-pastel`), swappable by the
  * visitor from the hero. Values from Figma (MO-SCRATCH, node 265:2069).
  * The choice is remembered per browser and applied before first paint.
  */
@@ -27,7 +27,8 @@ export function readCardstockIndex(): number {
 
 export function applyCardstock(index: number): void {
   const color = CARDSTOCK_COLORS[index] ?? CARDSTOCK_COLORS[0];
-  document.documentElement.style.setProperty("--accent-spot", color.value);
+  // --accent-spot (and dark mode's deep accent) are derived from this in CSS
+  document.documentElement.style.setProperty("--cardstock-pastel", color.value);
   try {
     window.localStorage.setItem(STORAGE_KEY, String(index));
   } catch {

@@ -9,12 +9,14 @@
   grid-column: 1 / span 5;
   grid-row: 1;
   margin: 0;
+  /* Slight indent, like the hero's Chicago line */
+  padding-left: 4px;
   font-family: var(--font-hand);
   font-size: 20px;
   line-height: 1.32;
   letter-spacing: 0.4px;
   color: var(--ink-print-muted);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
 .headline {
@@ -82,7 +84,7 @@
   position: absolute;
   inset: 0;
   background: var(--accent-spot, #c8e9ff);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
   pointer-events: none;
 }
 
@@ -93,9 +95,25 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
+/* Dark mode mirrors the duotone: black-and-white photo screened with the
+   (deep) accent plate — shadows show the accent, highlights print light.
+   The black base keeps the plate solid accent until the photo prints in,
+   as in light mode. */
+:global([data-theme="dark"]) .portrait {
+  background: #000;
+}
+
+:global([data-theme="dark"]) .portrait::after {
+  mix-blend-mode: screen;
+}
+
+:global([data-theme="dark"]) .portraitImg {
+  filter: var(--photo-ink);
+  mix-blend-mode: normal;
+}
 
 @media (max-width: 900px) {
   .grid {

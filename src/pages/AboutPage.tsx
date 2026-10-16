@@ -1,4 +1,5 @@
 import { Footer } from "../components/Footer/Footer";
+import { SiteHeader } from "../components/SiteHeader/SiteHeader";
 import { ABOUT_EXPERIENCE } from "./aboutExperience";
 import { ABOUT_RECOGNITION } from "./aboutRecognition";
 import styles from "./AboutPage.module.css";
@@ -7,37 +8,42 @@ export function AboutPage() {
   return (
     <>
       <main className={styles.main} id="about">
-        <header className={styles.header} aria-labelledby="about-page-title">
-          <p className={styles.eyebrow}>About</p>
-          <h1 className={styles.title} id="about-page-title">
-            Michelle Ovalle
-          </h1>
-          <p className={styles.lede}>
-            Bringing thoughtful, intentional design to complex products.
-          </p>
-        </header>
+        {/* Intro + experience on the homepage's 16-column grid */}
+        <div className={styles.grid}>
+          <SiteHeader className={styles.siteHeader} />
 
-        <section
-          className={styles.experience}
-          aria-labelledby="about-experience-heading"
-        >
-          <p className={styles.eyebrow} id="about-experience-heading">
-            Experience
-          </p>
-          <div className={styles.experienceBody}>
-            {ABOUT_EXPERIENCE.map((job) => (
-              <article key={job.id} className={styles.jobBlock}>
-                <div className={styles.jobTopRow}>
+          {/* No visible title — the page opens straight on Experience */}
+          <h1 className={styles.visuallyHidden}>About Michelle Ovalle</h1>
+
+          <section
+            className={styles.experience}
+            aria-labelledby="about-experience-heading"
+          >
+            <div className={styles.sectionIntro}>
+              <p className={styles.pageNumber}>01/02</p>
+              <h2 className={styles.sectionHeading} id="about-experience-heading">
+                Experience through the years
+              </h2>
+            </div>
+            <div className={styles.entries}>
+              {ABOUT_EXPERIENCE.map((job) => (
+                <article key={job.id} className={styles.jobBlock}>
                   <h3 className={styles.jobTitle}>{job.headline}</h3>
-                  <p className={styles.jobDates}>{job.dateRange}</p>
-                </div>
-                <p className={styles.jobLevel}>{job.levelLine}</p>
-                <p className={styles.jobDescription}>{job.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
+                  {/* Roles held there, each with its team and dates */}
+                  {job.roles.map((role) => (
+                    <div key={role.title} className={styles.role}>
+                      <div className={styles.jobTopRow}>
+                        <p className={styles.jobLevel}>{role.title}</p>
+                        <p className={styles.jobDates}>{role.dateRange}</p>
+                      </div>
+                      <p className={styles.jobDescription}>{role.description}</p>
+                    </div>
+                  ))}
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
       </main>
 
       <section
@@ -45,11 +51,14 @@ export function AboutPage() {
         id="about-recognition"
         aria-labelledby="about-recognition-heading"
       >
-        <div className={styles.recognitionInner}>
-          <h2 className={styles.sectionHeading} id="about-recognition-heading">
-            Recognition
-          </h2>
-          <div className={styles.experienceBody}>
+        <div className={styles.grid}>
+          <div className={styles.sectionIntro}>
+            <p className={styles.pageNumber}>02/02</p>
+            <h2 className={styles.sectionHeading} id="about-recognition-heading">
+              Highlights and Recognition
+            </h2>
+          </div>
+          <div className={styles.entries}>
             {ABOUT_RECOGNITION.map((item) => (
               <article key={item.id} className={styles.jobBlock}>
                 <div className={styles.jobTopRow}>

@@ -33,132 +33,11 @@
   }
 }
 
-.name {
-  grid-column: 1 / span 7;
+/* Name, icons and About — the shared site header, in the grid's first row */
+.siteHeader {
+  grid-column: 1 / -1;
   grid-row: 1;
   align-self: start;
-  margin: 0;
-  display: flex;
-  align-items: flex-start;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.32;
-  letter-spacing: 0.28px;
-  text-transform: uppercase;
-}
-
-/* Cardstock + Light mode, side by side at the start of the gallery columns */
-.utils {
-  grid-column: 9 / span 8;
-  grid-row: 1;
-  align-self: start;
-  justify-self: start;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.utilCardstock {
-  /* Button reset */
-  display: flex;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
-}
-
-.utilCardstock:hover .swatch {
-  transform: scale(1.12);
-}
-
-.utilCardstock:focus-visible {
-  outline: 2px solid var(--field-accent);
-  outline-offset: 3px;
-}
-
-/* Live swatch of the current cardstock colour */
-.swatch {
-  display: block;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--accent-spot);
-  box-shadow: inset 0 0 0 1px var(--ink-print-muted);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.utilLight {
-  display: flex;
-}
-
-/* Tooltip: an ink chip with the label in mono, just below the icon */
-.tip {
-  position: relative;
-}
-
-.tip::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  translate: -50% 4px;
-  z-index: 10;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: var(--ink);
-  color: var(--surface-cardstock, #f9f7f3);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease, translate 0.15s ease;
-}
-
-.tip:hover::after,
-.tip:focus-visible::after {
-  opacity: 1;
-  translate: -50% 0;
-}
-
-.utilIcon {
-  display: block;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.aboutLink {
-  grid-column: 15 / span 2;
-  grid-row: 1;
-  align-self: start;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  color: inherit;
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-}
-
-.aboutLink:hover {
-  opacity: 0.72;
-}
-
-.aboutLink:focus-visible {
-  outline: 2px solid var(--field-accent);
-  outline-offset: 3px;
 }
 
 .headline {
@@ -196,29 +75,6 @@
   aspect-ratio: 167 / 148.5;
 }
 
-/*
- * Header + footer labels line up with the 3×3 gallery's columns, which don't
- * fall on page-grid lines. Each spans the gallery's columns (9–16) and is
- * offset by whole gallery columns; % margins resolve against that span.
- */
-@media (min-width: 901px) {
-  /* Chicago time + weather: across gallery columns 2–3, right-aligned */
-  .is3x3 .role {
-    grid-column: 9 / span 8;
-    justify-self: start;
-    margin-left: calc((100% - 2 * var(--grid-gap, 8px)) / 3 + var(--grid-gap, 8px));
-    width: calc((100% - 2 * var(--grid-gap, 8px)) * 2 / 3 + var(--grid-gap, 8px));
-    text-align: right;
-  }
-
-  /* About: right-aligned to the gallery's right edge */
-  .is3x3 .aboutLink {
-    grid-column: 9 / span 8;
-    justify-self: end;
-    justify-content: flex-end;
-  }
-}
-
 .imageCell {
   display: flex;
   flex-direction: column;
@@ -235,7 +91,7 @@
   overflow: hidden;
   /* Neutral print plate — multiplies onto the cardstock so empty cells still read */
   background: var(--surface-print-plate);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
 .printPhoto {
@@ -245,13 +101,13 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(1) contrast(1.12);
-  mix-blend-mode: multiply;
+  filter: var(--photo-ink);
+  mix-blend-mode: var(--blend-ink);
   transition: filter 0.25s ease;
 }
 
 .printPhotoMultiply {
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
 /* Hover reveals the photo in full colour — drop the print treatment */
@@ -288,7 +144,7 @@
   padding: 12px 16px;
   border: 1px solid var(--ink-print-muted);
   border-radius: 8px;
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.32;
@@ -299,23 +155,25 @@
   transform: rotate(-2deg);
 }
 
-/* Live Chicago time and weather, below the gallery. A plain line of text
-   (not flex), so the emoji sits inline on the same baseline as the words. */
-.role {
-  grid-column: 9 / span 8;
-  grid-row: 16;
+/* Live Chicago time and weather, just above the headline. A plain line of
+   text (not flex), so the emoji sits inline on the same baseline as the words. */
+.localTime {
+  grid-column: 1 / span 7;
+  grid-row: 3;
   align-self: end;
-  justify-self: end;
+  justify-self: start;
   display: block;
-  margin: 0;
+  margin: 0 0 16px;
+  /* Slight indent so it reads optically aligned with the headline's serif */
+  padding-left: 6px;
   max-width: 100%;
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.32;
   letter-spacing: 0.24px;
   text-transform: uppercase;
-  color: var(--ink-print-muted);
-  text-align: right;
+  color: var(--ink); /* Neutral – Dark – 100 */
+  text-align: left;
 }
 
 @media (max-width: 900px) {
@@ -333,19 +191,9 @@
     grid-template-rows: repeat(20, minmax(0, 1fr));
   }
 
-  .name {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .utils,
-  .aboutLink {
-    display: none;
-  }
-
   .headline {
     grid-column: 1 / -1;
-    grid-row: 2 / span 5;
+    grid-row: 3 / span 5;
     font-size: clamp(1.75rem, 7vw, 2.5rem);
   }
 
@@ -365,10 +213,8 @@
     row-gap: 12px;
   }
 
-  .role {
+  .localTime {
     grid-column: 1 / -1;
-    grid-row: 20;
-    justify-self: start;
-    text-align: left;
+    grid-row: 2;
   }
 }

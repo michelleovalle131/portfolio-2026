@@ -39,11 +39,13 @@ function App() {
   const backgroundLocation = (location.state as { backgroundLocation?: Location } | null)
     ?.backgroundLocation;
 
-  const isHome = location.pathname === "/";
+  // Home and About carry the site header in their own grid, so the fixed
+  // nav bar is hidden there
+  const ownHeader = ["/", "/about"].includes(location.pathname);
 
   return (
     <div
-      className={[styles.shell, isHome ? "shellHome" : ""].filter(Boolean).join(" ")}
+      className={[styles.shell, ownHeader ? "shellHome" : ""].filter(Boolean).join(" ")}
     >
       <ScrollToTop skip={!!backgroundLocation} />
       <Nav />

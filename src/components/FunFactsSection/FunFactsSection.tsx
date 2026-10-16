@@ -263,6 +263,9 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
                         decoding="async"
                         draggable={false}
                       />
+                      <span className={styles.flood} aria-hidden>
+                        {slide.print.caption}
+                      </span>
                     </div>
                     <div className={`${styles.photo} ${styles.photoColor}`}>
                       <img
@@ -272,20 +275,13 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
                         decoding="async"
                         draggable={false}
                       />
+                      <span className={styles.flood} aria-hidden>
+                        {slide.color.caption}
+                      </span>
                     </div>
                     <p className={`${styles.bodyText} ${styles.isActive} ${styles.spreadBody}`}>
                       {slide.body}
                     </p>
-                    <div className={`${styles.caption} ${styles.captionPrint}`} aria-hidden>
-                      <span className={`${styles.captionText} ${styles.isActive}`}>
-                        {slide.print.caption}
-                      </span>
-                    </div>
-                    <div className={`${styles.caption} ${styles.captionColor}`} aria-hidden>
-                      <span className={`${styles.captionText} ${styles.isActive}`}>
-                        {slide.color.caption}
-                      </span>
-                    </div>
                   </div>
                 ))}
               </div>

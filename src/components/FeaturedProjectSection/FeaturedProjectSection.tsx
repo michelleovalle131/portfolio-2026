@@ -1,5 +1,7 @@
+import { useState, type ReactNode } from "react";
 import styles from "./FeaturedProjectSection.module.css";
 import { InkText } from "../InkText/InkText";
+import { ProjectPanel } from "../ProjectPanel/ProjectPanel";
 
 type FeaturedProjectSectionProps = {
   id: string;
@@ -16,6 +18,12 @@ type FeaturedProjectSectionProps = {
   screenshotAlt: string;
   /** "stacked": full-width image under the title. "split": image fills the right 10 columns. */
   layout?: "stacked" | "split";
+  /** When given, the image opens a side panel with these project details */
+  details?: {
+    meta?: string;
+    tags?: string[];
+    body: ReactNode;
+  };
 };
 
 export function FeaturedProjectSection({
@@ -28,8 +36,11 @@ export function FeaturedProjectSection({
   screenshotSrc,
   screenshotAlt,
   layout = "stacked",
+  details,
 }: FeaturedProjectSectionProps) {
   const headingId = `${id}-heading`;
+  const [panelOpen, setPanelOpen] = useState(false);
+  const MediaTag = details ? "button" : "div";
 
   return (
     <section
@@ -38,6 +49,18 @@ export function FeaturedProjectSection({
         .join(" ")}
       id={id}
       aria-labelledby={headingId}
+      // The whole section opens the project; the image is its keyboard button.
+      // Clicks inside the panel (rendered in here) bubble up too — skip those,
+      // including during its closing slide.
+      onClick={
+        details
+          ? (e) => {
+              if ((e.target as Element).closest("[data-project-panel]")) return;
+              setPanelOpen(true);
+            }
+          : undefined
+      }
+      data-clickable={details ? "" : undefined}
     >
       <div className={`editorialGrid ${styles.grid}`}>
         <p className={styles.pageNumber} aria-hidden data-ink="pen">
@@ -53,7 +76,18 @@ export function FeaturedProjectSection({
           <InkText>{title}</InkText>
         </h2>
 
-        <div className={styles.media} data-ink-box>
+        <MediaTag
+          className={[styles.media, details ? styles.mediaButton : ""].filter(Boolean).join(" ")}
+          data-ink-box
+          {...(details
+            ? {
+                type: "button" as const,
+                onClick: () => setPanelOpen(true),
+                "aria-haspopup": "dialog" as const,
+                "aria-label": `Open project: ${title}`,
+              }
+            : {})}
+        >
           <img
             className={styles.backdrop}
             data-ink="rise"
@@ -72,10 +106,28 @@ export function FeaturedProjectSection({
             loading="lazy"
             decoding="async"
           />
-        </div>
+        </MediaTag>
 
         <p className={styles.description} data-ink="stamp">{description}</p>
       </div>
+
+      {details && (
+        <ProjectPanel
+          open={panelOpen}
+          onClose={() => setPanelOpen(false)}
+          title={title}
+          meta={details.meta}
+          tags={details.tags}
+          media={
+            <>
+              <img className={styles.panelBackdrop} src={backgroundSrc} alt="" />
+              <img className={styles.panelShot} src={screenshotSrc} alt={screenshotAlt} />
+            </>
+          }
+        >
+          {details.body}
+        </ProjectPanel>
+      )}
     </section>
   );
 }

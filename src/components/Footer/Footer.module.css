@@ -26,12 +26,11 @@
   letter-spacing: 0.24px;
   text-transform: uppercase;
   color: var(--ink-print-muted);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
 .heading {
-  /* Same width as the fun facts photos above (columns 1–12) */
-  grid-column: 1 / span 12;
+  grid-column: 1 / span 16;
   grid-row: 2 / span 2;
   margin: 0;
   font-family: var(--font-display);
@@ -57,12 +56,29 @@
   white-space: nowrap;
   color: var(--ink);
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  /* Same hover as the hero badge: ink rolls up from the bottom, a two-tone
+     band with ink below, and the label reverses out of it */
+  background-color: transparent;
+  background-image: linear-gradient(to top, var(--ink) 50%, transparent 50%);
+  background-size: 100% 200%;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  transition:
+    background-position 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.2s ease 0.1s,
+    border-color 0.2s ease;
 }
 
-.button:hover {
-  background: var(--ink);
-  color: var(--accent-spot, #c8e9ff);
+.button:hover,
+.button:focus-visible {
+  background-position: 0 100%;
+  color: var(--surface-cardstock, #f9f7f3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
 }
 
 .button:focus-visible {
@@ -90,7 +106,7 @@
   letter-spacing: 0;
   text-align: right;
   color: var(--ink-print-muted);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--blend-ink);
 }
 
 @media (max-width: 900px) {

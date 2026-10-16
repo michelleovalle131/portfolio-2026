@@ -75,6 +75,17 @@ export function HomePage() {
         backgroundSrc="/imgs/ai-overlays-bg.webp"
         screenshotSrc="/imgs/ai-overlays-ui.webp"
         screenshotAlt="Loom AI Overlays panel with type style options beside a sample video presentation"
+        details={{
+          meta: "Loom at Atlassian",
+          tags: ["AI agent"],
+          body: (
+            <p>
+              An AI agent that turns a talking-head Loom into a dynamic video
+              presentation, generating motion graphics from your words and your
+              team’s context.
+            </p>
+          ),
+        }}
       />
       {/*
         Shelved for now — M1CA, Company Hub, Cositas Bonitas and Rovo.
