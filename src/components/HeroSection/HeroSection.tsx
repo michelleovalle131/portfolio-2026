@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   HERO_GRID_CELLS,
   HERO_GRID_CELLS_3X3,
@@ -50,6 +50,8 @@ function isFirstLoadThisSession(): boolean {
 const FIRST_LOAD_THIS_SESSION = isFirstLoadThisSession();
 
 const MIN_PHOTOS = 4;
+/** Fade-out before a reshuffled gallery prints in (matches .leaving in CSS) */
+const LEAVE_MS = 220;
 const MAX_PHOTOS = 6;
 
 /**
@@ -107,6 +109,43 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remixEpoch, layout]);
 
+  // Reshuffle button: a new arrangement, as on a fresh load — never the same
+  // pattern of filled cells twice in a row. The current prints lift away,
+  // then the new ones print in one after another (once their images load).
+  const [shuffleEpoch, setShuffleEpoch] = useState(0);
+  const [leaving, setLeaving] = useState(false);
+  const pattern = (list: HeroGridCell[]) => list.map((c) => (c.blank ? 0 : 1)).join("");
+  const remix = () => {
+    if (leaving) return;
+    let next = arrange();
+    for (let i = 0; i < 10 && pattern(next) === pattern(cells); i++) next = arrange();
+
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setCells(next);
+      return;
+    }
+    setLeaving(true);
+    const wait = (ms: number) => new Promise((done) => window.setTimeout(done, ms));
+    const loaded = Promise.all(
+      next
+        .filter((c) => !c.blank && c.imageSrc)
+        .map(
+          (c) =>
+            new Promise<void>((done) => {
+              const img = new Image();
+              img.onload = img.onerror = () => done();
+              img.src = c.imageSrc!;
+            }),
+        ),
+    );
+    // At least the fade-out; at most a short wait on slow images
+    void Promise.all([wait(LEAVE_MS), Promise.race([loaded, wait(900)])]).then(() => {
+      setCells(next);
+      setShuffleEpoch((n) => n + 1);
+      setLeaving(false);
+    });
+  };
+
   const gridCellStyles = useMemo(
     () =>
       cells.map((cell) => ({
@@ -124,9 +163,12 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
 
   const galleryCells = cells.map((cell, index) => cell.blank ? null : (
     <div
-      key={`hero-cell-${index}`}
-      className={styles.imageCell}
-      style={gridCellStyles[index]}
+      // A new key per reshuffle, so the new cells mount and print in
+      key={`hero-cell-${shuffleEpoch}-${index}`}
+      className={[styles.imageCell, shuffleEpoch > 0 ? styles.reprint : ""]
+        .filter(Boolean)
+        .join(" ")}
+      style={{ ...gridCellStyles[index], "--order": photoNumbers[index]! - 1 } as CSSProperties}
     >
       <div className={styles.printFrame}>
         {cell.imageSrc ? (
@@ -172,12 +214,24 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
         </h1>
 
         {gallery === "3x3" ? (
-          <div className={styles.gallery3x3}>{galleryCells}</div>
+          <div
+            className={[styles.gallery3x3, leaving ? styles.leaving : ""]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            {galleryCells}
+          </div>
         ) : (
           galleryCells
         )}
 
         <StampBadge areaRef={heroRef} className={styles.tagline} />
+
+        {gallery === "3x3" && (
+          <button type="button" className={`${styles.remix} link-ui`} onClick={remix}>
+            Reshuffle
+          </button>
+        )}
 
       </div>
     </section>

@@ -23,23 +23,7 @@
   justify-self: start;
 }
 
-/* Underline draws in on hover — same as the intro's Atlassian / Loom links */
-.link {
-  color: inherit;
-  text-decoration: none;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: color 0.2s ease, background-size 0.25s ease;
-}
-
-.link:hover {
-  color: var(--field-accent);
-  background-size: 100% 1px;
-}
-
-.link:focus-visible,
+/* Name and About use the shared .link-ui style (src/styles/links.css) */
 .utilButton:focus-visible {
   outline: 2px solid var(--field-accent);
   outline-offset: 3px;
@@ -129,13 +113,33 @@
   justify-self: end;
 }
 
+/* Phones: everything stays — name on the left, then the two toggles and
+   About at the right edge, in one row */
 @media (max-width: 900px) {
-  .name {
-    grid-column: 1 / -1;
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
-  .utils,
-  .aboutLink {
+  .utils {
+    margin-left: auto;
+    gap: 16px;
+  }
+
+  /* Bigger tap targets than the 20px icons, without moving them */
+  .utilButton {
+    position: relative;
+  }
+
+  .utilButton::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+  }
+
+  /* No hover on touch — skip the tooltips */
+  .tip::after {
     display: none;
   }
 }

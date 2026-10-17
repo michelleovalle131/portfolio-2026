@@ -3,6 +3,7 @@ import { FunFactsSection } from "../components/FunFactsSection/FunFactsSection";
 import { Footer } from "../components/Footer/Footer";
 import { IntroSection } from "../components/IntroSection/IntroSection";
 import { FeaturedProjectSection } from "../components/FeaturedProjectSection/FeaturedProjectSection";
+import { ExpandableVideo } from "../components/ProjectPanel/ExpandableVideo";
 import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./HomePage.module.css";
@@ -49,6 +50,10 @@ function useInkOnEnter(root: React.RefObject<HTMLElement | null>, enabled: boole
   }, [root, enabled]);
 }
 
+const PREFERS_REDUCED_MOTION =
+  typeof window !== "undefined" &&
+  !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
 export function HomePage() {
   // Tolerant of stray punctuation picked up when an address is copied from text
   const motion = new URLSearchParams(useLocation().search)
@@ -72,18 +77,81 @@ export function HomePage() {
         pageNumber="02/03"
         title="From Talking Head Video to Dynamic Presentation"
         description="An AI agent that turns a talking-head Loom into a dynamic video presentation, generating motion graphics from your words and your team’s context."
-        backgroundSrc="/imgs/ai-overlays-bg.webp"
+        backgroundSrc="/imgs/ai-overlays-bg.jpg"
         screenshotSrc="/imgs/ai-overlays-ui.webp"
-        screenshotAlt="Loom AI Overlays panel with type style options beside a sample video presentation"
+        screenshotAlt="A Loom video with AI Overlays: animated stat cards for daily engagement beside the presenter"
+        videoSrc="/imgs/ai-overlays-hero.mp4"
         details={{
           meta: "Loom at Atlassian",
-          tags: ["AI agent"],
+          role: "Led end-to-end design of UX, visual and motion system",
           body: (
-            <p>
-              An AI agent that turns a talking-head Loom into a dynamic video
-              presentation, generating motion graphics from your words and your
-              team’s context.
-            </p>
+            <>
+              <p>
+                AI Overlays is an agent that turns a talking-head Loom into a
+                dynamic presentation. It reads the transcript and pacing of what
+                you say, then generates timed, editorial motion graphics from
+                your words and your team’s context.
+              </p>
+              <p>
+                Announced in the Founder Keynote at Team ’26, where it was
+                demoed on stage by Atlassian’s Founder and CEO. The live
+                demonstration illustrated how a raw, casual screen-recording
+                could instantly transform into a highly-polished and dynamic
+                video presentation.
+              </p>
+              <p>
+                <a
+                  className="link-inline"
+                  href="https://www.youtube.com/watch?v=jQxFsWxn5rQ&t=3379s"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Watch the TEAM’26 Founder Keynote announcement
+                </a>
+              </p>
+              <img
+                src="/imgs/ai-overlays-keynote.jpg"
+                alt="Atlassian’s Founder and CEO on stage at Team ’26 beside a slide announcing Loom AI Overlays"
+                loading="lazy"
+                decoding="async"
+              />
+              {/* Demo: plays muted on a loop, unless the visitor prefers
+                  reduced motion. Full panel width, with an expand button. */}
+              <ExpandableVideo
+                src="/imgs/ai-overlays-demo.mp4"
+                autoPlay={!PREFERS_REDUCED_MOTION}
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                aria-label="Demo of configuring AI Overlays on a Loom video"
+              />
+              <ExpandableVideo
+                src="/imgs/ai-overlays-templates.mp4"
+                autoPlay={!PREFERS_REDUCED_MOTION}
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                aria-label="AI Overlays templates animating across different video layouts"
+              />
+              <h3>Impact</h3>
+              <ul>
+                <li>Featured in Atlassian Team EU Founder Keynote</li>
+                <li>
+                  Created the foundation for AI Overlays: a template, motion
+                  and design system built to grow beyond talking-head videos to
+                  screen-share and content-driven Looms
+                </li>
+                <li>
+                  Scaled into sibling workstreams like fast-tracking agentic PR
+                  reviews, because it was built as a modular visual and motion
+                  system
+                </li>
+              </ul>
+            </>
           ),
         }}
       />

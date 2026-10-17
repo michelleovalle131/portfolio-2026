@@ -78,7 +78,8 @@
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.24px;
+  /* Matches the badge's tracking, so prints are the same size as the block */
+  letter-spacing: 2.24px;
   text-transform: uppercase;
   white-space: nowrap;
   translate: -50% -50%;

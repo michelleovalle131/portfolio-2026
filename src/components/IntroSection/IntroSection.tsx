@@ -26,7 +26,7 @@ export function IntroSection() {
           <p>
             Right now, I&apos;m helping teams do their best work on{" "}
             <a
-              className={styles.inlineLink}
+              className="link-inline"
               href="https://www.loom.com/"
               target="_blank"
               rel="noopener noreferrer"
@@ -35,7 +35,7 @@ export function IntroSection() {
             </a>{" "}
             at{" "}
             <a
-              className={styles.inlineLink}
+              className="link-inline"
               href="https://www.atlassian.com/"
               target="_blank"
               rel="noopener noreferrer"

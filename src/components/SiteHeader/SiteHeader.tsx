@@ -51,7 +51,7 @@ export function SiteHeader({ className }: { className?: string }) {
       {pathname === "/" ? (
         <p className={styles.name}>michelle ovalle</p>
       ) : (
-        <Link className={`${styles.name} ${styles.link}`} to="/">
+        <Link className={`${styles.name} link-ui`} to="/">
           michelle ovalle
         </Link>
       )}
@@ -84,7 +84,7 @@ export function SiteHeader({ className }: { className?: string }) {
         </button>
       </div>
 
-      <NavLink className={`${styles.aboutLink} ${styles.link}`} to="/about">
+      <NavLink className={`${styles.aboutLink} link-ui`} to="/about">
         about
       </NavLink>
     </header>

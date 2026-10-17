@@ -39,7 +39,7 @@
   font-family: var(--font-display);
   font-size: var(--type-frame-headline);
   font-weight: 400;
-  line-height: 0.98;
+  line-height: var(--lh-display);
   letter-spacing: -0.02em;
   text-box: trim-both cap alphabetic;
 }
@@ -82,9 +82,12 @@
   filter: var(--photo-ink);
 }
 
-.photo:hover .photoImg {
-  filter: none;
-  mix-blend-mode: normal;
+/* Hover (mouse only, not phones): the photo in full colour */
+@media (hover: hover) and (min-width: 901px) {
+  .photo:hover .photoImg {
+    filter: none;
+    mix-blend-mode: normal;
+  }
 }
 
 .body {
@@ -133,7 +136,7 @@
 /* Captions appear with their photo's colour reveal. Captions are later
    siblings of the photos, so each photo's hover reaches its own caption.
    Touch screens have no hover, so captions stay visible there. */
-@media (hover: hover) {
+@media (hover: hover) and (min-width: 901px) {
   .caption {
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -257,11 +260,11 @@
     text-align: left;
   }
 
+  /* Arrows at the bottom right */
   .controls {
     grid-column: 1 / -1;
     grid-row: 6;
-    justify-content: flex-start;
-    margin-left: -8px;
+    justify-content: flex-end;
   }
 }
 
@@ -377,8 +380,10 @@
   transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.photo:hover .flood {
-  translate: 0 0;
+@media (hover: hover) {
+  .photo:hover .flood {
+    translate: 0 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,6 +9,8 @@ type ProjectPanelProps = {
   title: string;
   /** Bold line in the left column (a date, company, role…) */
   meta?: string;
+  /** Your role, as a line under the meta */
+  role?: string;
   /** Pill tags under the meta line */
   tags?: string[];
   /** The visual at the top of the panel */
@@ -28,6 +30,7 @@ export function ProjectPanel({
   onClose,
   title,
   meta,
+  role,
   tags = [],
   media,
   children,
@@ -126,6 +129,7 @@ export function ProjectPanel({
         <div className={styles.details}>
           <div className={styles.meta}>
             {meta && <p className={styles.metaLine}>{meta}</p>}
+            {role && <p className={styles.roleLine}>{role}</p>}
             {tags.length > 0 && (
               <ul className={styles.tags}>
                 {tags.map((tag) => (

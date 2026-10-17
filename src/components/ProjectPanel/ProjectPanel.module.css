@@ -87,7 +87,7 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 2.8vw, 48px);
   font-weight: 400;
-  line-height: 1.02;
+  line-height: var(--lh-display);
   letter-spacing: -0.02em;
 }
 
@@ -104,6 +104,13 @@
   font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 600;
+  line-height: 1.32;
+}
+
+.roleLine {
+  margin: 8px 0 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
   line-height: 1.32;
 }
 
@@ -136,12 +143,48 @@
   margin: 0 0 16px;
 }
 
-.body a {
-  color: inherit;
-  text-underline-offset: 0.15em;
+/* Sub-heads in the copy (Impact, …) */
+.body h3 {
+  margin: 32px 0 12px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.32;
+}
+
+.body ul {
+  padding-left: 1.2em;
+}
+
+.body li + li {
+  margin-top: 8px;
+}
+
+.body li > ul {
+  margin: 8px 0 0;
+}
+
+/* Videos and images in the copy bleed out to the panel's full width: the
+   body column is 2fr of a 1fr | 2fr grid with a 32px gap, so the left
+   column plus gap is half the body's width + 32px */
+.body > video,
+.body > img,
+.body > [data-bleed] {
+  display: block;
+  width: calc(150% + 32px);
+  max-width: none;
+  height: auto;
+  margin: 32px 0 32px calc(-50% - 32px);
 }
 
 @media (max-width: 900px) {
+  .body > video,
+  .body > img,
+  .body > [data-bleed] {
+    width: 100%;
+    margin-left: 0;
+  }
+
   .panel {
     width: 100%;
     padding: 20px 20px 48px;

@@ -100,6 +100,8 @@ function useWideStrip(requested: boolean) {
 }
 
 const MARQUEE_PX_PER_S = 50;
+/** The slideshow (phones) waits for the arrows instead of advancing itself */
+const SLIDESHOW_AUTOPLAY = false;
 const GLIDE_MS = 700;
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
@@ -123,8 +125,9 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
     setStepEpoch((n) => n + 1);
   }, []);
 
+  // The slideshow (phones) is stepped by hand with the arrows — no autoplay
   useEffect(() => {
-    if (isPaused || strip) return;
+    if (isPaused || strip || !SLIDESHOW_AUTOPLAY) return;
     const id = window.setInterval(
       () => setActive((i) => (i + 1) % SLIDE_COUNT),
       AUTO_ADVANCE_MS,
@@ -190,7 +193,8 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
   const slideClass = (index: number, base: string) =>
     [base, index === active ? styles.isActive : ""].filter(Boolean).join(" ");
 
-  const controls = (onStep: (direction: 1 | -1) => void) => (
+  // Pause only where something moves on its own (the desktop marquee)
+  const controls = (onStep: (direction: 1 | -1) => void, withPause: boolean) => (
     <div className={styles.controls} data-ink="stamp">
       <button
         type="button"
@@ -200,15 +204,17 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
       >
         <ChevronIcon direction="left" />
       </button>
-      <button
-        type="button"
-        className={styles.control}
-        onClick={() => setIsPaused((prev) => !prev)}
-        aria-label={isPaused ? "Play" : "Pause"}
-        aria-pressed={isPaused}
-      >
-        {isPaused ? <PlayIcon /> : <PauseIcon />}
-      </button>
+      {withPause && (
+        <button
+          type="button"
+          className={styles.control}
+          onClick={() => setIsPaused((prev) => !prev)}
+          aria-label={isPaused ? "Play" : "Pause"}
+          aria-pressed={isPaused}
+        >
+          {isPaused ? <PlayIcon /> : <PauseIcon />}
+        </button>
+      )}
       <button
         type="button"
         className={styles.control}
@@ -286,7 +292,7 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
                 ))}
               </div>
             </div>
-            {controls(marqueeStep)}
+            {controls(marqueeStep, true)}
           </div>
         </section>
       </div>
@@ -333,7 +339,7 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
 
         <div
           className={styles.body}
-          aria-live={isPaused ? "polite" : "off"}
+          aria-live={isPaused || !SLIDESHOW_AUTOPLAY ? "polite" : "off"}
           data-ink="stamp"
         >
           {SLIDES.map((slide, i) => (
@@ -362,7 +368,7 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
           ))}
         </div>
 
-        {controls(step)}
+        {controls(step, false)}
       </div>
     </section>
   );

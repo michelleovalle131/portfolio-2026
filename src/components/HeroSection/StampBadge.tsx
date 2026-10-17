@@ -5,7 +5,7 @@ import styles from "./StampBadge.module.css";
 const WORDS = ["design", "with", "heart", "and", "mind"];
 const MAX_PRINTS = 30;
 const KEY_STEP = 24;
-const MAX_TILT = 8; // degrees either way the block turns between presses
+const MAX_TILT = 16; // degrees either way the block turns between presses
 const SLOT_MARGIN = 16; // px around its spot that still counts as "put back"
 
 const randomTilt = () => (Math.random() * 2 - 1) * MAX_TILT;
@@ -23,7 +23,7 @@ type StampBadgeProps = {
  * "Design with heart and mind" as a lino block. Hover floods it with ink
  * (reversed, letters knocked out). Click to pick it up: it follows the pointer
  * around the hero, and each click prints an impression there at the block's
- * angle, after which the block turns slightly (±8°) for the next press. Esc,
+ * angle, after which the block turns (up to ±16°) for the next press. Esc,
  * or a click on or near its empty spot, puts it down.
  * Keyboard: Enter picks up, arrows move, Enter prints, Esc puts down.
  */

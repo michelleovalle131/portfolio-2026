@@ -45,7 +45,7 @@
   font-family: var(--font-display);
   font-size: var(--type-frame-headline);
   font-weight: 400;
-  line-height: 0.98;
+  line-height: var(--lh-display);
   letter-spacing: -0.02em;
   text-box: trim-both cap alphabetic;
 }
@@ -87,9 +87,41 @@
   transition: filter 0.25s ease;
 }
 
+/* The player inside the screen recording (1174 × 836): it sits at 48–1124
+   across and 109–711 down, so the frame takes its 1076 × 602 shape and the
+   video is scaled and shifted to show only that */
+.videoShot {
+  position: absolute;
+  overflow: hidden;
+  aspect-ratio: 1076 / 602;
+}
+
+.videoShot video {
+  position: absolute;
+  left: -4.461%;
+  top: -18.106%;
+  width: 109.108%;
+  height: auto;
+  display: block;
+}
+
+/* Centered over the backdrop like the screenshot, printed the same way */
+.screenshotVideo {
+  top: 50%;
+  left: 50%;
+  width: 87.57%;
+  max-height: 84%;
+  translate: -50% -50%;
+  border-radius: 12px;
+  filter: var(--photo-ink);
+  mix-blend-mode: var(--blend-ink);
+  transition: filter 0.25s ease;
+}
+
 /* Hover reveals the images in full colour — same print-plate reveal as the hero gallery */
 .media:hover .backdrop,
-.media:hover .screenshot {
+.media:hover .screenshot,
+.media:hover .screenshotVideo {
   mix-blend-mode: normal;
   filter: none;
 }
@@ -112,7 +144,45 @@
   outline-offset: 4px;
 }
 
+/* Dark mode: printed like the intro portrait — the black-and-white images
+   sit normally on a black base, then one accent plate screens over them, so
+   shadows show the deep accent and highlights print light. (Screening each
+   layer onto the accent separately stacks the light and washes it out.) */
+:global([data-theme="dark"]) .media {
+  isolation: isolate;
+  background: #000;
+}
+
+:global([data-theme="dark"]) .backdrop,
+:global([data-theme="dark"]) .screenshot,
+:global([data-theme="dark"]) .screenshotVideo {
+  mix-blend-mode: normal;
+}
+
+:global([data-theme="dark"]) .media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-spot);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+/* Hover still reveals the full-colour images */
+:global([data-theme="dark"]) .media:hover::after {
+  opacity: 0;
+}
+
 /* Panel visual: the same two layers, in full colour */
+.panelShotVideo {
+  top: 50%;
+  left: 50%;
+  width: 87.57%;
+  translate: -50% -50%;
+  border-radius: 12px;
+}
+
 .panelBackdrop {
   position: absolute;
   inset: 0;

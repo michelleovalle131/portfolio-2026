@@ -1,0 +1,63 @@
+/*
+ * Text links — two styles, chosen by role:
+ *
+ * .link-ui      Navigation and interface actions (About, home, Reshuffle…).
+ *               Sits outside the reading copy and carries its own type
+ *               (mono caps from its context). No underline at rest; one draws
+ *               in on hover and the text turns accent.
+ *
+ * .link-inline  Links inside reading copy (a sentence or paragraph). Takes
+ *               the surrounding text's type, with a thin underline at rest so
+ *               it's findable in prose; on hover the text turns accent.
+ *
+ * Boxed mono buttons (footer Email / LinkedIn) are the third, rarer tier:
+ * calls to action, with the badge's ink flood.
+ */
+.link-ui {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition:
+    color 0.2s ease,
+    background-size 0.25s ease;
+}
+
+.link-ui:hover {
+  color: var(--field-accent);
+  background-size: 100% 1px;
+}
+
+.link-inline {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: color 0.2s ease;
+}
+
+.link-inline:hover {
+  color: var(--field-accent);
+}
+
+.link-ui:focus-visible,
+.link-inline:focus-visible {
+  outline: 2px solid var(--field-accent);
+  outline-offset: 2px;
+}
+
+/* Either style on a <button>: drop the native button look (zero
+   specificity, so a component's own type and placement still win) */
+:where(button.link-ui, button.link-inline) {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  /* Buttons don't inherit type by default — take all of it from the text
+     around them (font doesn't cover tracking or case) */
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}

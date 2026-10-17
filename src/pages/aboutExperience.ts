@@ -21,13 +21,13 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     roles: [
       {
         title: "Sr Product Designer on AI Overlays",
-        dateRange: "May 2026–Present",
+        dateRange: "Jul 2026–Present",
         description:
-          "Led the 0→1 launch of agentic-created video overlays, featured in the Founder Keynote at Team'26 EU",
+          "Took agent-created video overlays from 0→1 to a Founder Keynote debut at Team'26 EU, designing the UX, templates and motion system end to end",
       },
       {
         title: "Sr Product Designer on Meeting Recordings",
-        dateRange: "Jan 2026–May 2026",
+        dateRange: "Jan 2026–Jun 2026",
         description:
           "Drove the vision for how 1-click AI-suggested actions can turn meeting discussions into progress",
       },

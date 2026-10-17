@@ -1,6 +1,7 @@
 @import "./styles/fonts.css";
 @import "./styles/editorialGrid.css";
 @import "./styles/ink.css";
+@import "./styles/links.css";
 
 *,
 *::before,
@@ -78,6 +79,8 @@
   --plate-rovo: #C4D5E8;           /* considered blue  */
 
   /* ── Type scale tokens (Gambarino) ───────────────────────────────────────── */
+  /* Line height for the big serif titles (hero, section and panel titles) */
+  --lh-display: 1.04;
   /* Hero display title — Hero .displayTitle */
   --type-display-size: clamp(2.6rem, 8.91vw, 8rem);
   --type-display-lh:   1;

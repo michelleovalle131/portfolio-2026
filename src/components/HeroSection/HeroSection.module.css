@@ -48,7 +48,7 @@
   font-family: var(--font-display);
   font-size: var(--type-frame-headline);
   font-weight: 400;
-  line-height: 0.98;
+  line-height: var(--lh-display);
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
@@ -68,6 +68,53 @@
   align-content: space-between;
   column-gap: var(--grid-gap, 8px);
   min-height: 0;
+}
+
+/* Reshuffle: the current prints lift away… */
+.leaving .imageCell {
+  opacity: 0;
+  translate: 0 -8px;
+  transition:
+    opacity 0.22s ease,
+    translate 0.22s ease;
+}
+
+/* …then each new one prints in, top to bottom like ink pulled through the
+   screen, one after another */
+.reprint .printFrame {
+  animation: reprint-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--order, 0) * 80ms);
+}
+
+.reprint .cellLabel {
+  animation: reprint-label 0.3s ease both;
+  animation-delay: calc(var(--order, 0) * 80ms + 0.35s);
+}
+
+@keyframes reprint-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes reprint-label {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaving .imageCell {
+    transition: none;
+  }
+
+  .reprint .printFrame,
+  .reprint .cellLabel {
+    animation: none;
+  }
 }
 
 .gallery3x3 .printFrame {
@@ -148,11 +195,30 @@
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.32;
-  letter-spacing: 0.24px;
+  /* Wider tracking than the other mono labels, like set lino type */
+  letter-spacing: 2.24px;
   text-transform: uppercase;
   color: var(--ink); /* Neutral – Dark – 100 */
   white-space: nowrap;
   transform: rotate(-2deg);
+}
+
+/* Reshuffle: a new gallery arrangement. Bottom row, right-aligned to the
+   last column (the gallery's right edge); a .link-ui like About */
+.remix {
+  grid-column: 9 / span 8;
+  grid-row: 16;
+  align-self: end;
+  justify-self: end;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: 0.24px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
 }
 
 /* Live Chicago time and weather, just above the headline. A plain line of
@@ -165,7 +231,7 @@
   display: block;
   margin: 0 0 16px;
   /* Slight indent so it reads optically aligned with the headline's serif */
-  padding-left: 6px;
+  padding-left: 4px;
   max-width: 100%;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -176,45 +242,51 @@
   text-align: left;
 }
 
+/*
+ * Phones: header, Chicago and headline at the top of the coloured stock,
+ * the stamp at the bottom, with open space between (80% of the screen
+ * tall, or taller if the content needs it). No gallery.
+ */
 @media (max-width: 900px) {
   .neutralPanel {
-    left: 0;
-    width: 100%;
-    height: 52%;
-    top: auto;
-    bottom: 0;
+    display: none;
   }
 
   .grid {
     height: auto;
-    min-height: max(100dvh, 720px);
-    grid-template-rows: repeat(20, minmax(0, 1fr));
-  }
-
-  .headline {
-    grid-column: 1 / -1;
-    grid-row: 3 / span 5;
-    font-size: clamp(1.75rem, 7vw, 2.5rem);
-  }
-
-  .tagline {
-    grid-column: 1 / -1;
-    grid-row: 19;
-    flex-wrap: wrap;
-    white-space: normal;
-    justify-content: flex-start;
-  }
-
-  /* Full width on the cardstock half, below the headline */
-  .gallery3x3 {
-    grid-column: 1 / -1;
-    grid-row: 11 / span 8;
-    align-content: start;
-    row-gap: 12px;
+    min-height: 80vh;
+    min-height: 80svh;
+    /* Header, Chicago, headline; the last row takes the spare height */
+    grid-template-rows: auto auto auto 1fr;
+    row-gap: 0;
+    padding-top: 24px;
   }
 
   .localTime {
     grid-column: 1 / -1;
     grid-row: 2;
+    margin: 48px 0 16px;
+  }
+
+  .headline {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+  }
+
+  /* .grid for specificity over the stamp's own margin reset */
+  .grid .tagline {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    align-self: end;
+    margin: 32px 0 0;
+    flex-wrap: wrap;
+    white-space: normal;
+    justify-content: flex-start;
+  }
+
+  .gallery3x3,
+  .remix {
+    display: none;
   }
 }

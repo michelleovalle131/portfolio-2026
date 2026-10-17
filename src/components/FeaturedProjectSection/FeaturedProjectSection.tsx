@@ -3,6 +3,36 @@ import styles from "./FeaturedProjectSection.module.css";
 import { InkText } from "../InkText/InkText";
 import { ProjectPanel } from "../ProjectPanel/ProjectPanel";
 
+const PREFERS_REDUCED_MOTION =
+  typeof window !== "undefined" &&
+  !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * The screen recording has its own blurred backdrop around the player; this
+ * frames just the player (cropped by position) so it sits on our own
+ * backdrop like the screenshot did.
+ */
+function VideoShot({
+  className,
+  src,
+  label,
+  ...rest
+}: { className: string; src: string; label: string; [data: `data-${string}`]: string }) {
+  return (
+    <div className={`${styles.videoShot} ${className}`} {...rest}>
+      <video
+        src={src}
+        autoPlay={!PREFERS_REDUCED_MOTION}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-label={label}
+      />
+    </div>
+  );
+}
+
 type FeaturedProjectSectionProps = {
   id: string;
   /** Handwritten section counter, e.g. "02/03". */
@@ -16,11 +46,16 @@ type FeaturedProjectSectionProps = {
   /** Product UI shown centered over the backdrop. */
   screenshotSrc: string;
   screenshotAlt: string;
+  /** A video to show instead of the backdrop + screenshot (muted, looping);
+   * screenshotAlt describes it */
+  videoSrc?: string;
   /** "stacked": full-width image under the title. "split": image fills the right 10 columns. */
   layout?: "stacked" | "split";
   /** When given, the image opens a side panel with these project details */
   details?: {
     meta?: string;
+    /** What you did on it, under the meta line */
+    role?: string;
     tags?: string[];
     body: ReactNode;
   };
@@ -35,6 +70,7 @@ export function FeaturedProjectSection({
   backgroundSrc,
   screenshotSrc,
   screenshotAlt,
+  videoSrc,
   layout = "stacked",
   details,
 }: FeaturedProjectSectionProps) {
@@ -88,27 +124,66 @@ export function FeaturedProjectSection({
               }
             : {})}
         >
-          <img
-            className={styles.backdrop}
-            data-ink="rise"
-            data-ink-pass="1"
-            src={backgroundSrc}
-            alt=""
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            className={styles.screenshot}
-            data-ink="rise"
-            data-ink-pass="2"
-            src={screenshotSrc}
-            alt={screenshotAlt}
-            loading="lazy"
-            decoding="async"
-          />
+          {videoSrc ? (
+            <>
+              <img
+                className={styles.backdrop}
+                data-ink="rise"
+                data-ink-pass="1"
+                src={backgroundSrc}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <VideoShot
+                className={styles.screenshotVideo}
+                src={videoSrc}
+                label={screenshotAlt}
+                data-ink="rise"
+                data-ink-pass="2"
+              />
+            </>
+          ) : (
+            <>
+              <img
+                className={styles.backdrop}
+                data-ink="rise"
+                data-ink-pass="1"
+                src={backgroundSrc}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <img
+                className={styles.screenshot}
+                data-ink="rise"
+                data-ink-pass="2"
+                src={screenshotSrc}
+                alt={screenshotAlt}
+                loading="lazy"
+                decoding="async"
+              />
+            </>
+          )}
         </MediaTag>
 
-        <p className={styles.description} data-ink="stamp">{description}</p>
+        <p className={styles.description} data-ink="stamp">
+          {description}
+          {/* Opens the side panel, like a click anywhere in the section */}
+          {details && (
+            <>
+              {" "}
+              <button
+                type="button"
+                className="link-inline"
+                onClick={() => setPanelOpen(true)}
+                aria-haspopup="dialog"
+              >
+                Learn more
+              </button>
+            </>
+          )}
+        </p>
       </div>
 
       {details && (
@@ -117,12 +192,20 @@ export function FeaturedProjectSection({
           onClose={() => setPanelOpen(false)}
           title={title}
           meta={details.meta}
+          role={details.role}
           tags={details.tags}
           media={
-            <>
-              <img className={styles.panelBackdrop} src={backgroundSrc} alt="" />
-              <img className={styles.panelShot} src={screenshotSrc} alt={screenshotAlt} />
-            </>
+            videoSrc ? (
+              <>
+                <img className={styles.panelBackdrop} src={backgroundSrc} alt="" />
+                <VideoShot className={styles.panelShotVideo} src={videoSrc} label={screenshotAlt} />
+              </>
+            ) : (
+              <>
+                <img className={styles.panelBackdrop} src={backgroundSrc} alt="" />
+                <img className={styles.panelShot} src={screenshotSrc} alt={screenshotAlt} />
+              </>
+            )
           }
         >
           {details.body}
