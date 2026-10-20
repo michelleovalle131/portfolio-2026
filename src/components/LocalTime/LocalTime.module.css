@@ -1,3 +1,19 @@
+/* Hidden until the weather is in, then the whole line fades in together */
+.line {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.line.ready {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    transition: none;
+  }
+}
+
 /* Emoji reads small at the 12px mono size — set it at 24px, kept on the text line */
 .weatherEmoji {
   font-size: 24px;

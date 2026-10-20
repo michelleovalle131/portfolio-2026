@@ -1,12 +1,7 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import {
-  HERO_GRID_CELLS,
-  HERO_GRID_CELLS_3X3,
-  type HeroGridCell,
-} from "./heroGridCells";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
+import { HERO_GRID_CELLS_3X3, type HeroGridCell } from "./heroGridCells";
 import { STAMP_IMAGE_URLS } from "./stampImagePool";
 import styles from "./HeroSection.module.css";
-import { InkText } from "../InkText/InkText";
 import { LocalTime } from "../LocalTime/LocalTime";
 import { StampBadge } from "./StampBadge";
 import { SiteHeader } from "../SiteHeader/SiteHeader";
@@ -75,39 +70,24 @@ function randomGalleryPattern(base: HeroGridCell[]): HeroGridCell[] {
       base.some((c, i) => c.col === col && filled.has(i)),
     );
     if (!everyRowUsed || !everyColUsed) continue;
-    return base.map((cell, i) => {
-      const { photoMultiply: _unused, ...rest } = cell;
-      return filled.has(i)
-        ? { ...rest, blank: false, imageSrc: cell.imageSrc ?? "placeholder" }
-        : { ...rest, blank: true, imageSrc: undefined };
-    });
+    return base.map((cell, i) =>
+      filled.has(i)
+        ? { ...cell, blank: false, imageSrc: cell.imageSrc ?? "placeholder" }
+        : { ...cell, blank: true, imageSrc: undefined },
+    );
   }
 }
 
-type HeroProps = {
-  /** Reshuffles the gallery (photos, and in 3×3 which cells are filled). */
-  remixEpoch?: number;
-  /** "4x3": 12 cells on the page grid (Figma). "3x3": 9 larger cells in the same area. */
-  gallery?: "4x3" | "3x3";
-};
-
-export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
+export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
-  const layout = gallery === "3x3" ? HERO_GRID_CELLS_3X3 : HERO_GRID_CELLS;
-  // 3×3: the original composition on a visitor's first load (per browser
+  // The original composition on a visitor's first load (per browser
   // session), then a new arrangement of filled and empty cells each load after
   const arrange = (firstLoad = false) =>
     cellsWithShuffledPhotos(
-      gallery === "3x3" && !firstLoad ? randomGalleryPattern(layout) : layout,
+      firstLoad ? HERO_GRID_CELLS_3X3 : randomGalleryPattern(HERO_GRID_CELLS_3X3),
       STAMP_IMAGE_URLS,
     );
   const [cells, setCells] = useState(() => arrange(FIRST_LOAD_THIS_SESSION));
-
-  useEffect(() => {
-    if (remixEpoch === 0) return;
-    setCells(arrange());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [remixEpoch, layout]);
 
   // Reshuffle button: a new arrangement, as on a fresh load — never the same
   // pattern of filled cells twice in a row. The current prints lift away,
@@ -173,12 +153,7 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
       <div className={styles.printFrame}>
         {cell.imageSrc ? (
           <img
-            className={[
-              styles.printPhoto,
-              cell.photoMultiply ? styles.printPhotoMultiply : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
+            className={styles.printPhoto}
             src={cell.imageSrc}
             alt=""
             draggable={false}
@@ -195,9 +170,7 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
     <section
       ref={heroRef}
       id="home"
-      className={[styles.hero, gallery === "3x3" ? styles.is3x3 : ""]
-        .filter(Boolean)
-        .join(" ")}
+      className={styles.hero}
       aria-labelledby="hero-title"
     >
       <div className={styles.neutralPanel} aria-hidden />
@@ -208,31 +181,22 @@ export function HeroSection({ remixEpoch = 0, gallery = "4x3" }: HeroProps) {
         <LocalTime className={styles.localTime} />
 
         <h1 id="hero-title" className={styles.headline}>
-          <InkText>
-            {"Shaping and shipping delightful products, one thoughtfully crafted decision at a time."}
-          </InkText>
+          {"Shaping and shipping delightful products, one thoughtfully crafted decision at a time."}
         </h1>
 
-        {gallery === "3x3" ? (
-          <div
-            className={[styles.gallery3x3, leaving ? styles.leaving : ""]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            {galleryCells}
-          </div>
-        ) : (
-          galleryCells
-        )}
+        <div
+          className={[styles.gallery3x3, leaving ? styles.leaving : ""]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {galleryCells}
+        </div>
 
         <StampBadge areaRef={heroRef} className={styles.tagline} />
 
-        {gallery === "3x3" && (
-          <button type="button" className={`${styles.remix} link-ui`} onClick={remix}>
-            Reshuffle
-          </button>
-        )}
-
+        <button type="button" className={`${styles.remix} link-ui`} onClick={remix}>
+          Reshuffle
+        </button>
       </div>
     </section>
   );

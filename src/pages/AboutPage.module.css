@@ -71,7 +71,8 @@
   line-height: 1.32;
   letter-spacing: 0.24px;
   text-transform: uppercase;
-  color: var(--ink-print-muted);
+  /* The neutral ink (dark in light mode, light in dark mode) at 80% */
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
 }
 
 /* Experience / Recognition: matches the featured project split — section

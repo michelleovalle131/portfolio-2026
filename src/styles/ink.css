@@ -1,5 +1,5 @@
 /*
- * Screenprint — motion prototype (/?motion=ink).
+ * Screenprint — the home page's scroll motion.
  *
  * Images print like they're coming off a press, tied to scroll: they land in
  * fine bands as their section arrives and lift again if you scroll back up,
@@ -11,9 +11,6 @@
  *                         screens, the second printed over the first
  *   [data-ink="float"]    the hero badge floats up from behind the section
  *                         below and turns into its resting tilt
- *
- * Headings still carry <InkText> word spans and copy carries "stamp"/"pen"
- * hooks from the earlier type motion; they're inert without styles here.
  *
  * HomePage marks a section [data-inked] when it is well into view and clears
  * the mark once it has fully left — that cue drives the badge, and the image
@@ -43,7 +40,7 @@
 
 /* The footer laid onto the parked 03/03 like a fresh sheet off the press:
    arriving a touch skewed and lifted, casting a soft shadow up onto the
-   section beneath, then settling flat (same feel as the pulled-sheets mode). */
+   section beneath, then settling flat. */
 @keyframes ink-lay-down {
   from {
     transform: rotate(-1.4deg) translateY(2%);

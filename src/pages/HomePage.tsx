@@ -5,30 +5,14 @@ import { IntroSection } from "../components/IntroSection/IntroSection";
 import { FeaturedProjectSection } from "../components/FeaturedProjectSection/FeaturedProjectSection";
 import { ExpandableVideo } from "../components/ProjectPanel/ExpandableVideo";
 import { useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import styles from "./HomePage.module.css";
-
-/**
- * Scroll motion. The live site always uses Screenprint. On the local dev
- * server the other prototypes stay available to keep testing, from the
- * address bar or the switch at the bottom of the page:
- *   /                  screenprint (default) — images print in on scroll
- *   /?motion=sheets    pulled sheets — sections stack as you scroll
- *   /?motion=fold      fold-out booklet — sections unfold left to right
- */
-const MODES = [
-  { id: "ink", label: "Screenprint", to: "/" },
-  { id: "sheets", label: "Pulled sheets", to: "/?motion=sheets" },
-  { id: "fold", label: "Booklet", to: "/?motion=fold" },
-] as const;
 
 /** Marks each section (and the footer) [data-inked] once it is well into
  * view, and clears the mark when it has fully left so it prints again on the
  * next visit. src/styles/ink.css plays the heading flood from that cue. */
-function useInkOnEnter(root: React.RefObject<HTMLElement | null>, enabled: boolean) {
+function useInkOnEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current;
-    if (!enabled || !el) return;
+    if (!el) return;
     const sheets = el.querySelectorAll<HTMLElement>("section, footer");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -47,36 +31,28 @@ function useInkOnEnter(root: React.RefObject<HTMLElement | null>, enabled: boole
       observer.disconnect();
       sheets.forEach((sheet) => sheet.removeAttribute("data-inked"));
     };
-  }, [root, enabled]);
+  }, [root]);
 }
 
 const PREFERS_REDUCED_MOTION =
   typeof window !== "undefined" &&
   !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
+/** Scroll motion: Screenprint — sections print in as they scroll into view */
 export function HomePage() {
-  // Tolerant of stray punctuation picked up when an address is copied from text
-  const motion = new URLSearchParams(useLocation().search)
-    .get("motion")
-    ?.match(/^[a-z]+/)?.[0];
-  const mode = import.meta.env.DEV
-    ? (MODES.find((m) => m.id === motion)?.id ?? "ink")
-    : "ink";
-  const isFold = mode === "fold";
   const pageRef = useRef<HTMLDivElement>(null);
-  useInkOnEnter(pageRef, mode === "ink");
+  useInkOnEnter(pageRef);
 
-  const panels = (
-    <>
-      {/* gallery="4x3" restores the 12-cell Figma grid */}
-      <HeroSection gallery="3x3" />
+  return (
+    <div ref={pageRef} className="motion-ink">
+      <HeroSection />
       <IntroSection />
       <FeaturedProjectSection
         id="ai-overlays"
         layout="split"
         pageNumber="02/03"
         title="From Talking Head Video to Dynamic Presentation"
-        description="An AI agent that turns a talking-head Loom into a dynamic video presentation, generating motion graphics from your words and your team’s context."
+        description="AI Overlays turns a talking-head Loom into a dynamic video presentation, generating polished motion graphics from your words."
         backgroundSrc="/imgs/ai-overlays-bg.jpg"
         screenshotSrc="/imgs/ai-overlays-ui.webp"
         screenshotAlt="A Loom video with AI Overlays: animated stat cards for daily engagement beside the presenter"
@@ -155,46 +131,7 @@ export function HomePage() {
           ),
         }}
       />
-      {/*
-        Shelved for now — M1CA, Company Hub, Cositas Bonitas and Rovo.
-        Components and case-study data are intact (src/data/projects.ts), and
-        /projects/:id links still work. To bring them back, re-import and render:
-          <PrimaryProjectsSection />   — M1CA + Company Hub
-          <SecondaryProjectsSection /> — Cositas Bonitas + Rovo awareness
-      */}
-      <FunFactsSection scrollStrip={mode === "ink"} />
-    </>
-  );
-
-  return (
-    <div
-      ref={pageRef}
-      className={
-        mode === "sheets" ? styles.press : mode === "ink" ? "motion-ink" : undefined
-      }
-    >
-      {import.meta.env.DEV && (
-        <nav className={styles.motionSwitch} aria-label="Scroll motion prototype">
-          {MODES.map((m) => (
-            <Link
-              key={m.id}
-              to={m.to}
-              className={m.id === mode ? styles.motionActive : undefined}
-            >
-              {m.label}
-            </Link>
-          ))}
-        </nav>
-      )}
-      {isFold ? (
-        <div className={styles.fold}>
-          <div className={styles.foldViewport}>
-            <div className={styles.foldRow}>{panels}</div>
-          </div>
-        </div>
-      ) : (
-        panels
-      )}
+      <FunFactsSection />
       <Footer />
     </div>
   );

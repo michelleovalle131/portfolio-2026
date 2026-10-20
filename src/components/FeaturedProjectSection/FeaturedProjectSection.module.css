@@ -285,4 +285,16 @@
     max-width: 92%;
     border-radius: 8px;
   }
+
+  /* Phones have no hover to reveal colour, so show the images as they are */
+  .backdrop,
+  .screenshot,
+  .screenshotVideo {
+    mix-blend-mode: normal;
+    filter: none;
+  }
+
+  :global([data-theme="dark"]) .media::after {
+    opacity: 0;
+  }
 }

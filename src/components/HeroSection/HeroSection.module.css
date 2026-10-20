@@ -54,9 +54,9 @@
 }
 
 /*
- * 3×3 alternative: 9 cells in their own 3-column grid across the gallery's
- * columns (9–16). Frames keep the 4×3 cells' proportions (167 × 148.5 at
- * 1440), so they grow taller with the wider columns; the gallery takes rows
+ * Gallery: 9 cells in their own 3-column grid across columns 9–16. Frames
+ * keep the original Figma cells' proportions (167 × 148.5 at 1440), so they
+ * grow taller with the wider columns; the gallery takes rows
  * 3–15 to fit them, and spare height becomes the space between rows.
  */
 .gallery3x3 {
@@ -153,10 +153,6 @@
   transition: filter 0.25s ease;
 }
 
-.printPhotoMultiply {
-  mix-blend-mode: var(--blend-ink);
-}
-
 /* Hover reveals the photo in full colour — drop the print treatment */
 .imageCell:hover .printFrame,
 .imageCell:hover .printPhoto {
@@ -165,6 +161,33 @@
 
 .imageCell:hover .printPhoto {
   filter: none;
+}
+
+/* Dark mode: printed like the intro portrait — black-and-white photos on a
+   black base with the deep accent plate screened over them. Hover lifts the
+   plate to reveal full colour. */
+:global([data-theme="dark"]) .printFrame {
+  isolation: isolate;
+  background: #000;
+  mix-blend-mode: normal;
+}
+
+:global([data-theme="dark"]) .printFrame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-spot);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+:global([data-theme="dark"]) .printPhoto {
+  mix-blend-mode: normal;
+}
+
+:global([data-theme="dark"]) .imageCell:hover .printFrame::after {
+  opacity: 0;
 }
 
 .cellLabel {

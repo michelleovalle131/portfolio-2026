@@ -1,5 +1,4 @@
 import styles from "./IntroSection.module.css";
-import { InkText } from "../InkText/InkText";
 
 const PORTRAIT_SRC = "/imgs/intro-portrait.jpg";
 
@@ -7,17 +6,15 @@ export function IntroSection() {
   return (
     <section className={styles.section} id="intro" aria-labelledby="intro-heading">
       <div className={`editorialGrid ${styles.grid}`}>
-        <p className={styles.pageNumber} aria-hidden data-ink="pen">
+        <p className={styles.pageNumber} aria-hidden>
           01/03
         </p>
 
         <h2 className={styles.headline} id="intro-heading">
-          <InkText>
-            {"I'm Michelle—an experienced Product Designer who thrives at the intersection of systems thinking, craft, and making a real impact."}
-          </InkText>
+          {"I'm Michelle—an experienced Product Designer who thrives at the intersection of systems thinking, craft, and making a real impact."}
         </h2>
 
-        <div className={styles.body} data-ink="stamp">
+        <div className={styles.body}>
           <p>
             I love untangling ambiguous problems, partnering closely with my
             cross-functional peers, and staying curious as design tools and

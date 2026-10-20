@@ -1,28 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FUN_FACTS_URLS from "virtual:fun-facts-imgs";
 import styles from "./FunFactsSection.module.css";
-import { InkText } from "../InkText/InkText";
 
 type Photo = { src: string; caption: string };
 
-const SLIDES: { id: string; label: string; print: Photo; color: Photo; body: string }[] = [
+const SLIDES: { id: string; print: Photo; color: Photo; body: string }[] = [
   {
     id: "life",
-    label: "A life with heart",
     print: { src: "/imgs/fun-facts/Sister cities copy.jpeg", caption: "Hometown love" },
     color: { src: "/imgs/fun-facts/My lovely family.JPEG", caption: "My little family" },
     body: "From El Paso to Sydney to Shanghai, I've called three countries and six cities home. Each place has shaped how I see, connect, and create. Today, my husband, our sweet dog Abu, and I call Chicago home — my favorite city yet.",
   },
   {
     id: "craft",
-    label: "A life of craft",
     print: { src: "/imgs/paint-1.jpg", caption: "Mixing colors" },
-    color: { src: "/imgs/fun-facts/Linocut love.png", caption: "Linocut love" },
+    color: { src: "/imgs/fun-facts/Linocut love.png", caption: "Linoprints in the making" },
     body: "I love stepping away from the screen to make things with my hands. Linocutting is my hobby of choice right now, and it's taught me to embrace imperfection.",
   },
   {
     id: "mind",
-    label: "A life of calm",
     print: { src: "/imgs/fun-facts/IMG_0303.jpg", caption: "Looking up" },
     color: { src: "/imgs/fun-facts/New Zealand.jpeg", caption: "Sketching New Zealand" },
     body: "When I'm not designing, you'll find me on a yoga mat, wandering my city, reading a physical book, or planning our next adventure.",
@@ -30,7 +26,6 @@ const SLIDES: { id: string; label: string; print: Photo; color: Photo; body: str
 ];
 
 const SLIDE_COUNT = SLIDES.length;
-const AUTO_ADVANCE_MS = 6000;
 
 function resolveImageSrc(preferredSrc: string): string {
   const filename = preferredSrc.split("/").pop() ?? preferredSrc;
@@ -85,55 +80,17 @@ function PlayIcon() {
   );
 }
 
-/** Desktop only: the slides ride a horizontal strip. Phones keep the
- * crossfading slideshow. */
-function useWideStrip(requested: boolean) {
-  const query = "(min-width: 901px)";
-  const [wide, setWide] = useState(() => window.matchMedia(query).matches);
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    const onChange = () => setWide(mql.matches);
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, []);
-  return requested && wide;
-}
-
 const MARQUEE_PX_PER_S = 50;
-/** The slideshow (phones) waits for the arrows instead of advancing itself */
-const SLIDESHOW_AUTOPLAY = false;
 const GLIDE_MS = 700;
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
-type FunFactsSectionProps = {
-  /** Desktop: the slides drift sideways as a continuous marquee (with
-   * controls) and the section parks briefly so the footer can slide over it. */
-  scrollStrip?: boolean;
-};
-
-export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
-  const strip = useWideStrip(scrollStrip);
-  const [active, setActive] = useState(0);
+/** The spreads drift sideways as a continuous, full-bleed marquee (with
+ * controls); on desktop the section parks briefly so the footer can slide
+ * over it. */
+export function FunFactsSection() {
   const [isPaused, setIsPaused] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
-  // Bumped on every manual step so the auto-advance timer restarts from zero.
-  const [stepEpoch, setStepEpoch] = useState(0);
-
-  const step = useCallback((direction: 1 | -1) => {
-    setActive((i) => (i + direction + SLIDE_COUNT) % SLIDE_COUNT);
-    setStepEpoch((n) => n + 1);
-  }, []);
-
-  // The slideshow (phones) is stepped by hand with the arrows — no autoplay
-  useEffect(() => {
-    if (isPaused || strip || !SLIDESHOW_AUTOPLAY) return;
-    const id = window.setInterval(
-      () => setActive((i) => (i + 1) % SLIDE_COUNT),
-      AUTO_ADVANCE_MS,
-    );
-    return () => window.clearInterval(id);
-  }, [isPaused, stepEpoch, strip]);
 
   // Strip marquee: the spreads drift right-to-left continuously and loop.
   // Two copies of the set are rendered so the wrap is seamless. The arrows
@@ -146,7 +103,7 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!strip || !track) return;
+    if (!track) return;
     let raf = 0;
     let last = performance.now();
     const spreadStep = () => {
@@ -175,7 +132,7 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [strip]);
+  }, []);
 
   const marqueeStep = (direction: 1 | -1) => {
     const track = trackRef.current;
@@ -190,35 +147,29 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
     glide.current = { from: offset.current, to: base, start: performance.now() };
   };
 
-  const slideClass = (index: number, base: string) =>
-    [base, index === active ? styles.isActive : ""].filter(Boolean).join(" ");
-
-  // Pause only where something moves on its own (the desktop marquee)
-  const controls = (onStep: (direction: 1 | -1) => void, withPause: boolean) => (
-    <div className={styles.controls} data-ink="stamp">
+  const controls = (
+    <div className={styles.controls}>
       <button
         type="button"
         className={styles.control}
-        onClick={() => onStep(-1)}
+        onClick={() => marqueeStep(-1)}
         aria-label="Previous"
       >
         <ChevronIcon direction="left" />
       </button>
-      {withPause && (
-        <button
-          type="button"
-          className={styles.control}
-          onClick={() => setIsPaused((prev) => !prev)}
-          aria-label={isPaused ? "Play" : "Pause"}
-          aria-pressed={isPaused}
-        >
-          {isPaused ? <PlayIcon /> : <PauseIcon />}
-        </button>
-      )}
       <button
         type="button"
         className={styles.control}
-        onClick={() => onStep(1)}
+        onClick={() => setIsPaused((prev) => !prev)}
+        aria-label={isPaused ? "Play" : "Pause"}
+        aria-pressed={isPaused}
+      >
+        {isPaused ? <PlayIcon /> : <PauseIcon />}
+      </button>
+      <button
+        type="button"
+        className={styles.control}
+        onClick={() => marqueeStep(1)}
         aria-label="Next"
       >
         <ChevronIcon direction="right" />
@@ -228,148 +179,70 @@ export function FunFactsSection({ scrollStrip = false }: FunFactsSectionProps) {
 
   const masthead = (
     <>
-      <p className={styles.pageNumber} aria-hidden data-ink="pen">
+      <p className={styles.pageNumber} aria-hidden>
         03/03
       </p>
 
       <h2 className={styles.headline} id="fun-facts-heading">
-        <InkText>
-          {"When I’m not designing for screens, you’ll find me making things, exploring new places, and getting grounded again."}
-        </InkText>
+        {"When I’m not designing for screens, you’ll find me making things, exploring new places, and getting grounded again."}
       </h2>
     </>
   );
 
-  if (strip) {
-    // The masthead stays put while the spreads drift by as a marquee. The
-    // section parks briefly at the end so the footer can slide over it.
-    return (
-      <div className={styles.pin} data-ink-pin>
-        <section
-          className={styles.section}
-          id="beyond-the-screen"
-          aria-labelledby="fun-facts-heading"
-          aria-roledescription="carousel"
-        >
-          <div className={`editorialGrid ${styles.grid}`}>
-            {masthead}
-            <div className={styles.strip} data-ink="stamp">
-              <div className={styles.stripTrack} ref={trackRef}>
-                {[...SLIDES, ...SLIDES].map((slide, i) => (
-                  <div
-                    key={`${slide.id}-${i}`}
-                    className={styles.spread}
-                    aria-hidden={i >= SLIDE_COUNT}
-                  >
-                    <div className={`${styles.photo} ${styles.photoPrint}`}>
-                      <img
-                        className={`${styles.photoImg} ${styles.isActive}`}
-                        src={resolveImageSrc(slide.print.src)}
-                        alt={slide.print.caption}
-                        decoding="async"
-                        draggable={false}
-                      />
-                      <span className={styles.flood} aria-hidden>
-                        {slide.print.caption}
-                      </span>
-                    </div>
-                    <div className={`${styles.photo} ${styles.photoColor}`}>
-                      <img
-                        className={`${styles.photoImg} ${styles.isActive}`}
-                        src={resolveImageSrc(slide.color.src)}
-                        alt={slide.color.caption}
-                        decoding="async"
-                        draggable={false}
-                      />
-                      <span className={styles.flood} aria-hidden>
-                        {slide.color.caption}
-                      </span>
-                    </div>
-                    <p className={`${styles.bodyText} ${styles.isActive} ${styles.spreadBody}`}>
-                      {slide.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {controls(marqueeStep, true)}
-          </div>
-        </section>
-      </div>
-    );
-  }
-
+  // The masthead stays put while the spreads drift by as a marquee. The
+  // section parks briefly at the end so the footer can slide over it.
   return (
-    <section
-      className={styles.section}
-      id="beyond-the-screen"
-      aria-labelledby="fun-facts-heading"
-      aria-roledescription="carousel"
-    >
-      <div className={`editorialGrid ${styles.grid}`}>
-        {masthead}
-
-        <div className={`${styles.photo} ${styles.photoPrint}`}>
-          {SLIDES.map((slide, i) => (
-            <img
-              key={slide.id}
-              className={slideClass(i, styles.photoImg)}
-              src={resolveImageSrc(slide.print.src)}
-              alt={i === active ? slide.print.caption : ""}
-              aria-hidden={i !== active}
-              decoding="async"
-              draggable={false}
-            />
-          ))}
+    <div className={styles.pin} data-ink-pin>
+      <section
+        className={styles.section}
+        id="beyond-the-screen"
+        aria-labelledby="fun-facts-heading"
+        aria-roledescription="carousel"
+      >
+        <div className={`editorialGrid ${styles.grid}`}>
+          {masthead}
+          <div className={styles.strip}>
+            <div className={styles.stripTrack} ref={trackRef}>
+              {[...SLIDES, ...SLIDES].map((slide, i) => (
+                <div
+                  key={`${slide.id}-${i}`}
+                  className={styles.spread}
+                  aria-hidden={i >= SLIDE_COUNT}
+                >
+                  <div className={`${styles.photo} ${styles.photoPrint}`}>
+                    <img
+                      className={styles.photoImg}
+                      src={resolveImageSrc(slide.print.src)}
+                      alt={slide.print.caption}
+                      decoding="async"
+                      draggable={false}
+                    />
+                    <span className={styles.flood} aria-hidden>
+                      {slide.print.caption}
+                    </span>
+                  </div>
+                  <div className={`${styles.photo} ${styles.photoColor}`}>
+                    <img
+                      className={styles.photoImg}
+                      src={resolveImageSrc(slide.color.src)}
+                      alt={slide.color.caption}
+                      decoding="async"
+                      draggable={false}
+                    />
+                    <span className={styles.flood} aria-hidden>
+                      {slide.color.caption}
+                    </span>
+                  </div>
+                  <p className={styles.spreadBody}>
+                    {slide.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          {controls}
         </div>
-
-        <div className={`${styles.photo} ${styles.photoColor}`}>
-          {SLIDES.map((slide, i) => (
-            <img
-              key={slide.id}
-              className={slideClass(i, styles.photoImg)}
-              src={resolveImageSrc(slide.color.src)}
-              alt={i === active ? slide.color.caption : ""}
-              aria-hidden={i !== active}
-              decoding="async"
-              draggable={false}
-            />
-          ))}
-        </div>
-
-        <div
-          className={styles.body}
-          aria-live={isPaused || !SLIDESHOW_AUTOPLAY ? "polite" : "off"}
-          data-ink="stamp"
-        >
-          {SLIDES.map((slide, i) => (
-            <p
-              key={slide.id}
-              className={slideClass(i, styles.bodyText)}
-              aria-hidden={i !== active}
-            >
-              {slide.body}
-            </p>
-          ))}
-        </div>
-
-        <div className={`${styles.caption} ${styles.captionPrint}`} aria-hidden>
-          {SLIDES.map((slide, i) => (
-            <span key={slide.id} className={slideClass(i, styles.captionText)}>
-              {slide.print.caption}
-            </span>
-          ))}
-        </div>
-        <div className={`${styles.caption} ${styles.captionColor}`} aria-hidden>
-          {SLIDES.map((slide, i) => (
-            <span key={slide.id} className={slideClass(i, styles.captionText)}>
-              {slide.color.caption}
-            </span>
-          ))}
-        </div>
-
-        {controls(step, false)}
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import styles from "./FeaturedProjectSection.module.css";
-import { InkText } from "../InkText/InkText";
 import { ProjectPanel } from "../ProjectPanel/ProjectPanel";
 
 const PREFERS_REDUCED_MOTION =
@@ -99,17 +98,17 @@ export function FeaturedProjectSection({
       data-clickable={details ? "" : undefined}
     >
       <div className={`editorialGrid ${styles.grid}`}>
-        <p className={styles.pageNumber} aria-hidden data-ink="pen">
+        <p className={styles.pageNumber} aria-hidden>
           {pageNumber}
         </p>
         {label && (
-          <p className={styles.label} data-ink="stamp">
+          <p className={styles.label}>
             {label}
           </p>
         )}
 
         <h2 className={styles.title} id={headingId}>
-          <InkText>{title}</InkText>
+          {title}
         </h2>
 
         <MediaTag
@@ -167,7 +166,7 @@ export function FeaturedProjectSection({
           )}
         </MediaTag>
 
-        <p className={styles.description} data-ink="stamp">
+        <p className={styles.description}>
           {description}
           {/* Opens the side panel, like a click anywhere in the section */}
           {details && (

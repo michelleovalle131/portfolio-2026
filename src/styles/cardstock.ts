@@ -3,14 +3,16 @@
  * visitor from the hero. Values from Figma (MO-SCRATCH, node 265:2069).
  * The choice is remembered per browser and applied before first paint.
  */
-export const CARDSTOCK_COLORS = [
-  { name: "Blue", value: "#c8e9ff" },
-  { name: "Mint", value: "#b4dfd4" },
-  { name: "Butter", value: "#f6e08c" },
-  { name: "Lilac", value: "#e1c9fa" },
-  { name: "Peach", value: "#ffd9ab" },
-  { name: "Pink", value: "#f4c5e1" },
-] as const;
+/* `value` is the pastel paper in light mode; `dark` the deep accent stock in
+   dark mode */
+export const CARDSTOCK_COLORS: readonly { name: string; value: string; dark: string }[] = [
+  { name: "Blue", value: "#c8e9ff", dark: "#1b3a58" },
+  { name: "Mint", value: "#b4dfd4", dark: "#193d34" },
+  { name: "Butter", value: "#f6e08c", dark: "#3c3915" },
+  { name: "Lilac", value: "#e1c9fa", dark: "#2e2a4f" },
+  { name: "Peach", value: "#ffd9ab", dark: "#562a1c" },
+  { name: "Pink", value: "#f4c5e1", dark: "#4e2138" },
+];
 
 const STORAGE_KEY = "cardstock";
 
@@ -27,8 +29,10 @@ export function readCardstockIndex(): number {
 
 export function applyCardstock(index: number): void {
   const color = CARDSTOCK_COLORS[index] ?? CARDSTOCK_COLORS[0];
-  // --accent-spot (and dark mode's deep accent) are derived from this in CSS
-  document.documentElement.style.setProperty("--cardstock-pastel", color.value);
+  // --accent-spot reads these in CSS (index.css)
+  const root = document.documentElement.style;
+  root.setProperty("--cardstock-pastel", color.value);
+  root.setProperty("--cardstock-dark", color.dark);
   try {
     window.localStorage.setItem(STORAGE_KEY, String(index));
   } catch {

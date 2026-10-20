@@ -1,5 +1,7 @@
 .section {
   position: relative;
+  /* The marquee runs edge to edge; clip it at the window, not the grid */
+  overflow-x: clip;
   background: var(--surface-cardstock, #f9f7f3);
   color: var(--ink);
 }
@@ -18,20 +20,6 @@
   mix-blend-mode: var(--blend-ink);
 }
 
-.label {
-  grid-column: 13 / span 4;
-  grid-row: 1;
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  text-align: right;
-  color: var(--ink-print-muted);
-  mix-blend-mode: var(--blend-ink);
-}
-
 .headline {
   grid-column: 1 / span 16;
   grid-row: 2 / span 3;
@@ -44,235 +32,10 @@
   text-box: trim-both cap alphabetic;
 }
 
-/* ── Slides: every slide's content is stacked in place and crossfaded ── */
-
-.photo {
-  grid-row: 6 / span 10;
-  position: relative;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.photoPrint {
-  grid-column: 1 / span 6;
-}
-
-.photoColor {
-  grid-column: 7 / span 6;
-}
-
-.photoImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  mix-blend-mode: var(--blend-ink);
-  opacity: 0;
-  transition: opacity 0.6s ease, filter 0.25s ease;
-}
-
-.isActive {
-  opacity: 1;
-}
-
-/* Both photos print in black and white, multiplied onto the cardstock, and
-   reveal in full colour on hover — same treatment as the hero gallery */
-.photoImg {
-  filter: var(--photo-ink);
-}
-
-/* Hover (mouse only, not phones): the photo in full colour */
-@media (hover: hover) and (min-width: 901px) {
-  .photo:hover .photoImg {
-    filter: none;
-    mix-blend-mode: normal;
-  }
-}
-
-.body {
-  grid-column: 14 / span 3;
-  grid-row: 6 / span 9;
-  display: grid;
-  align-content: start;
-}
-
-.bodyText {
-  grid-area: 1 / 1;
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--type-frame-body);
-  font-weight: 600;
-  line-height: 1.32;
-  letter-spacing: -0.02em;
-  text-align: left;
-  text-wrap: pretty;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.caption {
-  grid-row: 16;
-  display: grid;
-  /* Sit at the top of the row, right under the photos */
-  align-items: start;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  color: var(--ink-print-muted);
-  mix-blend-mode: var(--blend-ink);
-}
-
-.captionPrint {
-  grid-column: 1 / span 6;
-}
-
-.captionColor {
-  grid-column: 7 / span 6;
-}
-
-/* Captions appear with their photo's colour reveal. Captions are later
-   siblings of the photos, so each photo's hover reaches its own caption.
-   Touch screens have no hover, so captions stay visible there. */
-@media (hover: hover) and (min-width: 901px) {
-  .caption {
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-
-  .photoPrint:hover ~ .captionPrint,
-  .photoColor:hover ~ .captionColor {
-    opacity: 1;
-  }
-}
-
-.captionText {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.captionText.isActive,
-.bodyText.isActive {
-  opacity: 1;
-}
-
-/* ── Controls ── */
-
-.controls {
-  grid-column: 13 / span 4;
-  grid-row: 16;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-}
-
-/* Square cardstock buttons with an ink icon — same as the project panel's
-   close button */
-.control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border: 0;
-  background: var(--surface-cardstock, #f9f7f3);
-  color: var(--ink);
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.control:hover {
-  opacity: 0.85;
-}
-
-.control:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .photoImg,
-  .bodyText,
-  .captionText {
-    transition: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .grid {
-    height: auto;
-    min-height: auto;
-    grid-template-rows: none;
-    grid-auto-rows: auto;
-    row-gap: 16px;
-  }
-
-  .pageNumber {
-    grid-column: 1 / span 8;
-  }
-
-  .label {
-    grid-column: 9 / span 8;
-  }
-
-  .headline {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    margin: 16px 0 8px;
-  }
-
-  .photo {
-    aspect-ratio: 3 / 4;
-  }
-
-  .photoPrint {
-    grid-column: 1 / span 8;
-    grid-row: 3;
-  }
-
-  .photoColor {
-    grid-column: 9 / span 8;
-    grid-row: 3;
-  }
-
-  .captionPrint {
-    grid-column: 1 / span 8;
-    grid-row: 4;
-  }
-
-  .captionColor {
-    grid-column: 9 / span 8;
-    grid-row: 4;
-  }
-
-  .body {
-    grid-column: 1 / -1;
-    grid-row: 5;
-    margin-top: 8px;
-  }
-
-  .bodyText {
-    text-align: left;
-  }
-
-  /* Arrows at the bottom right */
-  .controls {
-    grid-column: 1 / -1;
-    grid-row: 6;
-    justify-content: flex-end;
-  }
-}
-
 /*
- * Strip carousel (desktop, scrollStrip prop) — the three spreads sit side by
- * side and slide sideways one at a time (autoplay + controls; the track's
- * transform is set from the component). The section parks at the top for a
- * footer's height of scrolling, so the footer can slide up over it.
+ * Marquee — the three spreads drift sideways continuously (the track's
+ * transform is set from the component). On desktop the section parks at the
+ * top for a footer's height of scrolling, so the footer can slide up over it.
  */
 .pin > .section {
   position: sticky;
@@ -289,17 +52,20 @@
   }
 }
 
-/* The spreads share the area the slideshow used: all columns, rows 6–16 */
+/* The spreads take all columns, rows 6–16. The strip stays on the grid (its
+   width sizes the spreads), but the track bleeds past it to both edges of
+   the window. */
 .strip {
   grid-column: 1 / -1;
   grid-row: 6 / span 11;
   min-height: 0;
-  overflow: hidden;
   container-type: inline-size;
 }
 
 .stripTrack {
   display: flex;
+  /* Start at the window's left edge rather than the grid's */
+  margin-left: calc(50cqw - 50vw);
   gap: var(--grid-gap, 8px);
   height: 100%;
   /* The moving track is its own layer, so the photos multiply against what's
@@ -307,23 +73,10 @@
   background: var(--surface-cardstock, #f9f7f3);
 }
 
-/* Controls sit over the strip's bottom-right corner, in its caption row */
-/* Controls overlay the carousel's bottom-right corner */
-.pin .controls {
-  position: relative;
-  z-index: 2;
-  grid-column: 1 / -1;
-  grid-row: 16;
-  align-self: end;
-  justify-self: end;
-  gap: 8px;
-  margin: 0 16px 16px 0;
-}
-
 /* One spread = three equal panels on the page grid's rhythm: print photo,
-   colour photo, then the copy — each five page columns wide and nine rows
-   tall. Page column = (strip width − 15 gaps) / 16, so a spread is
-   15 columns + 14 gaps. */
+   copy, then colour photo — each five page columns wide and nine rows tall.
+   Page column = (strip width − 15 gaps) / 16, so a spread is 15 columns +
+   14 gaps. */
 .spread {
   --col: calc((100cqw - 15 * var(--grid-gap, 8px)) / 16);
   flex: none;
@@ -335,23 +88,57 @@
   gap: var(--grid-gap, 8px);
 }
 
+.photo {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* Panels sit on the bottom nine rows, so the carousel meets the grid's bottom */
-.spread .photoPrint {
+.photoPrint {
   grid-column: 1 / span 5;
   grid-row: 3 / span 9;
 }
 
-.spread .photoColor {
+.photoColor {
   grid-column: 11 / span 5;
   grid-row: 3 / span 9;
 }
 
+/* Photos print in black and white, multiplied onto the cardstock, and
+   reveal in full colour on hover — same treatment as the hero gallery */
+.photoImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--photo-ink);
+  mix-blend-mode: var(--blend-ink);
+  transition: filter 0.25s ease;
+}
+
+/* Hover (mouse only, not phones): the photo in full colour */
+@media (hover: hover) and (min-width: 901px) {
+  .photo:hover .photoImg {
+    filter: none;
+    mix-blend-mode: normal;
+  }
+}
+
 /* An ink-black panel the same size as the photos, light copy set at its top */
-.spread .spreadBody {
+.spreadBody {
   grid-area: 3 / 6 / span 9 / span 5;
+  margin: 0;
   padding: 16px 16px 0;
   background: var(--ink);
   color: var(--surface-cardstock, #f9f7f3);
+  font-family: var(--font-sans);
+  font-size: var(--type-frame-body);
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
 }
 
 /* Caption: on hover, a band of the spot colour rises from the bottom of the
@@ -386,13 +173,93 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* Touch screens have no hover: captions always show */
+@media (hover: none) {
   .flood {
-    transition: none;
+    translate: 0 0;
   }
 }
 
+/* Dark mode (desktop): printed like the intro portrait — black-and-white
+   photos on a black base with the deep accent plate screened over them, so
+   shadows show the accent and highlights print light. Hover lifts the plate
+   to reveal full colour. Phones keep full colour (no hover). */
+@media (min-width: 901px) {
+  :global([data-theme="dark"]) .photo {
+    isolation: isolate;
+    background: #000;
+  }
+
+  :global([data-theme="dark"]) .photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent-spot);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  :global([data-theme="dark"]) .photoImg {
+    filter: var(--photo-ink);
+    mix-blend-mode: normal;
+  }
+
+  :global([data-theme="dark"]) .photo:hover::after {
+    opacity: 0;
+  }
+
+  :global([data-theme="dark"]) .photo:hover .photoImg {
+    filter: none;
+  }
+}
+
+/* ── Controls: overlay the carousel's bottom-right corner ── */
+
+.controls {
+  position: relative;
+  z-index: 2;
+  grid-column: 1 / -1;
+  grid-row: 16;
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 16px 16px 0;
+}
+
+/* Square cardstock buttons with an ink icon — same as the project panel's
+   close button */
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: var(--surface-cardstock, #f9f7f3);
+  color: var(--ink);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.control:hover {
+  opacity: 0.85;
+}
+
+.control:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .photoImg,
+  .flood {
+    transition: none;
+  }
+
   /* No footer slide-over, so no need to hold the section back */
   .pin {
     height: auto;
@@ -400,5 +267,75 @@
 
   .pin > .section {
     position: relative;
+  }
+}
+
+/* Phones: the marquee runs under the headline, each panel most of the
+   screen wide — print photo, copy, colour photo — with the controls below.
+   No parking (the footer only slides over on desktop). */
+@media (max-width: 900px) {
+  .grid {
+    height: auto;
+    min-height: auto;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    row-gap: 16px;
+  }
+
+  .pageNumber {
+    grid-column: 1 / span 8;
+  }
+
+  .headline {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin: 16px 0 8px;
+  }
+
+  .pin {
+    height: auto;
+  }
+
+  .pin > .section {
+    position: relative;
+  }
+
+  .strip {
+    grid-row: 3;
+    margin-top: 8px;
+  }
+
+  .spread {
+    display: flex;
+    width: auto;
+    height: auto;
+  }
+
+  .photoPrint,
+  .photoColor,
+  .spreadBody {
+    grid-area: auto;
+    flex: none;
+    width: 72vw;
+    aspect-ratio: 3 / 4;
+  }
+
+  .spreadBody {
+    order: 1;
+  }
+
+  .photoColor {
+    order: 2;
+  }
+
+  /* Phones have no hover to reveal colour, so show the photos as they are */
+  .photoImg {
+    filter: none;
+    mix-blend-mode: normal;
+  }
+
+  .controls {
+    grid-row: 4;
+    margin: 0;
   }
 }

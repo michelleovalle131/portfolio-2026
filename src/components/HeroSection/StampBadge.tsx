@@ -36,6 +36,8 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [prints, setPrints] = useState<Print[]>([]);
+  // Has this pick-up printed yet? Until it has, the hints say how to stamp
+  const [printedThisHold, setPrintedThisHold] = useState(false);
   // The block's angle in hand; it prints at this angle, then turns slightly
   const [tilt, setTilt] = useState(-2);
   const tiltRef = useRef(tilt);
@@ -56,6 +58,7 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
     if (!home) return;
     setSize({ w: home.offsetWidth, h: home.offsetHeight });
     setHeld(true);
+    setPrintedThisHold(false);
     // A keyboard pick-up starts the stamp just above its spot
     if (fromKeyboard) {
       const c = homeCenter();
@@ -84,6 +87,7 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
       ].slice(-MAX_PRINTS),
     );
     setTilt(randomTilt());
+    setPrintedThisHold(true);
   }, []);
 
   // While held: follow the pointer, print on click, block the page's own clicks
@@ -177,6 +181,9 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
 
   const words = WORDS.map((w) => <span key={w}>{w}</span>);
   const area = areaRef.current;
+  const touch = typeof window !== "undefined" && window.matchMedia?.("(hover: none)").matches;
+  // Until the first press, the empty slot says how to stamp
+  const slotHint = `${touch ? "Tap" : "Click"} anywhere to stamp`;
 
   return (
     <>
@@ -188,6 +195,7 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
           styles.block,
           held ? styles.lifted : "",
           held && overSlot ? styles.dropTarget : "",
+          held && printedThisHold ? styles.printed : "",
         ]
           .filter(Boolean)
           .join(" ")}
@@ -204,6 +212,11 @@ export function StampBadge({ areaRef, className }: StampBadgeProps) {
         }}
       >
         {words}
+        {held && !printedThisHold && (
+          <span className={styles.slotHint} aria-hidden>
+            {slotHint}
+          </span>
+        )}
       </button>
 
       {area &&
