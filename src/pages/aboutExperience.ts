@@ -4,7 +4,8 @@ export type ExperienceRole = {
   title: string;
   /** Shown in all caps via CSS */
   dateRange: string;
-  description: string;
+  /** A sentence, or a list of points (rendered as bullets) */
+  description: string | string[];
 };
 
 export type ExperienceEntry = {
@@ -27,7 +28,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
       },
       {
         title: "Sr Product Designer on Meeting Recordings",
-        dateRange: "Jan 2026–Jun 2026",
+        dateRange: "Jan 2026–Jul 2026",
         description:
           "Drove the vision for how 1-click AI-suggested actions can turn meeting discussions into progress",
       },
@@ -38,16 +39,19 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Confluence",
     roles: [
       {
-        title: "Sr Product Designer on Flywheel",
-        dateRange: "Apr 2025–Dec 2025",
+        title: "Sr Product Designer on Activation",
+        dateRange: "Oct 2025–Dec 2025",
         description:
           "Led rapid ideation and prototyping to validate key hypotheses and improve Activation and Feature Discovery efforts across Confluence",
       },
       {
-        title: "Sr Product Designer on Company Hub",
+        title: "Senior Associate Product Designer → Senior Product Designer, Company Hub",
         dateRange: "Jan 2024–Oct 2025",
-        description:
-          "Delivered a 0→1 MVP to GA and set FY25, FY26, and Unified Hubs product visions—establishing Company Hub as the design standard across a multi-product platform",
+        description: [
+          "Delivered a 0→1 MVP to GA and set the FY25, FY26, and Unified Hubs product visions",
+          "Introduced an editorial design style and scalable visual system that elevated visual quality and gave Company Hub a distinct identity, establishing it as the design standard across a multi-product platform",
+          "Strengthened cross-functional alignment by facilitating workshops and establishing rituals that clarified priorities and strengthened team culture",
+        ],
       },
       {
         title: "Product Designer on Ecosystem",

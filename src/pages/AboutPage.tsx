@@ -36,7 +36,15 @@ export function AboutPage() {
                         <p className={styles.jobLevel}>{role.title}</p>
                         <p className={styles.jobDates}>{role.dateRange}</p>
                       </div>
-                      <p className={styles.jobDescription}>{role.description}</p>
+                      {Array.isArray(role.description) ? (
+                        <ul className={`${styles.jobDescription} ${styles.jobPoints}`}>
+                          {role.description.map((point) => (
+                            <li key={point}>{point}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className={styles.jobDescription}>{role.description}</p>
+                      )}
                     </div>
                   ))}
                 </article>
