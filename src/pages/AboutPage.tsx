@@ -24,6 +24,14 @@ export function AboutPage() {
               <h2 className={styles.sectionHeading} id="about-experience-heading">
                 Experience through the years
               </h2>
+              {/* One-page PDF, printed from resume/resume.html (npm run resume) */}
+              <a
+                className={styles.resumeButton}
+                href="/Michelle_Ovalle_Resume.pdf"
+                download
+              >
+                Download resume (PDF)
+              </a>
             </div>
             <div className={styles.entries}>
               {ABOUT_EXPERIENCE.map((job) => (
