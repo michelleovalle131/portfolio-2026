@@ -66,10 +66,10 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "MS Interactive Media & Communication",
     roles: [
       {
-        title: "Shanghai, China",
-        dateRange: "Jan 2019–Aug 2022",
+        title: "Graduate Student & Expat in Shanghai, China",
+        dateRange: "Sep 2019–Jul 2022",
         description:
-          "Completed at Quinnipiac University while living abroad in Shanghai, China",
+          "Completed at Quinnipiac University while living abroad",
       },
     ],
   },
