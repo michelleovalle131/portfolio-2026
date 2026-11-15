@@ -1,0 +1,150 @@
+/* Larger look at one hero print: dimmed page, the photo in full colour,
+   its number + name underneath, and close / previous / next controls */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  /* Same dim as the project panel */
+  background: rgba(29, 29, 22, 0.72);
+  opacity: 0;
+  transition: opacity 0.26s ease;
+  cursor: zoom-out;
+}
+
+.figure {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  max-width: min(84vw, 1200px);
+  opacity: 0;
+  scale: 0.96;
+  transition:
+    opacity 0.26s ease,
+    scale 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: zoom-out;
+}
+
+.shown .backdrop,
+.shown .figure {
+  opacity: 1;
+}
+
+.shown .figure {
+  scale: 1;
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: default;
+  animation: print-swap 0.25s ease;
+}
+
+@keyframes print-swap {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Number in the gallery's handwriting, name in mono caps — light on the dim */
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: #f9f7f3;
+  cursor: default;
+}
+
+.number {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.32;
+  letter-spacing: 0.24px;
+  text-transform: uppercase;
+}
+
+/* Close and arrows: cardstock squares like the project panel's close */
+.iconButton {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: var(--surface-cardstock, #f9f7f3);
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.26s ease;
+}
+
+.shown .iconButton {
+  opacity: 1;
+}
+
+.shown .iconButton:hover {
+  opacity: 0.85;
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid var(--surface-cardstock, #f9f7f3);
+  outline-offset: 3px;
+}
+
+.close {
+  top: 24px;
+  right: 24px;
+}
+
+.prev,
+.next {
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.prev {
+  left: 24px;
+}
+
+.next {
+  right: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .figure,
+  .iconButton {
+    transition: none;
+  }
+
+  .figure {
+    scale: none;
+  }
+
+  .image {
+    animation: none;
+  }
+}

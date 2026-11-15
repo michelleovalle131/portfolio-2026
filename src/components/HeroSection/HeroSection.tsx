@@ -1,10 +1,12 @@
-import { useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
+import { useCallback, useMemo, useRef, useState, type CSSProperties } from "react";
 import { HERO_GRID_CELLS_3X3, type HeroGridCell } from "./heroGridCells";
-import { STAMP_IMAGE_URLS } from "./stampImagePool";
+import { STAMP_IMAGE_URLS, printTitleFromSrc } from "./stampImagePool";
 import styles from "./HeroSection.module.css";
 import { LocalTime } from "../LocalTime/LocalTime";
 import { StampBadge } from "./StampBadge";
 import { SiteHeader } from "../SiteHeader/SiteHeader";
+import { PrintPreview, type PreviewPrint } from "./PrintPreview";
 
 function shuffleInPlace<T>(arr: T[]): void {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -92,7 +94,9 @@ export function HeroSection() {
   // Reshuffle button: a new arrangement, as on a fresh load — never the same
   // pattern of filled cells twice in a row. The current prints lift away,
   // then the new ones print in one after another (once their images load).
-  const [shuffleEpoch, setShuffleEpoch] = useState(0);  const [leaving, setLeaving] = useState(false);
+  const [shuffleEpoch, setShuffleEpoch] = useState(0);
+  // Which photo's larger preview is open (index into previewPrints), if any
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);  const [leaving, setLeaving] = useState(false);
   const pattern = (list: HeroGridCell[]) => list.map((c) => (c.blank ? 0 : 1)).join("");
   const remix = () => {
     if (leaving) return;
@@ -140,6 +144,20 @@ export function HeroSection() {
     return acc;
   }, []);
 
+  // The photos the larger preview steps through, in gallery order
+  const previewPrints: PreviewPrint[] = [];
+  const previewSlot: number[] = cells.map((cell, i) => {
+    if (cell.blank || !cell.imageSrc || cell.imageSrc === "placeholder") return -1;
+    previewPrints.push({
+      src: cell.imageSrc,
+      title: printTitleFromSrc(cell.imageSrc),
+      number: photoNumbers[i]!,
+    });
+    return previewPrints.length - 1;
+  });
+  const previewIndexOf = (cellIndex: number) => previewSlot[cellIndex] ?? -1;
+  const closePreview = useCallback(() => setPreviewIndex(null), []);
+
   const galleryCells = cells.map((cell, index) => cell.blank ? null : (
     <div
       // A new key per reshuffle, so the new cells mount and print in
@@ -154,16 +172,25 @@ export function HeroSection() {
         } as CSSProperties
       }
     >
-      <div className={styles.printFrame}>
-        {cell.imageSrc ? (
+      {/* Each photo opens a larger preview */}
+      {previewIndexOf(index) >= 0 ? (
+        <button
+          type="button"
+          className={`${styles.printFrame} ${styles.printButton}`}
+          onClick={() => setPreviewIndex(previewIndexOf(index))}
+          aria-label={`View larger: ${printTitleFromSrc(cell.imageSrc!)}`}
+          aria-haspopup="dialog"
+        >
           <img
             className={styles.printPhoto}
             src={cell.imageSrc}
             alt=""
             draggable={false}
           />
-        ) : null}
-      </div>
+        </button>
+      ) : (
+        <div className={styles.printFrame} />
+      )}
       <span className={styles.cellLabel}>
         {String(photoNumbers[index]).padStart(2, "0")}
       </span>
@@ -225,6 +252,17 @@ export function HeroSection() {
           <span className={`${styles.remixLabel} link-ui`}>Remix collection</span>
         </button>
       </div>
+
+      {/* Rendered on <body>, above every section */}
+      {createPortal(
+        <PrintPreview
+          prints={previewPrints}
+          index={previewIndex}
+          onClose={closePreview}
+          onNavigate={setPreviewIndex}
+        />,
+        document.body,
+      )}
     </section>
   );
 }
