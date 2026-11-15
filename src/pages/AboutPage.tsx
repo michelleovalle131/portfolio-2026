@@ -39,9 +39,11 @@ export function AboutPage() {
                   <h3 className={styles.jobTitle}>{job.headline}</h3>
                   {/* Roles held there, each with its team and dates */}
                   {job.roles.map((role) => (
-                    <div key={role.title} className={styles.role}>
+                    <div key={role.title || role.dateRange} className={styles.role}>
                       <div className={styles.jobTopRow}>
-                        <p className={styles.jobLevel}>{role.title}</p>
+                        {role.title && (
+                          <p className={styles.jobLevel}>{role.title}</p>
+                        )}
                         <p className={styles.jobDates}>{role.dateRange}</p>
                       </div>
                       {Array.isArray(role.description) ? (

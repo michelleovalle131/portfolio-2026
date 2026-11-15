@@ -1,6 +1,6 @@
 /** About page — work history: one entry per product / place, its roles below */
 export type ExperienceRole = {
-  /** Role + team — rendered bold */
+  /** Role + team — rendered bold; empty for none */
   title: string;
   /** Shown in all caps via CSS */
   dateRange: string;
@@ -63,13 +63,14 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
   },
   {
     id: "masters-shanghai",
-    headline: "MS Interactive Media & Communication",
+    headline: "Expat in Shanghai, China",
     roles: [
       {
-        title: "Graduate Student & Expat in Shanghai, China",
-        dateRange: "Sep 2019–Jul 2022",
+        // No role line: the dates sit alone, the degree is the sentence below
+        title: "",
+        dateRange: "Sep 2018–Jul 2022",
         description:
-          "Completed at Quinnipiac University while living abroad",
+          "Completed an MS in Interactive Media & Communication at Quinnipiac University while living abroad",
       },
     ],
   },
