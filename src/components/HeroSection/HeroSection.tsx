@@ -92,8 +92,7 @@ export function HeroSection() {
   // Reshuffle button: a new arrangement, as on a fresh load — never the same
   // pattern of filled cells twice in a row. The current prints lift away,
   // then the new ones print in one after another (once their images load).
-  const [shuffleEpoch, setShuffleEpoch] = useState(0);
-  const [leaving, setLeaving] = useState(false);
+  const [shuffleEpoch, setShuffleEpoch] = useState(0);  const [leaving, setLeaving] = useState(false);
   const pattern = (list: HeroGridCell[]) => list.map((c) => (c.blank ? 0 : 1)).join("");
   const remix = () => {
     if (leaving) return;
@@ -148,7 +147,12 @@ export function HeroSection() {
       className={[styles.imageCell, shuffleEpoch > 0 ? styles.reprint : ""]
         .filter(Boolean)
         .join(" ")}
-      style={{ ...gridCellStyles[index], "--order": photoNumbers[index]! - 1 } as CSSProperties}
+      style={
+        {
+          ...gridCellStyles[index],
+          "--order": photoNumbers[index]! - 1,
+        } as CSSProperties
+      }
     >
       <div className={styles.printFrame}>
         {cell.imageSrc ? (
@@ -194,8 +198,31 @@ export function HeroSection() {
 
         <StampBadge areaRef={heroRef} className={styles.tagline} />
 
-        <button type="button" className={`${styles.remix} link-ui`} onClick={remix}>
-          Reshuffle
+        {/* Shuffle glyph + label; hovering it shows every print in full colour */}
+        <button
+          type="button"
+          className={styles.remix}
+          onClick={remix}
+        >
+          <svg
+            // Remounts per reshuffle so the glyph's spin replays
+            key={shuffleEpoch}
+            className={[styles.remixIcon, shuffleEpoch > 0 ? styles.remixIconSpin : ""]
+              .filter(Boolean)
+              .join(" ")}
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+          >
+            <path
+              d="M1.5 4.5h2.5c2.5 0 3.5 7 6 7h4M12 9l2 2.5-2 2.5M1.5 11.5h2.5c1 0 1.8-1.1 2.4-2.4M14 4.5h-4c-1 0-1.8 1.1-2.4 2.4M12 2l2 2.5L12 7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className={`${styles.remixLabel} link-ui`}>Remix collection</span>
         </button>
       </div>
     </section>

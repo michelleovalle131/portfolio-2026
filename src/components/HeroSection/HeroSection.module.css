@@ -7,14 +7,19 @@
   color: var(--ink);
 }
 
-/* Right “cardstock” column — 759 / 1440 of the centered grid, bleeding to the
-   right edge. Starts 2.708% of the grid width left of center. */
+/* Right “cardstock” column, bleeding to the right edge. Its edge sits 2.708%
+   of the grid width left of center, then one more grid column (+ gap) left
+   so the gallery can span columns 8–16. */
 .neutralPanel {
+  --hero-grid-w: min(100%, var(--frame-w));
+  --hero-col: calc(
+    (var(--hero-grid-w) - 2 * var(--grid-padding, 24px) - 15 * var(--grid-gap, 8px)) / 16
+  );
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  left: calc(50% - min(100%, var(--frame-w)) * 0.02708);
+  left: calc(50% - var(--hero-grid-w) * 0.02708 - var(--hero-col) - var(--grid-gap, 8px));
   background: var(--surface-cardstock, #f9f7f3);
   z-index: 0;
   pointer-events: none;
@@ -54,14 +59,23 @@
 }
 
 /*
- * Gallery: 9 cells in their own 3-column grid across columns 9–16. Frames
+ * Gallery: 9 cells in their own 3-column grid across columns 8–16. Frames
  * keep the original Figma cells' proportions (167 × 148.5 at 1440), so they
  * grow taller with the wider columns; the gallery takes rows
- * 3–15 to fit them, and spare height becomes the space between rows.
+ * 2–15 to fit them, and spare height becomes the space between rows.
  */
 .gallery3x3 {
-  grid-column: 9 / span 8;
-  grid-row: 3 / span 13;
+  grid-column: 8 / span 9;
+  grid-row: 2 / span 14;
+  /* On short frames the 28px number labels don't shrink with the photos, so
+     cap the width to what three rows of prints + labels + 16px between rows
+     can fit in the gallery's 14 rows; it stays right-aligned to the edge */
+  --gallery-cell-h: calc(
+    (14 * var(--frame-row) + 13 * var(--grid-gap, 8px) - 3 * 28px - 2 * 16px) / 3
+  );
+  max-width: calc(3 * var(--gallery-cell-h) * 167 / 148.5 + 2 * var(--grid-gap, 8px));
+  justify-self: end;
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(3, auto);
@@ -153,13 +167,17 @@
   transition: filter 0.25s ease;
 }
 
-/* Hover reveals the photo in full colour — drop the print treatment */
+/* Hover reveals the photo in full colour — drop the print treatment. Hovering
+   Reshuffle does it for every print at once, to show what it acts on. */
 .imageCell:hover .printFrame,
-.imageCell:hover .printPhoto {
+.imageCell:hover .printPhoto,
+.grid:has(.remix:hover, .remix:focus-visible) .printFrame,
+.grid:has(.remix:hover, .remix:focus-visible) .printPhoto {
   mix-blend-mode: normal;
 }
 
-.imageCell:hover .printPhoto {
+.imageCell:hover .printPhoto,
+.grid:has(.remix:hover, .remix:focus-visible) .printPhoto {
   filter: none;
 }
 
@@ -186,7 +204,8 @@
   mix-blend-mode: normal;
 }
 
-:global([data-theme="dark"]) .imageCell:hover .printFrame::after {
+:global([data-theme="dark"]) .imageCell:hover .printFrame::after,
+:global([data-theme="dark"]) .grid:has(.remix:hover, .remix:focus-visible) .printFrame::after {
   opacity: 0;
 }
 
@@ -227,13 +246,21 @@
 }
 
 /* Reshuffle: a new gallery arrangement. Bottom row, right-aligned to the
-   last column (the gallery's right edge); a .link-ui like About */
+   last column (the gallery's right edge). A shuffle glyph + .link-ui label,
+   so it reads as a control for the prints rather than a nav link. */
 .remix {
-  grid-column: 9 / span 8;
+  grid-column: 8 / span 9;
   grid-row: 16;
   align-self: end;
   justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 400;
@@ -242,6 +269,46 @@
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ink);
+  transition: color 0.2s ease;
+}
+
+/* The whole button is the hover target — glyph and label turn accent
+   together, and the label's underline draws in */
+.remix:hover {
+  color: var(--field-accent);
+}
+
+.remix:hover .remixLabel {
+  background-size: 100% 1px;
+}
+
+.remix:focus-visible {
+  outline: 2px solid var(--field-accent);
+  outline-offset: 3px;
+}
+
+.remixIcon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Half a turn on each reshuffle */
+.remixIconSpin {
+  animation: remix-spin 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes remix-spin {
+  from {
+    transform: rotate(-180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .remixIconSpin {
+    animation: none;
+  }
 }
 
 /* Live Chicago time and weather, just above the headline. A plain line of
@@ -294,7 +361,7 @@
   .headline {
     grid-column: 1 / -1;
     grid-row: 3;
-    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-size: clamp(2.25rem, 9.5vw, 3rem);
   }
 
   /* .grid for specificity over the stamp's own margin reset */

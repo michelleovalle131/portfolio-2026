@@ -25,10 +25,13 @@ export function SiteHeader({ className }: { className?: string }) {
   }, [cardstockIndex]);
 
   const [theme, setTheme] = useState<Theme>(readTheme);
+  // Bumped on each click so the icon's swap animation replays
+  const [themeFlips, setThemeFlips] = useState(0);
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     applyTheme(next, true);
     setTheme(next);
+    setThemeFlips((n) => n + 1);
   };
 
   // Until the visitor picks, follow the system setting as it changes
@@ -56,7 +59,8 @@ export function SiteHeader({ className }: { className?: string }) {
         </Link>
       )}
 
-      {/* Icon-only controls; their labels show as tooltips on hover/focus */}
+      {/* Icon-only controls (labels show as tooltips on hover/focus), then
+          About — one evenly spaced group at the right edge */}
       <div className={styles.utils}>
         <button
           type="button"
@@ -76,17 +80,24 @@ export function SiteHeader({ className }: { className?: string }) {
           aria-label={theme === "dark" ? "Dark mode. Switch to light mode" : "Light mode. Switch to dark mode"}
         >
           {/* Half paper, half ink — drawn in the page's own colours, so it
-              reverses with the mode */}
+              reverses with the mode. On a click the colours flip at once, so
+              the half starts turned round (looking unchanged) and spins back,
+              sweeping the light and dark sides across. */}
           <svg className={styles.utilIcon} viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="11.5" fill="var(--surface-cardstock)" stroke="var(--ink-print-muted)" />
-            <path d="M11.625 24C18.2524 24 23.625 18.6274 23.625 12C23.625 5.37258 18.2524 0 11.625 0V24Z" fill="var(--ink)" />
+            <path
+              key={themeFlips}
+              className={themeFlips > 0 ? styles.modeHalfFlip : undefined}
+              d="M11.625 24C18.2524 24 23.625 18.6274 23.625 12C23.625 5.37258 18.2524 0 11.625 0V24Z"
+              fill="var(--ink)"
+            />
           </svg>
         </button>
-      </div>
 
-      <NavLink className={`${styles.aboutLink} link-ui`} to="/about">
-        about
-      </NavLink>
+        <NavLink className={`${styles.aboutLink} link-ui`} to="/about">
+          about
+        </NavLink>
+      </div>
     </header>
   );
 }

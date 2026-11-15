@@ -213,6 +213,13 @@
   letter-spacing: -0.02em;
 }
 
+/* Learn more: on its own line under the description, hugging its text */
+.learnMore {
+  display: block;
+  width: fit-content;
+  margin-top: 8px;
+}
+
 /* ── Split layout: copy on the left 5 columns (6 is a gutter), image on the right 10, full height ── */
 @media (min-width: 901px) {
   .split .title {

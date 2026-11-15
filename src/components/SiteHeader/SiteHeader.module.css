@@ -29,11 +29,12 @@
   outline-offset: 3px;
 }
 
-/* Cardstock + light/dark mode, side by side at the start of the gallery columns */
+/* Cardstock, light/dark mode and About: one group at the grid's right edge,
+   with the same space between all three */
 .utils {
   grid-column: 9 / span 8;
   grid-row: 1;
-  justify-self: start;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -73,6 +74,28 @@
   flex-shrink: 0;
 }
 
+/* Mode icon: the ink half spins half a turn into place after a toggle */
+.modeHalfFlip {
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+  animation: modeHalfFlip 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes modeHalfFlip {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modeHalfFlip {
+    animation: none;
+  }
+}
+
 /* Tooltip: an ink chip with the label in mono, just below the icon */
 .tip {
   position: relative;
@@ -104,13 +127,6 @@
 .tip:focus-visible::after {
   opacity: 1;
   translate: -50% 0;
-}
-
-/* About: right-aligned to the grid's right edge */
-.aboutLink {
-  grid-column: 9 / span 8;
-  grid-row: 1;
-  justify-self: end;
 }
 
 /* Phones: everything stays — name on the left, then the two toggles and

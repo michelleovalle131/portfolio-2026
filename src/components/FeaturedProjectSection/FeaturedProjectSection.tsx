@@ -170,17 +170,14 @@ export function FeaturedProjectSection({
           {description}
           {/* Opens the side panel, like a click anywhere in the section */}
           {details && (
-            <>
-              {" "}
-              <button
-                type="button"
-                className="link-inline"
-                onClick={() => setPanelOpen(true)}
-                aria-haspopup="dialog"
-              >
-                Learn more
-              </button>
-            </>
+            <button
+              type="button"
+              className={`${styles.learnMore} link-inline`}
+              onClick={() => setPanelOpen(true)}
+              aria-haspopup="dialog"
+            >
+              Learn more
+            </button>
           )}
         </p>
       </div>
