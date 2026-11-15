@@ -12,7 +12,7 @@ export const ABOUT_RECOGNITION: RecognitionEntry[] = [
     headline: "Atlassian ShipIt Hackathon",
     dateRange: "2026",
     description:
-      "Updated Cover Images for Meeting Recordings, 1st place in 'Customer Impact' category",
+      "Updated Cover Images, 1st place in 'Customer Impact' category",
   },
   {
     id: "shipit-2023",

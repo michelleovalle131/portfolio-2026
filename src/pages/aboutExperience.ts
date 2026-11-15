@@ -21,13 +21,13 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Loom",
     roles: [
       {
-        title: "Sr Product Designer on AI Overlays",
+        title: "Sr Product Designer, AI Overlays",
         dateRange: "Jul 2026–Present",
         description:
           "Took agent-created video overlays from 0→1 to a Founder Keynote debut at Team'26 EU, designing the UX, templates and motion system end to end",
       },
       {
-        title: "Sr Product Designer on Meeting Recordings",
+        title: "Sr Product Designer, Meeting Recordings",
         dateRange: "Jan 2026–Jul 2026",
         description:
           "Drove the vision for how 1-click AI-suggested actions can turn meeting discussions into progress",
@@ -39,13 +39,13 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Confluence",
     roles: [
       {
-        title: "Sr Product Designer on Activation",
+        title: "Sr Product Designer, Activation",
         dateRange: "Oct 2025–Dec 2025",
         description:
           "Led rapid ideation and prototyping to validate key hypotheses and improve Activation and Feature Discovery efforts across Confluence",
       },
       {
-        title: "Senior Associate Product Designer → Senior Product Designer, Company Hub",
+        title: "Sr Associate Product Designer → Sr Product Designer, Company Hub",
         dateRange: "Jan 2024–Oct 2025",
         description: [
           "Delivered a 0→1 MVP to GA and set the FY25, FY26, and Unified Hubs product visions",
@@ -54,7 +54,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         ],
       },
       {
-        title: "Product Designer on Ecosystem",
+        title: "Product Designer → Sr Associate Product Designer, Ecosystem",
         dateRange: "Nov 2022–Dec 2023",
         description:
           "Led the launch of Confluence's Dark Mode in close collaboration with ADS, PM and Eng to deliver on a top 10 customer request",
