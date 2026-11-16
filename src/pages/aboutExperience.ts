@@ -30,7 +30,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         title: "Sr Product Designer, Meeting Recordings",
         dateRange: "Jan 2026–Jul 2026",
         description:
-          "Drove the vision for how 1-click AI-suggested actions can turn meeting discussions into progress",
+          "Drove the vision for how 1-click AI-suggested actions can turn meetings into progress",
       },
     ],
   },

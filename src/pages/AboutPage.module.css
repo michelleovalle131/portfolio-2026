@@ -158,7 +158,7 @@
 }
 
 /* Role row: role + team in 7–13, dates in 14–16 */
-.jobTopRow > :first-child {
+.jobTopRow > :first-child:not(.jobDates) {
   grid-column: 1 / span 7;
 }
 
@@ -288,7 +288,7 @@
 
   /* Text full width, dates on their own line below the role */
   .jobBlock > .jobTitle,
-  .jobTopRow > :first-child,
+  .jobTopRow > :first-child:not(.jobDates),
   .jobDescription,
   .jobDates {
     grid-column: 1 / -1;
