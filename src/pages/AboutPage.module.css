@@ -88,51 +88,6 @@
   grid-column: 1 / span 5;
 }
 
-/* Resume download: the footer's boxed mono button, under the heading */
-.resumeButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  margin-top: 24px;
-  padding: 0 16px;
-  border: 1px solid var(--ink);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.32;
-  letter-spacing: 0.24px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--ink);
-  text-decoration: none;
-  /* Ink rolls up from the bottom on hover, as on the footer buttons */
-  background-color: transparent;
-  background-image: linear-gradient(to top, var(--ink) 50%, transparent 50%);
-  background-size: 100% 200%;
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  transition:
-    background-position 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-    color 0.2s ease 0.1s;
-}
-
-.resumeButton:hover,
-.resumeButton:focus-visible {
-  background-position: 0 100%;
-  color: var(--surface-cardstock, #f9f7f3);
-}
-
-.resumeButton:focus-visible {
-  outline: 2px solid var(--field-accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .resumeButton {
-    transition: none;
-  }
-}
-
 /* Entries, rules and dates sit in columns 7–16, on the page's own columns
    (subgrid all the way down); dates right-aligned at 16 */
 .entries {

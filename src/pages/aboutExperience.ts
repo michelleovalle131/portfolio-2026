@@ -21,16 +21,20 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Loom",
     roles: [
       {
-        title: "Sr Product Designer, AI Overlays",
+        title: "Senior Product Designer, AI Overlays",
         dateRange: "Jul 2026–Present",
-        description:
+        description: [
           "Took agent-created video overlays from 0→1 to a Founder Keynote debut at Team'26 EU, designing the UX, templates and motion system end to end",
+          "Led 18 production-ready templates in 5.5 weeks with an AI-assisted Figma-to-Cursor workflow; the system was reused by another squad to ship in two weeks",
+        ],
       },
       {
-        title: "Sr Product Designer, Meeting Recordings",
+        title: "Senior Product Designer, Meeting Recordings",
         dateRange: "Jan 2026–Jul 2026",
-        description:
-          "Drove the vision for how 1-click AI-suggested actions can turn meetings into progress",
+        description: [
+          "Drove the vision for how 1-click AI-suggested actions turn meetings into progress",
+          "Designed onboarding for a team experiment that nearly doubled recordings per user",
+        ],
       },
     ],
   },
@@ -39,25 +43,25 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Confluence",
     roles: [
       {
-        title: "Sr Product Designer, Activation",
+        title: "Senior Product Designer, Activation",
         dateRange: "Oct 2025–Dec 2025",
         description:
-          "Led rapid ideation and prototyping to validate key hypotheses and improve Activation and Feature Discovery efforts across Confluence",
+          "Designed and shipped 8 Activation and Feature Discovery experiments, 6 of which drove measurable gains in engagement",
       },
       {
-        title: "Sr Associate Product Designer → Sr Product Designer, Company Hub",
+        title: "Senior Associate Product Designer → Senior Product Designer, Company Hub",
         dateRange: "Jan 2024–Oct 2025",
         description: [
           "Delivered a 0→1 MVP to GA and set the FY25, FY26, and Unified Hubs product visions",
-          "Introduced an editorial design style and scalable visual system that elevated visual quality and gave Company Hub a distinct identity, establishing it as the design standard across a multi-product platform",
+          "Introduced an editorial design style and scalable visual system that gave the product a distinct identity and made it the design standard across a multi-product platform",
           "Strengthened cross-functional alignment by facilitating workshops and establishing rituals that clarified priorities and strengthened team culture",
         ],
       },
       {
-        title: "Product Designer → Sr Associate Product Designer, Ecosystem",
+        title: "Product Designer → Senior Associate Product Designer, Ecosystem",
         dateRange: "Nov 2022–Dec 2023",
         description:
-          "Led the launch of Confluence's Dark Mode in close collaboration with ADS, PM and Eng to deliver on a top 10 customer request",
+          "Led the launch of Dark Mode with the Atlassian Design System (ADS) team, PM, and Eng, delivering a top 10 customer request",
       },
     ],
   },
@@ -79,7 +83,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "GMMB agency",
     roles: [
       {
-        title: "Sr Multidisciplinary Designer",
+        title: "Senior Multidisciplinary Designer",
         dateRange: "2016–2018",
         description:
           "Led end-to-end digital and brand design for high-profile public sector and nonprofit clients (including the Bill & Melinda Gates Foundation, FEMA, and JB Pritzker for Governor), delivering branding, websites and campaigns",
@@ -91,7 +95,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
     headline: "Marriott International",
     roles: [
       {
-        title: "Sr Art Director",
+        title: "Senior Art Director",
         dateRange: "2015–2016",
         description:
           "Led the rebranding of SpringHill Suites, Marriott's largest all-suite hotel brand, delivering stakeholder-approved strategic design solutions and nationwide test campaigns",
