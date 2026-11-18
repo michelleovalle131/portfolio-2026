@@ -38,19 +38,26 @@ export function AboutPage() {
                         )}
                         <p className={styles.jobDates}>{role.dateRange}</p>
                       </div>
-                      {Array.isArray(role.description) ? (
-                        <ul className={`${styles.jobDescription} ${styles.jobPoints}`}>
-                          {role.description.map((point) => (
-                            <li key={point}>{point}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className={styles.jobDescription}>{role.description}</p>
-                      )}
+                      {/* Always bullets, even for a single point */}
+                      <ul className={`${styles.jobDescription} ${styles.jobPoints}`}>
+                        {[role.description].flat().map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </article>
               ))}
+              {/* The rest of the history lives on LinkedIn */}
+              <a
+                className={styles.experienceButton}
+                href="https://www.linkedin.com/in/michelleovalle"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View full experience on LinkedIn
+                <span className={styles.visuallyHidden}> (opens in a new tab)</span>
+              </a>
             </div>
           </section>
         </div>

@@ -4,7 +4,7 @@ export type ExperienceRole = {
   title: string;
   /** Shown in all caps via CSS */
   dateRange: string;
-  /** A sentence, or a list of points (rendered as bullets) */
+  /** One point or a list of points — always rendered as bullets */
   description: string | string[];
 };
 
@@ -18,7 +18,7 @@ export type ExperienceEntry = {
 export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
   {
     id: "loom",
-    headline: "Loom",
+    headline: "Loom @Atlassian",
     roles: [
       {
         title: "Senior Product Designer, AI Overlays",
@@ -26,6 +26,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         description: [
           "Took agent-created video overlays from 0→1 to a Founder Keynote debut at Team'26 EU, designing the UX, templates, and motion system end to end",
           "Led 18 production-ready templates in 5.5 weeks with an AI-assisted Figma-to-Cursor workflow; the system was reused by another squad to ship in two weeks",
+          "Invited by Core Design leadership to present the AI-assisted design-to-production workflow at AI Builders Week",
         ],
       },
       {
@@ -40,7 +41,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
   },
   {
     id: "confluence",
-    headline: "Confluence",
+    headline: "Confluence @Atlassian",
     roles: [
       {
         title: "Senior Product Designer, Activation",
@@ -73,8 +74,10 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         // No role line: the dates sit alone, the degree is the sentence below
         title: "",
         dateRange: "Sep 2018–Jul 2022",
-        description:
+        description: [
           "Completed an MS in Interactive Media & Communication at Quinnipiac University while living abroad",
+          "Received national awards for student work with GDUSA, PrintMag, and AIGA",
+        ],
       },
     ],
   },
@@ -85,8 +88,10 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
       {
         title: "Senior Multidisciplinary Designer",
         dateRange: "2016–2018",
-        description:
+        description: [
           "Led end-to-end digital and brand design for high-profile public sector and nonprofit clients (including the Bill & Melinda Gates Foundation, FEMA, and JB Pritzker for Governor), delivering branding, websites and campaigns",
+          "Design lead for the rebranding of global non-profit organizations that resulted in award-winning work, and return client business",
+        ],
       },
     ],
   },
@@ -97,8 +102,10 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
       {
         title: "Senior Art Director",
         dateRange: "2015–2016",
-        description:
+        description: [
           "Led the rebranding of SpringHill Suites, Marriott's largest all-suite hotel brand, delivering stakeholder-approved strategic design solutions and nationwide test campaigns",
+          "Launched on schedule and under budget by $30,000 while solving production challenges",
+        ],
       },
     ],
   },
