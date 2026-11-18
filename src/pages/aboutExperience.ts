@@ -50,7 +50,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
           "Designed and shipped 8 Activation and Feature Discovery experiments, 6 of which drove measurable gains in engagement",
       },
       {
-        title: "Senior Associate Product Designer → Senior Product Designer, Company Hub",
+        title: "PD IV → Senior Product Designer, Company Hub",
         dateRange: "Jan 2024–Oct 2025",
         description: [
           "Delivered a 0→1 MVP to GA and set the FY25, FY26, and Unified Hubs product visions",
@@ -59,7 +59,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         ],
       },
       {
-        title: "Product Designer → Senior Associate Product Designer, Ecosystem",
+        title: "PD III → Product Designer IV, Ecosystem",
         dateRange: "Nov 2022–Dec 2023",
         description:
           "Led the launch of Dark Mode with the Atlassian Design System (ADS) team, PM, and Eng, delivering a top 10 customer request",
