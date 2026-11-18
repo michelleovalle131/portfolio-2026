@@ -89,7 +89,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         title: "Senior Multidisciplinary Designer",
         dateRange: "2016–2018",
         description: [
-          "Led end-to-end digital and brand design for high-profile public sector and nonprofit clients (including the Bill & Melinda Gates Foundation, FEMA, and JB Pritzker for Governor), delivering branding, websites and campaigns",
+          "Led end-to-end digital and brand design for prominent public sector and nonprofit clients (including the Bill & Melinda Gates Foundation, FEMA, and JB Pritzker for Governor), delivering branding, websites and campaigns",
           "Design lead for the rebranding of global non-profit organizations that resulted in award-winning work, and return client business",
         ],
       },
