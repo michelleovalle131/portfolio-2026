@@ -24,9 +24,9 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         title: "Senior Product Designer, AI Overlays",
         dateRange: "Jul 2026–Present",
         description: [
-          "Took agent-created video overlays from 0→1 to a Founder Keynote debut at Team'26 EU, designing the UX, templates, and motion system end to end",
-          "Led 18 production-ready templates in 5.5 weeks with an AI-assisted Figma-to-Cursor workflow; the system was reused by another squad to ship in two weeks",
-          "Invited by Core Design leadership to present the AI-assisted design-to-production workflow at AI Builders Week",
+          "Took agent-created video overlays from 0→1, designing the UX, templates, and motion system end-to-end; debuted in the Founder Keynote at Team '26 EU",
+          "Designed and shipped 18 production-ready templates in 5.5 weeks using an AI-assisted Figma-to-Cursor workflow; another squad reused the system to ship in two weeks",
+          "Invited by Core Design leadership to present this workflow at AI Builders Week, Atlassian's company-wide AI initiative",
         ],
       },
       {
@@ -56,6 +56,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
           "Delivered a 0→1 MVP to GA and set the FY25, FY26, and Unified Hubs product visions",
           "Introduced an editorial design style and scalable visual system that gave the product a distinct identity and made it the design standard across a multi-product platform",
           "Strengthened cross-functional alignment by facilitating workshops and establishing rituals that clarified priorities and team culture",
+          "Coached fellow designers on the design system, driving team adoption that helped us ship more, faster",
         ],
       },
       {
