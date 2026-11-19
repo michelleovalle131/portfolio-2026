@@ -63,7 +63,7 @@ export const ABOUT_EXPERIENCE: ExperienceEntry[] = [
         title: "Product Designer III → Product Designer IV, Ecosystem",
         dateRange: "Nov 2022–Dec 2023",
         description:
-          "Led the launch of Dark Mode with the Atlassian Design System (ADS) team, PM, and Eng, delivering a top 10 customer request",
+          "Launched Dark Mode with the Atlassian Design System (ADS) team, PM, and Eng, delivering a top 10 customer request",
       },
     ],
   },
